@@ -86,12 +86,17 @@ pip install -r requirements.txt
 ```
 
 > El archivo `requirements.txt` instala:
+
+> - asgiref==3.11.1
 > - Django==4.2.16
+> - django-cors-headers==4.4.0
 > - djangorestframework==3.15.2
 > - djangorestframework-simplejwt==5.3.1
-> - django-cors-headers==4.4.0
-> - mysqlclient==2.2.4
-> - Pillow==10.4.0
+> - mysql==0.0.3
+> - mysqlclient==2.2.8
+> - pillow==10.4.0
+> - PyJWT==2.12.1
+> - PyMySQL==1.1.2
 > - python-decouple==3.8
 > - sqlparse==0.5.5
 > - tzdata==2025.3
