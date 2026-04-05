@@ -1,0 +1,23 @@
+[
+    {
+        "model": "usuarios.rol",
+        "pk": 1,
+        "fields": {
+            "nombre_rol": "administrador"
+        }
+    },
+    {
+        "model": "usuarios.rol",
+        "pk": 2,
+        "fields": {
+            "nombre_rol": "creador"
+        }
+    },
+    {
+        "model": "usuarios.rol",
+        "pk": 3,
+        "fields": {
+            "nombre_rol": "lector"
+        }
+    }
+]
