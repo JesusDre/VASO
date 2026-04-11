@@ -5,6 +5,9 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import Login from '../modules/auth/Login';
 import Register from '../modules/auth/Register';
 
+// Público
+import Home from '../modules/public/Home';
+
 // Admin
 import AdminPanel from '../modules/admin/AdminPanel/index.jsx'; 
 
@@ -24,7 +27,7 @@ const routes = [
     { path: '/registro', element: <Register /> },
 
     // ── Público ───────────────────────────────────────────────
-    { path: '/',         element: <Login /> }, 
+    { path: '/',         element: <Home /> }, 
 
     // ── Admin ─────────────────────────────────────────────────
     { path: '/admin',      element: protect(adminOnly, <AdminPanel />) },

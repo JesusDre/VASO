@@ -1,0 +1,122 @@
+.nv-home-page {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* Header section */
+.nv-home-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 2rem 0 1.5rem;
+}
+
+.nv-home-header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.nv-home-heading h1 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  color: var(--text);
+}
+
+.nv-home-heading p {
+  margin-top: 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.nv-search-wrap {
+  flex-shrink: 0;
+  width: 280px;
+}
+
+.nv-search-wrap input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+  color: var(--text);
+  padding: 0 14px;
+  font-size: 0.88rem;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.nv-search-wrap input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+  background: var(--surface);
+}
+
+.nv-search-wrap input::placeholder {
+  color: #a0aec0;
+}
+
+/* Results section */
+.nv-home-results {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem 3rem;
+}
+
+.nv-home-feedback {
+  text-align: center;
+  padding: 3rem 0;
+  color: var(--text-muted);
+}
+
+.nv-home-feedback p {
+  margin-top: 0.75rem;
+  font-size: 0.9rem;
+}
+
+/* Grid */
+.nv-stories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 1024px) {
+  .nv-stories-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .nv-stories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nv-search-wrap {
+    width: 100%;
+  }
+
+  .nv-home-header-inner {
+    flex-direction: column;
+  }
+}
+
+/* Spinner */
+.nv-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
