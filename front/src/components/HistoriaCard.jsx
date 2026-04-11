@@ -27,7 +27,7 @@ export default function HistoriaCard({ historia }) {
         ? `data:image/png;base64,${historia.portada_base64}`
         : historia.portada_url || null;
 
-    const openHistoria = () => console.log(historia.id);
+    const openHistoria = () => navigate(`/historia/${historia.id}`);
 
     const fecha = new Date(historia.fecha_creacion).toLocaleDateString('es-MX', {
         year: 'numeric', month: 'short'

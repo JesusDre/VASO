@@ -7,9 +7,10 @@ import Register from '../modules/auth/Register';
 
 // Público
 import Home from '../modules/public/Home';
+import DetalleHistoria from '../modules/public/DetalleHistoria';
 
 // Admin
-import AdminPanel from '../modules/admin/AdminPanel/index.jsx'; 
+import AdminPanel from '../modules/admin/AdminPanel/index.jsx';
 
 // Legacy Admin
 import HistoriasApp from '../modules/admin/legacy/HistoriasApp';
@@ -23,18 +24,19 @@ const protect = (roles, element) => (
 
 const routes = [
     // ── Autenticación ─────────────────────────────────────────
-    { path: '/login',    element: <Login /> },
+    { path: '/login', element: <Login /> },
     { path: '/registro', element: <Register /> },
 
     // ── Público ───────────────────────────────────────────────
-    { path: '/',         element: <Home /> }, 
+    { path: '/', element: <Home /> },
+    { path: '/historia/:id', element: <DetalleHistoria /> },
 
     // ── Admin ─────────────────────────────────────────────────
-    { path: '/admin',      element: protect(adminOnly, <AdminPanel />) },
+    { path: '/admin', element: protect(adminOnly, <AdminPanel />) },
 
     // Legacy admin
-    { path: '/historias',  element: protect(adminOnly, <HistoriasApp />) },
-    { path: '/usuarios',   element: protect(adminOnly, <UsuariosApp />) },
+    { path: '/historias', element: protect(adminOnly, <HistoriasApp />) },
+    { path: '/usuarios', element: protect(adminOnly, <UsuariosApp />) },
 
     // ── Fallback ──────────────────────────────────────────────
     { path: '*', element: <Navigate to="/" replace /> },
