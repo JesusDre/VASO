@@ -5,12 +5,13 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import Login from '../modules/auth/Login';
 import Register from '../modules/auth/Register';
 
-// IMPORTANTE: Comentamos lo que aún no existe para que no truene
-// import Home from '../modules/public/Home'; 
-// import DetalleHistoria from '../modules/public/DetalleHistoria';
-// ... etc
+// Admin
+import AdminPanel from '../modules/admin/AdminPanel/index.jsx'; 
 
-const creador = ['creador', 'admin'];
+// Legacy Admin
+import HistoriasApp from '../modules/admin/legacy/HistoriasApp';
+import UsuariosApp from '../modules/admin/legacy/UsuariosApp';
+
 const adminOnly = ['admin'];
 
 const protect = (roles, element) => (
@@ -23,12 +24,14 @@ const routes = [
     { path: '/registro', element: <Register /> },
 
     // ── Público ───────────────────────────────────────────────
-    // Usamos el Login como Home temporal para que veas algo apenas abras la app
     { path: '/',         element: <Login /> }, 
 
-    /* Descomenta estos conforme me vayas pasando los archivos:
-    { path: '/creador',  element: protect(creador, <DashboardCreador />) },
-    */
+    // ── Admin ─────────────────────────────────────────────────
+    { path: '/admin',      element: protect(adminOnly, <AdminPanel />) },
+
+    // Legacy admin
+    { path: '/historias',  element: protect(adminOnly, <HistoriasApp />) },
+    { path: '/usuarios',   element: protect(adminOnly, <UsuariosApp />) },
 
     // ── Fallback ──────────────────────────────────────────────
     { path: '*', element: <Navigate to="/" replace /> },
