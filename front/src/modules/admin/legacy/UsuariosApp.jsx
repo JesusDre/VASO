@@ -35,7 +35,7 @@ function UsuariosPanel() {
         catch { toast.error('Error al eliminar', { id: tid }); }
     };
 
-    const nombreRol = (id) => roles.find((r) => r.id === id)?.nombre_rol || (id ? `Rol ${id}` : '—');
+    const nombreRol = (id_rol) => roles.find((r) => r.id === id_rol)?.nombre_rol || (id_rol ? `Rol ${id_rol}` : '—');
 
     const filtrados = usuarios.filter((u) =>
         `${u.nombre} ${u.apellido_paterno} ${u.email}`.toLowerCase().includes(filtro.toLowerCase())
@@ -59,16 +59,17 @@ function UsuariosPanel() {
                         <table className="table table-hover table-sm align-middle">
                             <thead className="table-dark">
                                 <tr>
-                                    <th>ID</th><th>Nombre</th><th>Email</th>
+                                    <th>#</th>
+                                    <th>Nombre</th><th>Email</th>
                                     <th>Rol</th><th>Activo</th><th>Registro</th><th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filtrados.length === 0 ? (
                                     <tr><td colSpan={7} className="text-center text-muted py-3">Sin resultados</td></tr>
-                                ) : filtrados.map((u) => (
+                                ) : filtrados.map((u, i) => ( 
                                     <tr key={u.id}>
-                                        <td>{u.id}</td>
+                                        <td>{i + 1}</td> 
                                         <td>{u.nombre} {u.apellido_paterno} {u.apellido_materno || ''}</td>
                                         <td>{u.email}</td>
                                         <td>{nombreRol(u.id_rol)}</td>
@@ -204,14 +205,18 @@ function RolesPanel() {
                             <div className="table-responsive">
                                 <table className="table table-hover table-sm align-middle">
                                     <thead className="table-dark">
-                                        <tr><th>ID</th><th>Nombre del rol</th><th>Acciones</th></tr>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Nombre del rol</th>
+                                            <th>Acciones</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
                                         {filtrados.length === 0 ? (
                                             <tr><td colSpan={3} className="text-center text-muted py-3">Sin resultados</td></tr>
-                                        ) : filtrados.map((r) => (
+                                        ) : filtrados.map((r, i) => (
                                             <tr key={r.id}>
-                                                <td>{r.id}</td>
+                                                <td>{i + 1}</td>
                                                 <td><span className="badge bg-dark fs-6">{r.nombre_rol}</span></td>
                                                 <td>
                                                     <button className="btn btn-warning btn-sm me-1" onClick={() => prepararEdicion(r)}>Editar</button>
@@ -230,9 +235,6 @@ function RolesPanel() {
     );
 }
 
-// -----------------------------------------------------------
-// Componente principal con tabs
-// -----------------------------------------------------------
 export default function UsuariosApp() {
     const [tab, setTab] = useState('usuarios');
 
