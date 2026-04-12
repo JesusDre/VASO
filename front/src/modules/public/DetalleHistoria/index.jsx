@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { readHistoria, readProgresos, deleteProgreso } from '../../../services/api';
 import Navbar from '../../../components/Navbar';
@@ -10,6 +10,14 @@ export default function DetalleHistoria() {
     const navigate = useNavigate();
     const { usuario } = useAuth();
 
+    const decodedId = useMemo(() => {
+        try {
+            return Number(atob(id));
+        } catch {
+            return Number(id);
+        }
+    }, [id]);
+
     const [historia, setHistoria] = useState(null);
     const [autor, setAutor] = useState('');
     const [progreso, setProgreso] = useState(null);
@@ -18,7 +26,7 @@ export default function DetalleHistoria() {
     useEffect(() => {
         const cargar = async () => {
             try {
-                const resHistoria = await readHistoria(id);
+                const resHistoria = await readHistoria(decodedId);
                 const hist = resHistoria.data;
                 setHistoria(hist);
 
@@ -27,7 +35,7 @@ export default function DetalleHistoria() {
                 if (usuario) {
                     const resProgresos = await readProgresos();
                     const progresoExistente = resProgresos.data.find(
-                        (p) => Number(p.id_historia) === Number(id)
+                        (p) => Number(p.id_historia) === decodedId
                     );
                     setProgreso(progresoExistente || null);
                 }
@@ -40,13 +48,13 @@ export default function DetalleHistoria() {
         cargar();
     }, [id, usuario]);
 
-    const handleComenzar = () => navigate(`/leer/${id}`);
+    const handleComenzar = () => navigate(`/leer/${btoa(String(decodedId))}`);
 
     const handleReiniciar = async () => {
         if (progreso) {
             try { await deleteProgreso(progreso.id); } catch { /* continuar igual */ }
         }
-        navigate(`/leer/${id}`);
+        navigate(`/leer/${btoa(String(decodedId))}`);
     };
 
     if (cargando) {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     readHistoria, readNodos, readOpciones,
@@ -23,6 +23,14 @@ export default function LectorNovela() {
     const { usuario } = useAuth();
     const navigate = useNavigate();
 
+    const decodedHistoriaId = useMemo(() => {
+        try {
+            return Number(atob(historiaId));
+        } catch {
+            return Number(historiaId);
+        }
+    }, [historiaId]);
+
     const [nodosMap, setNodosMap] = useState({});
     const [opcionesMap, setOpcionesMap] = useState({});
     const [npMap, setNpMap] = useState({});
@@ -40,7 +48,7 @@ export default function LectorNovela() {
     const { displayado, listo, terminar } = useTypewriter(nodoActual?.texto || '');
 
     useEffect(() => {
-        if (!historiaId) return;
+        if (!decodedHistoriaId) return;
         const cargar = async () => {
             try {
                 const [
@@ -48,7 +56,7 @@ export default function LectorNovela() {
                     resNP, resPersonajes, resImagenes,
                     resAudios, resProgresos,
                 ] = await Promise.all([
-                    readHistoria(historiaId),
+                    readHistoria(decodedHistoriaId),
                     readNodos(),
                     readOpciones(),
                     readNodoPersonajes(),
@@ -61,7 +69,7 @@ export default function LectorNovela() {
                 const hist = resHistoria.data;
 
                 const nodosFiltrados = resNodos.data.filter(
-                    (n) => Number(n.id_historia) === Number(historiaId)
+                    (n) => Number(n.id_historia) === decodedHistoriaId
                 );
                 const nm = {};
                 nodosFiltrados.forEach((n) => { nm[n.id] = n; });
@@ -95,7 +103,7 @@ export default function LectorNovela() {
 
                 let nodoInicial;
                 const progresoExistente = usuario
-                    ? resProgresos.data.find((p) => Number(p.id_historia) === Number(historiaId))
+                    ? resProgresos.data.find((p) => Number(p.id_historia) === decodedHistoriaId)
                     : null;
 
                 if (progresoExistente) {
@@ -114,7 +122,7 @@ export default function LectorNovela() {
             }
         };
         cargar();
-    }, [historiaId]);
+    }, [decodedHistoriaId]);
 
     useEffect(() => {
         if (!nodoActual) return;
@@ -140,9 +148,9 @@ export default function LectorNovela() {
         if (!usuario) return;
         try {
             if (progresoId) {
-                await updateProgreso(progresoId, { id_historia: Number(historiaId), id_nodo_actual: nodoId });
+                await updateProgreso(progresoId, { id_historia: decodedHistoriaId, id_nodo_actual: nodoId });
             } else {
-                const res = await createProgreso({ id_historia: Number(historiaId), id_nodo_actual: nodoId });
+                const res = await createProgreso({ id_historia: decodedHistoriaId, id_nodo_actual: nodoId });
                 setProgresoId(res.data.id);
             }
         } catch (err) {
@@ -225,7 +233,7 @@ export default function LectorNovela() {
             <Navbar />
 
             <div className="ln-topbar">
-                <button className="ln-back-btn" onClick={() => navigate(`/historia/${historiaId}`)}>
+                <button className="ln-back-btn" onClick={() => navigate(`/historia/${btoa(String(decodedHistoriaId))}`)}>
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M19 12H5M12 19l-7-7 7-7" />
                     </svg>
