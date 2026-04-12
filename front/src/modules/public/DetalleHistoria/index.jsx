@@ -40,13 +40,13 @@ export default function DetalleHistoria() {
         cargar();
     }, [id, usuario]);
 
-    const handleComenzar = () => console.log("comenzar");
+    const handleComenzar = () => navigate(`/leer/${id}`);
 
     const handleReiniciar = async () => {
         if (progreso) {
             try { await deleteProgreso(progreso.id); } catch { /* continuar igual */ }
         }
-        console.log("reiniciar");
+        navigate(`/leer/${id}`);
     };
 
     if (cargando) {

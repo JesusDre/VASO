@@ -8,6 +8,7 @@ import Register from '../modules/auth/Register';
 // Público
 import Home from '../modules/public/Home';
 import DetalleHistoria from '../modules/public/DetalleHistoria';
+import LectorNovela from '../modules/public/LectorNovela';
 
 // Admin
 import AdminPanel from '../modules/admin/AdminPanel/index.jsx';
@@ -30,6 +31,7 @@ const routes = [
     // ── Público ───────────────────────────────────────────────
     { path: '/', element: <Home /> },
     { path: '/historia/:id', element: <DetalleHistoria /> },
+    { path: '/leer/:historiaId', element: <LectorNovela /> },
 
     // ── Admin ─────────────────────────────────────────────────
     { path: '/admin', element: protect(adminOnly, <AdminPanel />) },
