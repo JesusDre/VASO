@@ -24,7 +24,9 @@ class ImagenSerializer(serializers.ModelSerializer):
             'imagen_base64_display',
             'tipo',
             'descripcion',
+            'usuario',
         ]
+        read_only_fields = ['usuario']
 
     def create(self, validated_data):
         # Extraemos el archivo binario antes de crear el objeto
@@ -57,4 +59,6 @@ class AudioSerializer(serializers.ModelSerializer):
             'id',
             'archivo',
             'descripcion',
+            'usuario',
         ]
+        read_only_fields = ['usuario']
