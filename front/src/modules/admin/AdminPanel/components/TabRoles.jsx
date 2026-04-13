@@ -95,7 +95,7 @@ export default function TabRoles() {
                             }}>
                                 <div>
                                     <span style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.92rem' }}>{r.nombre_rol}</span>
-                                    <span style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginLeft: 10 }}>ID {r.id}</span>
+                                    
                                 </div>
                                 <div style={{ display: 'flex', gap: 8 }}>
                                     <button onClick={() => editar(r)} style={{
