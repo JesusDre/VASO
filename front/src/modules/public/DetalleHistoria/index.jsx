@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { readHistoria, readProgresos, deleteProgreso } from '../../../services/api';
 import Navbar from '../../../components/Navbar';
+import ModalAlert from '../../../components/ModalAlert';
 import { useAuth } from '../../../context/AuthContext';
 import './DetalleHistoria.css';
 
@@ -22,6 +23,7 @@ export default function DetalleHistoria() {
     const [autor, setAutor] = useState('');
     const [progreso, setProgreso] = useState(null);
     const [cargando, setCargando] = useState(true);
+    const [modalReiniciar, setModalReiniciar] = useState(false);
 
     useEffect(() => {
         const cargar = async () => {
@@ -50,7 +52,11 @@ export default function DetalleHistoria() {
 
     const handleComenzar = () => navigate(`/leer/${btoa(String(decodedId))}`);
 
-    const handleReiniciar = async () => {
+    const handleReiniciar = () => setModalReiniciar(true);
+
+    const confirmarReiniciar = async (confirmed) => {
+        setModalReiniciar(false);
+        if (!confirmed) return;
         if (progreso) {
             try { await deleteProgreso(progreso.id); } catch { /* continuar igual */ }
         }
@@ -87,6 +93,15 @@ export default function DetalleHistoria() {
     return (
         <div className="dh-page">
             <Navbar />
+            <ModalAlert
+                open={modalReiniciar}
+                onClose={confirmarReiniciar}
+                type="warning"
+                title="Reiniciar historia"
+                message="Se perderá tu progreso actual. ¿Deseas comenzar desde el principio?"
+                confirmText="Reiniciar"
+                cancelText="Cancelar"
+            />
 
             <div className="dh-back-bar">
                 <button className="dh-back-btn" onClick={() => navigate('/')}>
