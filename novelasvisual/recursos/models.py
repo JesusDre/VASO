@@ -1,6 +1,7 @@
 # Modelos de recursos multimedia: imagenes y audios
 import base64
 from django.db import models
+from django.conf import settings
 
 
 # -----------------------------------------------------------
@@ -28,6 +29,15 @@ class Imagen(models.Model):
     # Descripcion opcional para identificar la imagen
     descripcion = models.CharField(max_length=255, blank=True)
 
+    # Usuario propietario de esta imagen
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='imagenes',
+        null=True,
+        blank=True,
+    )
+
     @property
     def imagen_base64(self):
         """Convierte la imagen binaria a base64 para mostrarla en el frontend"""
@@ -53,6 +63,15 @@ class Audio(models.Model):
 
     # Descripcion para identificar el audio
     descripcion = models.CharField(max_length=255, blank=True)
+
+    # Usuario propietario de este audio
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='audios',
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = 'Audio'
