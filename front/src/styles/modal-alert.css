@@ -1,0 +1,129 @@
+/* ── Backdrop ─────────────────────────────────────────────────── */
+.modal-alert-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: modal-fade-in 0.15s ease;
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Caja principal ───────────────────────────────────────────── */
+.modal-alert-box {
+  background: var(--surface);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+  padding: 2rem 1.75rem 1.5rem;
+  border-top: 4px solid transparent;
+  animation: modal-slide-up 0.2s ease;
+}
+
+@keyframes modal-slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Tipos ────────────────────────────────────────────────────── */
+.alert-success { border-top-color: var(--green); }
+.alert-error   { border-top-color: var(--red); }
+.alert-warning { border-top-color: var(--yellow); }
+.alert-info    { border-top-color: var(--accent); }
+
+/* ── Contenido ────────────────────────────────────────────────── */
+.modal-alert-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+
+/* ── Icono ────────────────────────────────────────────────────── */
+.modal-alert-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 0.25rem;
+  flex-shrink: 0;
+}
+
+.alert-success .modal-alert-icon { color: var(--green); }
+.alert-error   .modal-alert-icon { color: var(--red); }
+.alert-warning .modal-alert-icon { color: var(--yellow); }
+.alert-info    .modal-alert-icon { color: var(--accent); }
+
+/* ── Textos ───────────────────────────────────────────────────── */
+.modal-alert-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.modal-alert-message {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Botones ──────────────────────────────────────────────────── */
+.modal-alert-actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.modal-alert-btn {
+  padding: 0.5rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  border: 1.5px solid transparent;
+  min-width: 100px;
+}
+
+.modal-alert-btn-cancel {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-muted);
+}
+
+.modal-alert-btn-cancel:hover {
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.modal-alert-btn-confirm {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.modal-alert-btn-confirm:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+/* Confirmar por tipo */
+.alert-success .modal-alert-btn-confirm { background: var(--green); border-color: var(--green); }
+.alert-success .modal-alert-btn-confirm:hover { filter: brightness(0.9); }
+
+.alert-error .modal-alert-btn-confirm { background: var(--red); border-color: var(--red); }
+.alert-error .modal-alert-btn-confirm:hover { filter: brightness(0.9); }
+
+.alert-warning .modal-alert-btn-confirm { background: var(--yellow); border-color: var(--yellow); }
+.alert-warning .modal-alert-btn-confirm:hover { filter: brightness(0.9); }
