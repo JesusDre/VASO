@@ -1,4 +1,4 @@
-# Cambios: Sistema de Categorías
+# Cambios: Sistema de Categorías + Contador de Visitas
 
 ## Archivos NUEVOS
 
@@ -54,10 +54,55 @@
 
 ---
 
+# Cambios: Contador de Visitas
+
+## Archivos NUEVOS
+
+### Backend
+- `novelasvisual/core/migrations/0001_initial.py`
+  Migración que crea la tabla `ContadorVisitas`.
+
+- `novelasvisual/core/urls.py`
+  Ruta `GET/POST /api/visitas/`.
+
+### Frontend
+- `front/.env`
+  Variable `VITE_VISITA_SEGUNDOS=60` para configurar el tiempo antes de contar una visita.
+
+- `front/src/hooks/useContadorVisitas.js`
+  Hook que obtiene el total de visitas y dispara el registro después de X segundos. Usa `sessionStorage` para no contar recargas.
+
+---
+
+## Archivos MODIFICADOS
+
+### Backend
+- `novelasvisual/core/models.py`
+  Se agregó el modelo `ContadorVisitas` (singleton, un solo registro).
+
+- `novelasvisual/core/views.py`
+  Se agregó `VisitasView` (GET devuelve total, POST incrementa).
+
+- `novelasvisual/novelasvisual/urls.py`
+  Se incluyó `core.urls`.
+
+### Frontend
+- `front/src/services/api.js`
+  Se agregaron `readVisitas` y `registrarVisita`.
+
+- `front/src/components/Navbar.jsx`
+  Se importó el hook y se muestra el contador discretamente junto al logo.
+
+- `front/src/styles/navbar.css`
+  Se agregó el estilo `.nv-visit-counter`.
+
+---
+
 ## Pasos para activar
 
-1. Aplicar la migración:
+1. Aplicar las migraciones:
    ```bash
    python manage.py migrate
    ```
 2. El admin debe tener `is_staff = True` en Django para poder crear/editar categorías desde la API.
+3. Para cambiar el tiempo de conteo de visitas, editar `front/.env` y modificar `VITE_VISITA_SEGUNDOS`.

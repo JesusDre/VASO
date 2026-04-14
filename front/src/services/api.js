@@ -140,3 +140,9 @@ export const deleteRol  = (id)       => api.delete(`/api/roles/${id}/`);
 export const readCategorias  = ()         => api.get('/api/categorias/');
 export const createCategoria = (data)     => api.post('/api/categorias/', data);
 export const updateCategoria = (id, data) => api.put(`/api/categorias/${id}/`, data);
+
+// -----------------------------------------------------------
+// VISITAS
+// -----------------------------------------------------------
+export const readVisitas     = ()  => api.get('/api/visitas/');
+export const registrarVisita = ()  => api.post('/api/visitas/');
