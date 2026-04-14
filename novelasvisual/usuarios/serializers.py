@@ -68,5 +68,6 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'email',
             'fecha_registro',
             'activo',
+            'is_active',
             'id_rol',
         ]

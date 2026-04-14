@@ -35,7 +35,8 @@ class HistoriaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, EsPropietarioOAdmin]
 
     def get_queryset(self):
-        qs = Historia.objects.all()
+        # Excluir historias de usuarios deshabilitados (por is_active o activo)
+        qs = Historia.objects.filter(id_creador__is_active=True, id_creador__activo=True)
         categoria_id = self.request.query_params.get('categoria')
         if categoria_id:
             qs = qs.filter(categoria_id=categoria_id)
