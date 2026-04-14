@@ -146,3 +146,8 @@ export const updateCategoria = (id, data) => api.put(`/api/categorias/${id}/`, d
 // -----------------------------------------------------------
 export const readVisitas     = ()  => api.get('/api/visitas/');
 export const registrarVisita = ()  => api.post('/api/visitas/');
+
+// -----------------------------------------------------------
+// BITACORA DE AUDITORIA (solo lectura, solo admin)
+// -----------------------------------------------------------
+export const readBitacora = (params = {}) => api.get('/api/bitacora/', { params });

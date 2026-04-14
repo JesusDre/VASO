@@ -98,11 +98,44 @@
 
 ---
 
+---
+
+# Cambios: Bitácora de Auditoría
+
+## Archivos NUEVOS
+
+### Backend (nueva app `auditoria`)
+- `novelasvisual/auditoria/__init__.py`
+- `novelasvisual/auditoria/apps.py` — AppConfig que conecta las signals en `ready()`
+- `novelasvisual/auditoria/models.py` — modelo `BitacoraMovimiento`
+- `novelasvisual/auditoria/middleware.py` — captura IP y usuario del request por hilo
+- `novelasvisual/auditoria/signals.py` — signals `pre_save`, `post_save`, `post_delete` para Historia, Categoria, MiUsuario, Nodo
+- `novelasvisual/auditoria/serializers.py` — serializer de solo lectura
+- `novelasvisual/auditoria/views.py` — `ReadOnlyModelViewSet` con `IsAdminUser` y filtros
+- `novelasvisual/auditoria/urls.py` — ruta `/api/bitacora/`
+- `novelasvisual/auditoria/migrations/__init__.py`
+- `novelasvisual/auditoria/migrations/0001_initial.py`
+
+### Frontend
+- `front/src/modules/admin/AdminPanel/components/TabBitacora.jsx` — vista de solo lectura con filtros por tabla, tipo de movimiento y fechas. Cada fila es expandible para ver `valor_anterior` y `valor_nuevo`.
+
+## Archivos MODIFICADOS
+
+### Backend
+- `novelasvisual/novelasvisual/settings.py` — se agregó `auditoria` a `INSTALLED_APPS` y `AuditoriaMiddleware` a `MIDDLEWARE`
+- `novelasvisual/novelasvisual/urls.py` — se incluyó `auditoria.urls`
+
+### Frontend
+- `front/src/services/api.js` — se agregó `readBitacora`
+- `front/src/modules/admin/AdminPanel/index.jsx` — se agregó tab "Bitácora"
+
+---
+
 ## Pasos para activar
 
 1. Aplicar las migraciones:
    ```bash
    python manage.py migrate
    ```
-2. El admin debe tener `is_staff = True` en Django para poder crear/editar categorías desde la API.
+2. El admin debe tener `is_staff = True` en Django para poder crear/editar categorías y consultar la bitácora.
 3. Para cambiar el tiempo de conteo de visitas, editar `front/.env` y modificar `VITE_VISITA_SEGUNDOS`.

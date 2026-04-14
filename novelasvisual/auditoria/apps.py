@@ -1,0 +1,12 @@
+from django.apps import AppConfig
+
+
+class AuditoriaConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'auditoria'
+    verbose_name = 'Auditoría'
+
+    def ready(self):
+        # Conectar las signals una vez que todos los modelos están cargados
+        from .signals import conectar_signals
+        conectar_signals()

@@ -6,6 +6,7 @@ import TabHistorias from './components/TabHistorias';
 import TabUsuarios from './components/TabUsuarios';
 import TabRoles from './components/TabRoles';
 import TabCategorias from './components/TabCategorias';
+import TabBitacora from './components/TabBitacora';
 
 export default function AdminPanel() {
     const [tab, setTab] = useState('historias');
@@ -15,6 +16,7 @@ export default function AdminPanel() {
         { key: 'usuarios',   label: 'Usuarios' },
         { key: 'roles',      label: 'Roles' },
         { key: 'categorias', label: 'Categorías' },
+        { key: 'bitacora',   label: 'Bitácora' },
     ];
 
     return (
@@ -51,6 +53,7 @@ export default function AdminPanel() {
                 {tab === 'usuarios'   && <TabUsuarios />}
                 {tab === 'roles'      && <TabRoles />}
                 {tab === 'categorias' && <TabCategorias />}
+                {tab === 'bitacora'   && <TabBitacora />}
             </div>
 
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
