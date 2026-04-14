@@ -1,6 +1,8 @@
 # Serializadores para registro y consulta de usuarios
+import re
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import Rol
 
 # Obtiene dinamicamente el modelo MiUsuario gracias a AUTH_USER_MODEL en settings.py
@@ -33,6 +35,13 @@ class RegistroSerializer(serializers.ModelSerializer):
             'id_rol',
         ]
         extra_kwargs = {'password': {'write_only': True}}
+
+    def validate_password(self, data):
+        if not re.match(r'^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$', data):
+            raise ValidationError(
+                'La contrasena debe tener al menos 8 caracteres, una mayuscula, un numero y un caracter especial.'
+            )
+        return data
 
     def create(self, validated_data):
         # Ignorar id_rol enviado por el cliente; asignar rol "creador" automaticamente
