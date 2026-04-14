@@ -4,6 +4,7 @@ from rest_framework import generics, viewsets
 from rest_framework.permissions import AllowAny
 from .models import Rol
 from .serializers import RegistroSerializer, RolSerializer, UsuarioSerializer
+from historias.models import Historia
 
 # Obtenemos el modelo personalizado
 User = get_user_model()
@@ -28,7 +29,18 @@ class RolViewSet(viewsets.ModelViewSet):
 
 # -----------------------------------------------------------
 # ViewSet de Usuarios: CRUD completo con autenticacion
+# Al deshabilitar un usuario sus historias pasan a borrador automaticamente
 # -----------------------------------------------------------
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UsuarioSerializer
+
+    def perform_update(self, serializer):
+        usuario_antes = self.get_object()
+        estaba_activo = usuario_antes.is_active and usuario_antes.activo
+        usuario = serializer.save()
+        # Si el usuario acaba de ser deshabilitado por cualquiera de los dos campos,
+        # sus historias pasan a borrador automaticamente
+        ahora_activo = usuario.is_active and usuario.activo
+        if estaba_activo and not ahora_activo:
+            Historia.objects.filter(id_creador=usuario).update(publicada=False)
