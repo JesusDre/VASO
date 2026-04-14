@@ -2,6 +2,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics, viewsets
 from rest_framework.permissions import AllowAny
+from loguru import logger
 from .models import Rol
 from .serializers import RegistroSerializer, RolSerializer, UsuarioSerializer
 from historias.models import Historia
@@ -39,8 +40,9 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         usuario_antes = self.get_object()
         estaba_activo = usuario_antes.is_active and usuario_antes.activo
         usuario = serializer.save()
-        # Si el usuario acaba de ser deshabilitado por cualquiera de los dos campos,
-        # sus historias pasan a borrador automaticamente
         ahora_activo = usuario.is_active and usuario.activo
         if estaba_activo and not ahora_activo:
-            Historia.objects.filter(id_creador=usuario).update(publicada=False)
+            count = Historia.objects.filter(id_creador=usuario).update(publicada=False)
+            logger.warning("Usuario deshabilitado | id={} email='{}' — {} historia(s) pasaron a borrador", usuario.id, usuario.email, count)
+        else:
+            logger.info("Usuario actualizado | id={} email='{}'", usuario.id, usuario.email)

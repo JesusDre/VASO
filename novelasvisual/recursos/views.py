@@ -1,6 +1,7 @@
 # Vistas de la app recursos
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from loguru import logger
 from .models import Imagen, Audio
 from .serializers import ImagenSerializer, AudioSerializer
 
@@ -19,7 +20,18 @@ class ImagenViewSet(viewsets.ModelViewSet):
         return Imagen.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        imagen = serializer.save(usuario=self.request.user)
+        logger.info(
+            "Imagen creada (public endpoint) | id={} tipo='{}' user={}",
+            imagen.id, getattr(imagen, "tipo", None), getattr(self.request.user, "id", None)
+        )
+
+    def perform_destroy(self, instance):
+        logger.warning(
+            "Imagen eliminada (public endpoint) | id={} tipo='{}' user={}",
+            instance.id, getattr(instance, "tipo", None), getattr(self.request.user, "id", None)
+        )
+        instance.delete()
 
 
 class AudioViewSet(viewsets.ModelViewSet):
@@ -30,7 +42,18 @@ class AudioViewSet(viewsets.ModelViewSet):
         return Audio.objects.all()
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        audio = serializer.save(usuario=self.request.user)
+        logger.info(
+            "Audio creado (public endpoint) | id={} user={}",
+            audio.id, getattr(self.request.user, "id", None)
+        )
+
+    def perform_destroy(self, instance):
+        logger.warning(
+            "Audio eliminado (public endpoint) | id={} user={}",
+            instance.id, getattr(self.request.user, "id", None)
+        )
+        instance.delete()
 
 
 # -----------------------------------------------------------
@@ -46,7 +69,18 @@ class MisImagenesViewSet(viewsets.ModelViewSet):
         return Imagen.objects.filter(usuario=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        imagen = serializer.save(usuario=self.request.user)
+        logger.info(
+            "Imagen creada (privado) | id={} tipo='{}' user={}",
+            imagen.id, getattr(imagen, "tipo", None), self.request.user.id
+        )
+
+    def perform_destroy(self, instance):
+        logger.warning(
+            "Imagen eliminada (privado) | id={} tipo='{}' user={}",
+            instance.id, getattr(instance, "tipo", None), self.request.user.id
+        )
+        instance.delete()
 
 
 class MisAudiosViewSet(viewsets.ModelViewSet):
@@ -57,4 +91,15 @@ class MisAudiosViewSet(viewsets.ModelViewSet):
         return Audio.objects.filter(usuario=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        audio = serializer.save(usuario=self.request.user)
+        logger.info(
+            "Audio creado (privado) | id={} user={}",
+            audio.id, self.request.user.id
+        )
+
+    def perform_destroy(self, instance):
+        logger.warning(
+            "Audio eliminado (privado) | id={} user={}",
+            instance.id, self.request.user.id
+        )
+        instance.delete()

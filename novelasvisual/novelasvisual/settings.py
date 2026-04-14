@@ -4,6 +4,7 @@
 from decouple import config
 from datetime import timedelta
 from pathlib import Path
+from loguru import logger
 import os
 
 # Ruta base del proyecto
@@ -166,3 +167,49 @@ SIMPLE_JWT = {
 # Modelo de usuario personalizado
 # -----------------------------------------------------------
 AUTH_USER_MODEL = 'usuarios.MiUsuario'
+
+# -----------------------------------------------------------
+# Logging con Loguru
+# -----------------------------------------------------------
+LOGGING_CONFIG = None  # Desactiva la configuracion automatica de Django
+
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+
+_FMT = "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}"
+
+logger.configure(handlers=[
+    {
+        'sink': LOG_DIR / 'debug.log',
+        'level': 'DEBUG',
+        'filter': lambda record: record['level'].no <= logger.level('WARNING').no,
+        'format': _FMT,
+        'rotation': '10 MB',
+        'retention': '2 days',
+        'compression': 'zip',
+    },
+    {
+        'sink': LOG_DIR / 'error.log',
+        'level': 'ERROR',
+        'format': _FMT,
+        'rotation': '10 MB',
+        'retention': '2 days',
+        'compression': 'zip',
+        'backtrace': True,
+        'diagnose': True,
+    },
+])
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'loguru': {
+            'class': 'novelasvisual.interceptor.InterceptorHandler',
+        },
+    },
+    'root': {
+        'handlers': ['loguru'],
+        'level': 'DEBUG',
+    },
+}
