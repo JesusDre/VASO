@@ -10,7 +10,17 @@ const initialState = {
     apellido_materno: '',
     email: '',
     password: '',
+    confirmar_password: '',
 };
+
+function validarPassword(password) {
+    const errores = [];
+    if (password.length < 8) errores.push('mínimo 8 caracteres');
+    if (!/[A-Z]/.test(password)) errores.push('al menos una mayúscula');
+    if (!/[0-9]/.test(password)) errores.push('al menos un número');
+    if (!/[^a-zA-Z0-9]/.test(password)) errores.push('al menos un carácter especial');
+    return errores;
+}
 
 function Register() {
     const navigate = useNavigate();
@@ -26,11 +36,23 @@ function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setLoading(true);
         setError('');
         setSuccess('');
+
+        const erroresPassword = validarPassword(formData.password);
+        if (erroresPassword.length > 0) {
+            setError(`La contraseña debe tener: ${erroresPassword.join(', ')}.`);
+            return;
+        }
+        if (formData.password !== formData.confirmar_password) {
+            setError('Las contraseñas no coinciden.');
+            return;
+        }
+
+        setLoading(true);
+        const { confirmar_password, ...payload } = formData;
         try {
-            await registerUser(formData);
+            await registerUser(payload);
             setSuccess('¡Registro completado! Redirigiendo...');
             setFormData(initialState);
             setTimeout(() => navigate('/login'), 900);
@@ -176,6 +198,34 @@ function Register() {
                                     name="password"
                                     type="password"
                                     value={formData.password}
+                                    onChange={handleChange}
+                                    autoComplete="new-password"
+                                    required
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                            <p className="login-hint">
+                                Mínimo 8 caracteres, una mayúscula, un número y un carácter especial.
+                            </p>
+                        </div>
+
+                        {/* Confirmar contraseña */}
+                        <div className="login-field">
+                            <label htmlFor="confirmar_password" className="login-label">
+                                Confirmar contraseña <span className="login-required">*</span>
+                            </label>
+                            <div className="login-input-wrap">
+                                <span className="login-input-icon">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                        <path d="M7 11V7a5 5 0 0110 0v4" />
+                                    </svg>
+                                </span>
+                                <input
+                                    id="confirmar_password"
+                                    name="confirmar_password"
+                                    type="password"
+                                    value={formData.confirmar_password}
                                     onChange={handleChange}
                                     autoComplete="new-password"
                                     required
