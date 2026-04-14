@@ -4,7 +4,11 @@ import { useHistorias } from './hooks/useHistorias';
 import './Home.css';
 
 export default function Home() {
-    const { filtradas, filtro, setFiltro, cargando } = useHistorias();
+    const { filtradas, filtro, setFiltro, categoria, setCategoria, categorias, cargando } = useHistorias();
+
+    const sinResultados = !filtro && !categoria
+        ? 'Aún no hay historias publicadas.'
+        : 'No hay historias que coincidan con los filtros.';
 
     return (
         <div className="nv-home-page">
@@ -25,6 +29,28 @@ export default function Home() {
                         />
                     </div>
                 </div>
+
+                {categorias.length > 0 && (
+                    <div className="nv-home-header-inner" style={{ paddingTop: 0 }}>
+                        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                            <button
+                                onClick={() => setCategoria('')}
+                                className={`nv-cat-btn${categoria === '' ? ' active' : ''}`}
+                            >
+                                Todas
+                            </button>
+                            {categorias.map((c) => (
+                                <button
+                                    key={c.id}
+                                    onClick={() => setCategoria(String(c.id))}
+                                    className={`nv-cat-btn${String(categoria) === String(c.id) ? ' active' : ''}`}
+                                >
+                                    {c.nombre}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="nv-home-results">
@@ -35,11 +61,7 @@ export default function Home() {
                     </div>
                 ) : filtradas.length === 0 ? (
                     <div className="nv-home-feedback">
-                        <p>
-                            {filtro
-                                ? 'No hay historias que coincidan con tu búsqueda.'
-                                : 'Aún no hay historias publicadas.'}
-                        </p>
+                        <p>{sinResultados}</p>
                     </div>
                 ) : (
                     <div className="nv-stories-grid">

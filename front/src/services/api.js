@@ -133,3 +133,10 @@ export const readRoles  = ()         => api.get('/api/roles/');
 export const createRol  = (data)     => api.post('/api/roles/', data);
 export const updateRol  = (id, data) => api.put(`/api/roles/${id}/`, data);
 export const deleteRol  = (id)       => api.delete(`/api/roles/${id}/`);
+
+// -----------------------------------------------------------
+// CATEGORIAS
+// -----------------------------------------------------------
+export const readCategorias  = ()         => api.get('/api/categorias/');
+export const createCategoria = (data)     => api.post('/api/categorias/', data);
+export const updateCategoria = (id, data) => api.put(`/api/categorias/${id}/`, data);

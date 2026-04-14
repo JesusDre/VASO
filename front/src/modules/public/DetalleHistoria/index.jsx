@@ -120,7 +120,7 @@ export default function DetalleHistoria() {
                     {portadaSrc && <div className="dh-hero-overlay" />}
 
                     <div className={`dh-hero-content ${portadaSrc ? 'has-image' : 'no-image'}`}>
-                        <div className="dh-badge">Misterio • Novela Visual</div>
+                        <div className="dh-badge">{historia.nombre_categoria ? `${historia.nombre_categoria} • Novela Visual` : 'Novela Visual'}</div>
 
                         <h1 className="dh-title">{historia.titulo}</h1>
 
