@@ -1,6 +1,6 @@
 # Vistas de la app recursos
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from .models import Imagen, Audio
 from .serializers import ImagenSerializer, AudioSerializer
 
@@ -10,10 +10,10 @@ from .serializers import ImagenSerializer, AudioSerializer
 # -----------------------------------------------------------
 class ImagenViewSet(viewsets.ModelViewSet):
     serializer_class = ImagenSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Imagen.objects.all()
+        return Imagen.objects.filter(usuario=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)
@@ -21,10 +21,10 @@ class ImagenViewSet(viewsets.ModelViewSet):
 
 class AudioViewSet(viewsets.ModelViewSet):
     serializer_class = AudioSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Audio.objects.all()
+        return Audio.objects.filter(usuario=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(usuario=self.request.user)
