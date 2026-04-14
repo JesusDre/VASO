@@ -2,12 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import {
     readHistoria, createHistoria, updateHistoria,
-    readNodos, readImagenes, createImagen,
+    readNodos, readImagenes, createImagen, readCategorias,
 } from '../../../../services/api';
 import { inputStyle, labelStyle, selectStyle, btnPrimary } from '../styles/editorStyles';
 
 export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
-    const FORM_INICIAL = { titulo: '', descripcion: '', publicada: false, id_nodo_inicio: '', id_portada: '' };
+    const FORM_INICIAL = { titulo: '', descripcion: '', publicada: false, id_nodo_inicio: '', id_portada: '', categoria: '' };
     const [form, setForm] = useState(historia
         ? {
             titulo: historia.titulo,
@@ -15,10 +15,12 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
             publicada: historia.publicada,
             id_nodo_inicio: historia.id_nodo_inicio || '',
             id_portada: historia.id_portada || '',
+            categoria: historia.categoria || '',
         }
         : FORM_INICIAL);
     const [nodos, setNodos] = useState([]);
     const [portadas, setPortadas] = useState([]);
+    const [categorias, setCategorias] = useState([]);
     const [guardando, setGuardando] = useState(false);
     const [errores, setErrores] = useState({});
     const [subiendoPortada, setSubiendoPortada] = useState(false);
@@ -34,6 +36,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
         readImagenes().then((r) => {
             setPortadas(r.data.filter((i) => i.tipo === 'portada'));
         }).catch(() => {});
+        readCategorias().then((r) => setCategorias(r.data)).catch(() => {});
     }, [historiaId]);
 
     useEffect(() => { setImgError(false); }, [form.id_portada]);
@@ -76,6 +79,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
             id_creador: usuario.id,
             id_nodo_inicio: form.id_nodo_inicio || null,
             id_portada: form.id_portada || null,
+            categoria: form.categoria || null,
         };
         try {
             if (historiaId) {
@@ -104,6 +108,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                 id_creador: usuario.id,
                 id_nodo_inicio: form.id_nodo_inicio || null,
                 id_portada: form.id_portada || null,
+                categoria: form.categoria || null,
             };
             await updateHistoria(historiaId, payload);
             setForm((prev) => ({ ...prev, publicada: true }));
@@ -125,6 +130,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                 id_creador: usuario.id,
                 id_nodo_inicio: form.id_nodo_inicio || null,
                 id_portada: form.id_portada || null,
+                categoria: form.categoria || null,
             };
             await updateHistoria(historiaId, payload);
             setForm((prev) => ({ ...prev, publicada: false }));
@@ -229,13 +235,17 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                     <div style={{ display: 'flex', gap: 12 }}>
                         <div style={{ flex: 1 }}>
                             <label style={labelStyle}>Categoría</label>
-                            <select style={selectStyle} defaultValue="misterio">
-                                <option value="misterio">Misterio</option>
-                                <option value="aventura">Aventura</option>
-                                <option value="romance">Romance</option>
-                                <option value="terror">Terror</option>
-                                <option value="fantasia">Fantasía</option>
-                                <option value="ciencia-ficcion">Ciencia Ficción</option>
+                            <select
+                                name="categoria"
+                                value={form.categoria}
+                                onChange={handleChange}
+                                disabled={guardando}
+                                style={selectStyle}
+                            >
+                                <option value="">-- Sin categoría --</option>
+                                {categorias.map((c) => (
+                                    <option key={c.id} value={c.id}>{c.nombre}</option>
+                                ))}
                             </select>
                         </div>
                         <div style={{ flex: 1 }}>

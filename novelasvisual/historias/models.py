@@ -4,6 +4,24 @@ from django.conf import settings
 
 
 # -----------------------------------------------------------
+# Modelo Categoria
+# activa=False equivale a un delete lógico
+# -----------------------------------------------------------
+class Categoria(models.Model):
+    nombre      = models.CharField(max_length=100, unique=True)
+    descripcion = models.TextField(blank=True)
+    activa      = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name          = 'Categoría'
+        verbose_name_plural   = 'Categorías'
+        ordering              = ['nombre']
+
+    def __str__(self):
+        return self.nombre
+
+
+# -----------------------------------------------------------
 # Modelo Historia
 # Nota: id_nodo_inicio es null=True para resolver la referencia circular
 # con el modelo Nodo (que aun no existe cuando se crea la historia)
@@ -46,6 +64,15 @@ class Historia(models.Model):
         null=True,
         blank=True,
         related_name='historias_portada'
+    )
+
+    # Categoría de la historia (opcional, delete lógico en Categoria)
+    categoria = models.ForeignKey(
+        Categoria,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='historias'
     )
 
     class Meta:

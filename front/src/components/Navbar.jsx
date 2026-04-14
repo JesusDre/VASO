@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useContadorVisitas } from '../hooks/useContadorVisitas';
 import '../styles/navbar.css';
 
 function IconUser() {
@@ -52,6 +53,7 @@ export default function Navbar() {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [proyectosOpen, setProyectosOpen] = useState(false);
     const dropdownRef = useRef(null);
+    const { total } = useContadorVisitas();
 
     const isActive = (path) =>
         location.pathname === path || location.pathname.startsWith(path + '/')
@@ -87,6 +89,13 @@ export default function Navbar() {
                     <div className="nv-brand-icon">C</div>
                     <span className="nv-brand-name">Novelas de Chucho</span>
                 </Link>
+
+                {/* Contador de visitas */}
+                {total !== null && (
+                    <span className="nv-visit-counter" title="Visitas totales al sitio">
+                        Visitas {total.toLocaleString()}
+                    </span>
+                )}
 
                 {/* Mobile toggle */}
                 <button

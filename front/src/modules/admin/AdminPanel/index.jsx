@@ -5,14 +5,18 @@ import { Toaster } from 'react-hot-toast';
 import TabHistorias from './components/TabHistorias';
 import TabUsuarios from './components/TabUsuarios';
 import TabRoles from './components/TabRoles';
+import TabCategorias from './components/TabCategorias';
+import TabBitacora from './components/TabBitacora';
 
 export default function AdminPanel() {
     const [tab, setTab] = useState('historias');
 
     const tabs = [
-        { key: 'historias', label: 'Historias' },
-        { key: 'usuarios',  label: 'Usuarios' },
-        { key: 'roles',     label: 'Roles' },
+        { key: 'historias',  label: 'Historias' },
+        { key: 'usuarios',   label: 'Usuarios' },
+        { key: 'roles',      label: 'Roles' },
+        { key: 'categorias', label: 'Categorías' },
+        { key: 'bitacora',   label: 'Bitácora' },
     ];
 
     return (
@@ -45,9 +49,11 @@ export default function AdminPanel() {
                     ))}
                 </div>
 
-                {tab === 'historias' && <TabHistorias />}
-                {tab === 'usuarios'  && <TabUsuarios />}
-                {tab === 'roles'     && <TabRoles />}
+                {tab === 'historias'  && <TabHistorias />}
+                {tab === 'usuarios'   && <TabUsuarios />}
+                {tab === 'roles'      && <TabRoles />}
+                {tab === 'categorias' && <TabCategorias />}
+                {tab === 'bitacora'   && <TabBitacora />}
             </div>
 
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

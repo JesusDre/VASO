@@ -120,3 +120,29 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* Filtros de categoría */
+.nv-cat-btn {
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.nv-cat-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.nv-cat-btn.active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 700;
+}
