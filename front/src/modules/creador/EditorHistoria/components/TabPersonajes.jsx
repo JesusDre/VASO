@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import {
     readPersonajes, createPersonaje, updatePersonaje, deletePersonaje,
-    readImagenes, readNodos, readNodoPersonajes,
+    readMisImagenes, readNodos, readNodoPersonajes,
     createNodoPersonaje, deleteNodoPersonaje,
 } from '../../../../services/api';
 import { inputStyle, labelStyle, selectStyle, btnPrimary, btnGhost, cardStyle } from '../styles/editorStyles';
@@ -20,7 +20,7 @@ export default function TabPersonajes({ historiaId }) {
     const [asignando, setAsignando] = useState(false);
 
     const cargar = async () => {
-        const [rp, ri, rn, rnp] = await Promise.all([readPersonajes(), readImagenes(), readNodos(), readNodoPersonajes()]);
+        const [rp, ri, rn, rnp] = await Promise.all([readPersonajes(), readMisImagenes(), readNodos(), readNodoPersonajes()]);
         setPersonajes(rp.data.filter((p) => Number(p.id_historia) === Number(historiaId)));
         setImagenes(ri.data.filter((i) => i.tipo === 'personaje'));
         setNodos(rn.data.filter((n) => Number(n.id_historia) === Number(historiaId)));

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import {
     readNodos, createNodo, updateNodo, deleteNodo,
-    readImagenes, readAudios,
+    readMisImagenes, readMisAudios,
 } from '../../../../services/api';
 import { inputStyle, labelStyle, selectStyle, btnPrimary, btnGhost, cardStyle } from '../styles/editorStyles';
 import Modal from './Modal';
@@ -20,7 +20,7 @@ export default function TabNodos({ historiaId }) {
 
     useEffect(() => {
         cargar();
-        Promise.all([readImagenes(), readAudios()]).then(([i, a]) => {
+        Promise.all([readMisImagenes(), readMisAudios()]).then(([i, a]) => {
             setImagenes(i.data); setAudios(a.data);
         }).catch(() => {});
     }, [historiaId]);

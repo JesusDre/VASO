@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
     readPersonajes, createPersonaje, updatePersonaje, deletePersonaje,
     readNodoPersonajes, createNodoPersonaje, updateNodoPersonaje, deleteNodoPersonaje,
-    readHistorias, readNodos, readImagenes,
+    readHistorias, readNodos, readMisImagenes,
 } from '../../../services/api';
 import Navbar from '../../../components/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -26,7 +26,7 @@ function PersonajesPanel() {
 
     useEffect(() => {
         cargar();
-        Promise.all([readHistorias(), readImagenes()]).then(([h, i]) => {
+        Promise.all([readHistorias(), readMisImagenes()]).then(([h, i]) => {
             setHistorias(h.data);
             setImagenes(i.data);
         }).catch(() => {});

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import {
     readHistoria, createHistoria, updateHistoria,
-    readNodos, readImagenes, createImagen, readCategorias,
+    readNodos, readMisImagenes, createMiImagen, readCategorias,
 } from '../../../../services/api';
 import { inputStyle, labelStyle, selectStyle, btnPrimary } from '../styles/editorStyles';
 
@@ -33,7 +33,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                 setNodos(r.data.filter((n) => Number(n.id_historia) === Number(historiaId)));
             }).catch(() => {});
         }
-        readImagenes().then((r) => {
+        readMisImagenes().then((r) => {
             setPortadas(r.data.filter((i) => i.tipo === 'portada'));
         }).catch(() => {});
         readCategorias().then((r) => setCategorias(r.data)).catch(() => {});
@@ -55,7 +55,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
         fd.append('tipo', 'portada');
         fd.append('descripcion', file.name);
         try {
-            const res = await createImagen(fd);
+            const res = await createMiImagen(fd);
             const nuevaPortada = res.data;
             setPortadas((prev) => [...prev, nuevaPortada]);
             setForm((prev) => ({ ...prev, id_portada: nuevaPortada.id }));

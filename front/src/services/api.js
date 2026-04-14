@@ -97,7 +97,7 @@ export const updateNodoPersonaje   = (id, data) => api.put(`/api/nodo-personajes
 export const deleteNodoPersonaje   = (id)       => api.delete(`/api/nodo-personajes/${id}/`);
 
 // -----------------------------------------------------------
-// IMAGENES
+// IMAGENES (público — para portadas y lector de novelas)
 // -----------------------------------------------------------
 export const readImagenes  = ()         => api.get('/api/imagenes/');
 export const createImagen  = (data)     => api.post('/api/imagenes/', data);
@@ -105,12 +105,26 @@ export const updateImagen  = (id, data) => api.put(`/api/imagenes/${id}/`, data)
 export const deleteImagen  = (id)       => api.delete(`/api/imagenes/${id}/`);
 
 // -----------------------------------------------------------
-// AUDIOS
+// MIS IMAGENES (privado — solo las del usuario, para editor y biblioteca)
+// -----------------------------------------------------------
+export const readMisImagenes  = ()         => api.get('/api/mis-imagenes/');
+export const createMiImagen   = (data)     => api.post('/api/mis-imagenes/', data);
+export const deleteMiImagen   = (id)       => api.delete(`/api/mis-imagenes/${id}/`);
+
+// -----------------------------------------------------------
+// AUDIOS (público — para el lector de novelas)
 // -----------------------------------------------------------
 export const readAudios  = ()         => api.get('/api/audios/');
 export const createAudio = (data)     => api.post('/api/audios/', data);
 export const updateAudio = (id, data) => api.put(`/api/audios/${id}/`, data);
 export const deleteAudio = (id)       => api.delete(`/api/audios/${id}/`);
+
+// -----------------------------------------------------------
+// MIS AUDIOS (privado — solo los del usuario, para editor y biblioteca)
+// -----------------------------------------------------------
+export const readMisAudios  = ()     => api.get('/api/mis-audios/');
+export const createMiAudio  = (data) => api.post('/api/mis-audios/', data);
+export const deleteMiAudio  = (id)   => api.delete(`/api/mis-audios/${id}/`);
 
 // -----------------------------------------------------------
 // PROGRESOS

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import {
     readNodos, createNodo, updateNodo, deleteNodo,
     readOpciones, createOpcion, updateOpcion, deleteOpcion,
-    readHistorias, readImagenes, readAudios,
+    readHistorias, readMisImagenes, readMisAudios,
 } from '../../../services/api';
 import Navbar from '../../../components/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -30,7 +30,7 @@ function NodosPanel() {
 
     useEffect(() => {
         cargar();
-        Promise.all([readHistorias(), readImagenes(), readAudios()]).then(([h, i, a]) => {
+        Promise.all([readHistorias(), readMisImagenes(), readMisAudios()]).then(([h, i, a]) => {
             setHistorias(h.data);
             setImagenes(i.data);
             setAudios(a.data);

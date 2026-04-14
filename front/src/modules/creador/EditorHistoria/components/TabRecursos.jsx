@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import {
-    readImagenes, createImagen, updateImagen, deleteImagen,
-    readAudios, createAudio, updateAudio, deleteAudio,
+    readMisImagenes, createMiImagen, updateImagen, deleteMiImagen,
+    readMisAudios, createMiAudio, updateAudio, deleteMiAudio,
 } from '../../../../services/api';
 import { inputStyle, labelStyle, selectStyle, btnPrimary, cardStyle } from '../styles/editorStyles';
 import Modal from './Modal';
@@ -31,7 +31,7 @@ export default function TabRecursos() {
     const [guardandoEdit, setGuardandoEdit] = useState(false);
 
     const cargar = async () => {
-        const [ri, ra] = await Promise.all([readImagenes(), readAudios()]);
+        const [ri, ra] = await Promise.all([readMisImagenes(), readMisAudios()]);
         setImagenes(ri.data);
         setAudios(ra.data);
     };
@@ -47,7 +47,7 @@ export default function TabRecursos() {
         fd.append('tipo', imgTipo);
         fd.append('descripcion', imgDesc);
         try {
-            await createImagen(fd);
+            await createMiImagen(fd);
             toast.success('Imagen subida');
             setImgFile(null); setImgDesc('');
             e.target.reset(); cargar();
@@ -63,7 +63,7 @@ export default function TabRecursos() {
         fd.append('archivo', audFile);
         fd.append('descripcion', audDesc);
         try {
-            await createAudio(fd);
+            await createMiAudio(fd);
             toast.success('Audio subido');
             setAudFile(null); setAudDesc('');
             e.target.reset(); cargar();
@@ -76,8 +76,8 @@ export default function TabRecursos() {
     const confirmarEliminar = async () => {
         setEliminando(true);
         try {
-            if (modalEliminar.tipo === 'imagen') await deleteImagen(modalEliminar.id);
-            else await deleteAudio(modalEliminar.id);
+            if (modalEliminar.tipo === 'imagen') await deleteMiImagen(modalEliminar.id);
+            else await deleteMiAudio(modalEliminar.id);
             toast.success(`${modalEliminar.tipo === 'imagen' ? 'Imagen' : 'Audio'} eliminado`);
             setModalEliminar(null); cargar();
         } catch { toast.error('Error al eliminar'); }

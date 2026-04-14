@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
-    readImagenes, createImagen, updateImagen, deleteImagen,
-    readAudios, createAudio, updateAudio, deleteAudio,
+    readMisImagenes, createMiImagen, updateImagen, deleteMiImagen,
+    readMisAudios, createMiAudio, updateAudio, deleteMiAudio,
 } from '../../../services/api';
 import Navbar from '../../../components/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -25,7 +25,7 @@ function ImagenesPanel() {
 
     const cargar = async () => {
         setCargando(true);
-        try { setImagenes((await readImagenes()).data); }
+        try { setImagenes((await readMisImagenes()).data); }
         catch { toast.error('Error al obtener imagenes'); }
         finally { setCargando(false); }
     };
@@ -52,7 +52,7 @@ function ImagenesPanel() {
                 await updateImagen(editandoId, data);
                 toast.success('Imagen actualizada');
             } else {
-                await createImagen(data);
+                await createMiImagen(data);
                 toast.success('Imagen creada');
             }
             setFormData(FORM_INICIAL);
@@ -75,7 +75,7 @@ function ImagenesPanel() {
     const handleEliminar = async (id) => {
         if (!window.confirm('Eliminar esta imagen?')) return;
         const tid = toast.loading('Eliminando...');
-        try { await deleteImagen(id); toast.success('Imagen eliminada', { id: tid }); cargar(); }
+        try { await deleteMiImagen(id); toast.success('Imagen eliminada', { id: tid }); cargar(); }
         catch { toast.error('Error al eliminar', { id: tid }); }
     };
 
@@ -215,7 +215,7 @@ function AudiosPanel() {
 
     const cargar = async () => {
         setCargando(true);
-        try { setAudios((await readAudios()).data); }
+        try { setAudios((await readMisAudios()).data); }
         catch { toast.error('Error al obtener audios'); }
         finally { setCargando(false); }
     };
@@ -234,7 +234,7 @@ function AudiosPanel() {
         if (formData.archivo instanceof File) data.append('archivo', formData.archivo);
         try {
             if (editandoId) { await updateAudio(editandoId, data); toast.success('Audio actualizado'); }
-            else { await createAudio(data); toast.success('Audio creado'); }
+            else { await createMiAudio(data); toast.success('Audio creado'); }
             setFormData(FORM_INICIAL);
             setEditandoId(null);
             cargar();
@@ -255,7 +255,7 @@ function AudiosPanel() {
     const handleEliminar = async (id) => {
         if (!window.confirm('Eliminar este audio?')) return;
         const tid = toast.loading('Eliminando...');
-        try { await deleteAudio(id); toast.success('Audio eliminado', { id: tid }); cargar(); }
+        try { await deleteMiAudio(id); toast.success('Audio eliminado', { id: tid }); cargar(); }
         catch { toast.error('Error al eliminar', { id: tid }); }
     };
 
