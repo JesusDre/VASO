@@ -1,6 +1,11 @@
 # Serializadores de la app recursos
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import Imagen, Audio
+
+# Limites de tamaño permitidos
+IMAGEN_MAX_BYTES = 5 * 1024 * 1024   # 5 MB
+AUDIO_MAX_BYTES  = 10 * 1024 * 1024  # 10 MB
 
 
 # -----------------------------------------------------------
@@ -27,6 +32,16 @@ class ImagenSerializer(serializers.ModelSerializer):
             'usuario',
         ]
         read_only_fields = ['usuario']
+
+    def validate_imagen_para_binario(self, archivo):
+        if not archivo:
+            return archivo
+        tipos_permitidos = {'image/jpeg', 'image/png', 'image/webp', 'image/gif'}
+        if archivo.content_type not in tipos_permitidos:
+            raise ValidationError('Formato no permitido. Usa JPG, PNG, WebP o GIF.')
+        if archivo.size > IMAGEN_MAX_BYTES:
+            raise ValidationError('La imagen no puede superar 5 MB.')
+        return archivo
 
     def create(self, validated_data):
         # Extraemos el archivo binario antes de crear el objeto
@@ -62,3 +77,13 @@ class AudioSerializer(serializers.ModelSerializer):
             'usuario',
         ]
         read_only_fields = ['usuario']
+
+    def validate_archivo(self, archivo):
+        if not archivo:
+            return archivo
+        tipos_permitidos = {'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp4'}
+        if archivo.content_type not in tipos_permitidos:
+            raise ValidationError('Formato no permitido. Usa MP3, WAV, OGG o M4A.')
+        if archivo.size > AUDIO_MAX_BYTES:
+            raise ValidationError('El audio no puede superar 10 MB.')
+        return archivo
