@@ -70,8 +70,14 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
 
     const handleGuardar = async (e) => {
         e.preventDefault();
-        setGuardando(true);
         setErrores({});
+
+        if (historiaId && nodos.length > 0 && !form.id_nodo_inicio) {
+            setErrores({ id_nodo_inicio: 'Debes seleccionar un nodo de inicio antes de guardar.' });
+            return;
+        }
+
+        setGuardando(true);
         const payload = {
             titulo: form.titulo,
             descripcion: form.descripcion,
@@ -99,6 +105,14 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
     };
 
     const handlePublicar = async () => {
+        if (!form.id_nodo_inicio) {
+            toast.error(
+                nodos.length === 0
+                    ? 'Debes crear al menos un nodo y seleccionarlo como nodo de inicio antes de publicar.'
+                    : 'Debes seleccionar un nodo de inicio antes de publicar.'
+            );
+            return;
+        }
         setGuardando(true);
         try {
             const payload = {
@@ -286,14 +300,24 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
 
                     {historiaId && nodos.length > 0 && (
                         <div>
-                            <label style={labelStyle}>Nodo de inicio</label>
-                            <select name="id_nodo_inicio" value={form.id_nodo_inicio} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                            <label style={labelStyle}>Nodo de inicio *</label>
+                            <select name="id_nodo_inicio" value={form.id_nodo_inicio} onChange={handleChange} disabled={guardando}
+                                style={{ ...selectStyle, ...(errores.id_nodo_inicio ? { borderColor: 'var(--red)' } : {}) }}>
                                 <option value="">-- Sin nodo de inicio --</option>
                                 {nodos.map((n) => (
                                     <option key={n.id} value={n.id}>{n.titulo_nodo} (ID {n.id})</option>
                                 ))}
                             </select>
+                            {errores.id_nodo_inicio && (
+                                <p style={{ color: 'var(--red)', fontSize: '0.8rem', marginTop: 4 }}>{errores.id_nodo_inicio}</p>
+                            )}
                         </div>
+                    )}
+
+                    {historiaId && nodos.length === 0 && (
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', margin: 0 }}>
+                            Aún no hay nodos en esta historia. Ve a la pestaña <strong>Nodos</strong> para crearlos antes de publicar.
+                        </p>
                     )}
 
                     {!form.publicada && historiaId && (
