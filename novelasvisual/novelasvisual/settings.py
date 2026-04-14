@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'nodos',
     'personajes',
     'progreso',
+    'auditoria',
 ]
 
 # -----------------------------------------------------------
@@ -52,6 +53,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Captura IP y usuario del request para la bitácora de auditoría
+    'auditoria.middleware.AuditoriaMiddleware',
 ]
 
 ROOT_URLCONF = 'novelasvisual.urls'

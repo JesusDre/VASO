@@ -56,7 +56,7 @@ export default function HistoriaCard({ historia }) {
                         <IconImage />
                     </div>
                 )}
-                <span className="nv-story-category">Novela Visual</span>
+                <span className="nv-story-category">{historia.nombre_categoria || 'Novela Visual'}</span>
             </div>
 
             <div className="nv-story-body">

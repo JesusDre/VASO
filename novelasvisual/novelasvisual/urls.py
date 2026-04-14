@@ -22,6 +22,8 @@ urlpatterns = [
     path('api/registro/', RegistroView.as_view(), name='registro'),
 
     # Rutas de cada app del proyecto
+    path('', include('core.urls')),
+    path('', include('auditoria.urls')),
     path('', include('usuarios.urls')),
     path('', include('recursos.urls')),
     path('', include('historias.urls')),
