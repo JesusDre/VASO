@@ -1,6 +1,7 @@
 # Vistas de la app historias
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, BasePermission, SAFE_METHODS
+from loguru import logger
 from .models import Historia, Categoria
 from .serializers import HistoriaSerializer, CategoriaSerializer
 
@@ -41,6 +42,18 @@ class HistoriaViewSet(viewsets.ModelViewSet):
         if categoria_id:
             qs = qs.filter(categoria_id=categoria_id)
         return qs
+
+    def perform_create(self, serializer):
+        historia = serializer.save(id_creador=self.request.user)
+        logger.info("Historia creada | id={} titulo='{}' user={}", historia.id, historia.titulo, self.request.user.id)
+
+    def perform_update(self, serializer):
+        historia = serializer.save()
+        logger.info("Historia actualizada | id={} titulo='{}' user={}", historia.id, historia.titulo, self.request.user.id)
+
+    def perform_destroy(self, instance):
+        logger.warning("Historia eliminada | id={} titulo='{}' user={}", instance.id, instance.titulo, self.request.user.id)
+        instance.delete()
 
 
 # -----------------------------------------------------------
