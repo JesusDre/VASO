@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import {
+    API_BASE,
     readMisImagenes, createMiImagen, updateImagen, deleteMiImagen,
     readMisAudios, createMiAudio, updateAudio, deleteMiAudio,
 } from '../../../../services/api';
@@ -200,7 +201,7 @@ export default function TabRecursos() {
                                         {imgsFiltradas.map((img) => {
                                             const src = img.imagen_base64_display
                                                 ? `data:image/png;base64,${img.imagen_base64_display}`
-                                                : img.url ? `http://localhost:8000${img.url}` : null;
+                                                : img.url ? `${API_BASE}${img.url}` : null;
                                             return (
                                                 <div key={img.id} style={{ ...cardStyle, display: 'flex', alignItems: 'center', gap: 14 }}>
                                                     <div style={{ width: 60, height: 60, borderRadius: 7, overflow: 'hidden', flexShrink: 0, background: 'var(--surface-2)', border: '1px solid var(--border)' }}>
@@ -259,7 +260,7 @@ export default function TabRecursos() {
                                     <div style={{ fontWeight: 600, color: 'var(--text)', marginBottom: 6 }}>{a.descripcion || `Audio ${a.id}`}</div>
                                     {a.archivo && (
                                         <audio controls style={{ height: 32, width: '100%' }}>
-                                            <source src={`http://localhost:8000${a.archivo}`} />
+                                            <source src={`${API_BASE}${a.archivo}`} />
                                         </audio>
                                     )}
                                 </div>

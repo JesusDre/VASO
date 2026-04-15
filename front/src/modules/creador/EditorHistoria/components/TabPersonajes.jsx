@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import {
+    API_BASE,
     readPersonajes, createPersonaje, updatePersonaje, deletePersonaje,
     readMisImagenes, readNodos, readNodoPersonajes,
     createNodoPersonaje, deleteNodoPersonaje, createMiImagen,
@@ -139,7 +140,7 @@ export default function TabPersonajes({ historiaId }) {
         const img = imagenes.find((i) => i.id === p.id_imagen);
         if (!img) return null;
         if (img.imagen_base64_display) return `data:image/png;base64,${img.imagen_base64_display}`;
-        if (img.url) return `http://localhost:8000${img.url}`;
+        if (img.url) return `${API_BASE}${img.url}`;
         return null;
     };
 

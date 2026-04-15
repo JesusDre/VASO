@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
-import {
-    createHistoria, updateHistoria,
+import {    
+    API_BASE, createHistoria, updateHistoria,
     readNodos, readMisImagenes, createMiImagen, readCategorias, readOpciones,
 } from '../../../../services/api';
 import { inputStyle, labelStyle, selectStyle, btnPrimary } from '../styles/editorStyles';
@@ -220,7 +220,9 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
     const portadaSrc = portadaSeleccionada
         ? (portadaSeleccionada.imagen_base64_display
             ? `data:image/png;base64,${portadaSeleccionada.imagen_base64_display}`
-            : portadaSeleccionada.url ? `http://localhost:8000${portadaSeleccionada.url}` : null)
+            : portadaSeleccionada.url
+                ? `${API_BASE}${portadaSeleccionada.url}`
+                : null)
         : null;
 
     return (
