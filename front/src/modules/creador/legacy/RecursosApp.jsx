@@ -7,6 +7,7 @@ import {
 import Navbar from '../../../components/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import toast, { Toaster } from 'react-hot-toast';
+import ModalAlert from '../../../components/ModalAlert';
 
 // -----------------------------------------------------------
 // Panel de Imagenes
@@ -21,6 +22,7 @@ function ImagenesPanel() {
     const [cargando, setCargando] = useState(false);
     const [cargandoGuardar, setCargandoGuardar] = useState(false);
     const [errores, setErrores] = useState({});
+    const [confirmDelete, setConfirmDelete] = useState(null);
 
     useEffect(() => { cargar(); }, []);
 
@@ -73,8 +75,11 @@ function ImagenesPanel() {
 
     const cancelar = () => { setFormData(FORM_INICIAL); setEditandoId(null); setErrores({}); };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('Eliminar esta imagen?')) return;
+    const handleEliminar = (id) => setConfirmDelete(id);
+
+    const ejecutarEliminar = async () => {
+        const id = confirmDelete;
+        setConfirmDelete(null);
         const tid = toast.loading('Eliminando...');
         try { await deleteMiImagen(id); toast.success('Imagen eliminada', { id: tid }); cargar(); }
         catch { toast.error('Error al eliminar', { id: tid }); }
@@ -194,6 +199,16 @@ function ImagenesPanel() {
                     </div>
                 </div>
             </div>
+
+            <ModalAlert
+                open={!!confirmDelete}
+                type="warning"
+                title="¿Eliminar imagen?"
+                message="Se eliminará esta imagen permanentemente. Esta acción no se puede deshacer."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminar(); else setConfirmDelete(null); }}
+            />
         </div>
     );
 }
@@ -211,6 +226,7 @@ function AudiosPanel() {
     const [cargando, setCargando] = useState(false);
     const [cargandoGuardar, setCargandoGuardar] = useState(false);
     const [errores, setErrores] = useState({});
+    const [confirmDeleteAudio, setConfirmDeleteAudio] = useState(null);
 
     useEffect(() => { cargar(); }, []);
 
@@ -253,8 +269,11 @@ function AudiosPanel() {
 
     const cancelar = () => { setFormData(FORM_INICIAL); setEditandoId(null); setErrores({}); };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('Eliminar este audio?')) return;
+    const handleEliminar = (id) => setConfirmDeleteAudio(id);
+
+    const ejecutarEliminarAudio = async () => {
+        const id = confirmDeleteAudio;
+        setConfirmDeleteAudio(null);
         const tid = toast.loading('Eliminando...');
         try { await deleteMiAudio(id); toast.success('Audio eliminado', { id: tid }); cargar(); }
         catch { toast.error('Error al eliminar', { id: tid }); }
@@ -353,6 +372,16 @@ function AudiosPanel() {
                     </div>
                 </div>
             </div>
+
+            <ModalAlert
+                open={!!confirmDeleteAudio}
+                type="warning"
+                title="¿Eliminar audio?"
+                message="Se eliminará este audio permanentemente. Esta acción no se puede deshacer."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminarAudio(); else setConfirmDeleteAudio(null); }}
+            />
         </div>
     );
 }

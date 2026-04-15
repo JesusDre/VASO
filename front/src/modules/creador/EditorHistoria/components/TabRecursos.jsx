@@ -7,6 +7,16 @@ import {
 } from '../../../../services/api';
 import { inputStyle, labelStyle, selectStyle, btnPrimary, cardStyle } from '../styles/editorStyles';
 import Modal from './Modal';
+import ModalAlert from '../../../../components/ModalAlert';
+
+function extraerMensajeError(err, fallback) {
+    const data = err.response?.data;
+    if (!data) return fallback;
+    if (typeof data === 'string') return data;
+    if (data.detail) return data.detail;
+    const mensajes = Object.values(data).flat();
+    return mensajes.length > 0 ? mensajes[0] : fallback;
+}
 
 const tipoLabel = { escenario: 'Fondo', personaje: 'Personaje', portada: 'Portada' };
 const tipoBadgeBg = { escenario: '#dbeafe', personaje: '#ede9fe', portada: '#fee2e2' };
@@ -24,6 +34,8 @@ export default function TabRecursos() {
     const [seccion, setSeccion] = useState('imagenes');
 
     const [filtroTipo, setFiltroTipo] = useState('todos');
+
+    const [alerta, setAlerta] = useState(null);
 
     const [modalEliminar, setModalEliminar] = useState(null);
     const [eliminando, setEliminando] = useState(false);
@@ -52,8 +64,9 @@ export default function TabRecursos() {
             toast.success('Imagen subida');
             setImgFile(null); setImgDesc('');
             e.target.reset(); cargar();
-        } catch { toast.error('Error al subir imagen'); }
-        finally { setSubiendo(false); }
+        } catch (err) {
+            setAlerta({ title: 'No se pudo subir la imagen', message: extraerMensajeError(err, 'Error al subir imagen') });
+        } finally { setSubiendo(false); }
     };
 
     const subirAudio = async (e) => {
@@ -68,8 +81,9 @@ export default function TabRecursos() {
             toast.success('Audio subido');
             setAudFile(null); setAudDesc('');
             e.target.reset(); cargar();
-        } catch { toast.error('Error al subir audio'); }
-        finally { setSubiendo(false); }
+        } catch (err) {
+            setAlerta({ title: 'No se pudo subir el audio', message: extraerMensajeError(err, 'Error al subir audio') });
+        } finally { setSubiendo(false); }
     };
 
     const abrirEliminar = (id, nombre, tipo) => setModalEliminar({ id, nombre, tipo });
@@ -261,7 +275,7 @@ export default function TabRecursos() {
             )}
 
             {modalEliminar && (
-                <Modal titulo="Confirmar eliminación" onClose={() => !eliminando && setModalEliminar(null)} ancho={400}>
+                <Modal isOpen titulo="Confirmar eliminación" onClose={() => !eliminando && setModalEliminar(null)} ancho={400}>
                     <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start', marginBottom: 24 }}>
                         <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--red-bg)', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--red)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -283,8 +297,18 @@ export default function TabRecursos() {
                 </Modal>
             )}
 
+            <ModalAlert
+                open={!!alerta}
+                onClose={() => setAlerta(null)}
+                type="error"
+                title={alerta?.title || 'Error'}
+                message={alerta?.message || ''}
+                hideCancel
+                confirmText="Entendido"
+            />
+
             {modalEditar && (
-                <Modal titulo={`Editar ${modalEditar.tipo === 'imagen' ? 'imagen' : 'audio'}`} onClose={() => !guardandoEdit && setModalEditar(null)} ancho={420}>
+                <Modal isOpen titulo={`Editar ${modalEditar.tipo === 'imagen' ? 'imagen' : 'audio'}`} onClose={() => !guardandoEdit && setModalEditar(null)} ancho={420}>
                     <form onSubmit={confirmarEditar} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                         <div>
                             <label style={labelStyle}>Descripción</label>

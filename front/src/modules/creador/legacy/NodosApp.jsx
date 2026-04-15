@@ -7,6 +7,7 @@ import {
 import Navbar from '../../../components/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import toast, { Toaster } from 'react-hot-toast';
+import ModalAlert from '../../../components/ModalAlert';
 
 // -----------------------------------------------------------
 // Panel de Nodos
@@ -27,6 +28,7 @@ function NodosPanel() {
     const [cargando, setCargando] = useState(false);
     const [cargandoGuardar, setCargandoGuardar] = useState(false);
     const [errores, setErrores] = useState({});
+    const [confirmDelete, setConfirmDelete] = useState(null);
 
     useEffect(() => {
         cargar();
@@ -34,7 +36,7 @@ function NodosPanel() {
             setHistorias(h.data);
             setImagenes(i.data);
             setAudios(a.data);
-        }).catch(() => {});
+        }).catch(() => toast.error('Error al cargar datos auxiliares'));
     }, []);
 
     const cargar = async () => {
@@ -88,8 +90,11 @@ function NodosPanel() {
 
     const cancelar = () => { setFormData(FORM_INICIAL); setEditandoId(null); setErrores({}); };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('Eliminar este nodo?')) return;
+    const handleEliminar = (id) => setConfirmDelete(id);
+
+    const ejecutarEliminar = async () => {
+        const id = confirmDelete;
+        setConfirmDelete(null);
         const tid = toast.loading('Eliminando...');
         try { await deleteNodo(id); toast.success('Nodo eliminado', { id: tid }); cargar(); }
         catch { toast.error('Error al eliminar', { id: tid }); }
@@ -235,6 +240,16 @@ function NodosPanel() {
                     </div>
                 </div>
             </div>
+
+            <ModalAlert
+                open={!!confirmDelete}
+                type="warning"
+                title="¿Eliminar nodo?"
+                message="Se eliminará este nodo permanentemente. Las opciones que lo referencien se verán afectadas."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminar(); else setConfirmDelete(null); }}
+            />
         </div>
     );
 }
@@ -253,10 +268,11 @@ function OpcionesPanel() {
     const [cargando, setCargando] = useState(false);
     const [cargandoGuardar, setCargandoGuardar] = useState(false);
     const [errores, setErrores] = useState({});
+    const [confirmDeleteOp, setConfirmDeleteOp] = useState(null);
 
     useEffect(() => {
         cargar();
-        readNodos().then((r) => setNodos(r.data)).catch(() => {});
+        readNodos().then((r) => setNodos(r.data)).catch(() => toast.error('Error al cargar nodos'));
     }, []);
 
     const cargar = async () => {
@@ -301,8 +317,11 @@ function OpcionesPanel() {
 
     const cancelar = () => { setFormData(FORM_INICIAL); setEditandoId(null); setErrores({}); };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('Eliminar esta opcion?')) return;
+    const handleEliminar = (id) => setConfirmDeleteOp(id);
+
+    const ejecutarEliminarOp = async () => {
+        const id = confirmDeleteOp;
+        setConfirmDeleteOp(null);
         const tid = toast.loading('Eliminando...');
         try { await deleteOpcion(id); toast.success('Opcion eliminada', { id: tid }); cargar(); }
         catch { toast.error('Error al eliminar', { id: tid }); }
@@ -416,6 +435,16 @@ function OpcionesPanel() {
                     </div>
                 </div>
             </div>
+
+            <ModalAlert
+                open={!!confirmDeleteOp}
+                type="warning"
+                title="¿Eliminar opción?"
+                message="Se eliminará esta opción de navegación. El lector ya no podrá tomar esta ruta."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminarOp(); else setConfirmDeleteOp(null); }}
+            />
         </div>
     );
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { readHistorias, readCategorias } from '../../../../services/api';
 
 export function useHistorias() {
@@ -7,11 +8,12 @@ export function useHistorias() {
     const [filtro, setFiltro]           = useState('');
     const [categoria, setCategoria]     = useState('');
     const [cargando, setCargando]       = useState(true);
+    const [error, setError]             = useState(false);
 
     useEffect(() => {
         readHistorias()
             .then((res) => setHistorias(res.data.filter((h) => h.publicada)))
-            .catch(() => {})
+            .catch(() => { setError(true); toast.error('No se pudieron cargar las historias'); })
             .finally(() => setCargando(false));
 
         readCategorias()
@@ -29,5 +31,5 @@ export function useHistorias() {
         return coincideTexto && coincideCategoria;
     });
 
-    return { filtradas, filtro, setFiltro, categoria, setCategoria, categorias, cargando };
+    return { filtradas, filtro, setFiltro, categoria, setCategoria, categorias, cargando, error };
 }

@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
 import { API_BASE, readUsuarios, readRoles, deleteUsuario } from '../../../../services/api';
+import { useAuth } from '../../../../context/AuthContext';
 import toast from 'react-hot-toast';
+import ModalAlert from '../../../../components/ModalAlert';
 import Spinner from './Spinner';
 import Empty from './Empty';
 
 export default function TabUsuarios() {
+    const { usuario: currentUser } = useAuth();
     const [usuarios, setUsuarios] = useState([]);
     const [roles, setRoles] = useState([]);
     const [filtro, setFiltro] = useState('');
     const [cargando, setCargando] = useState(true);
+    const [confirmDelete, setConfirmDelete] = useState(null);
 
     useEffect(() => { cargar(); }, []);
 
@@ -39,8 +43,11 @@ export default function TabUsuarios() {
         } catch { toast.error('Error al cambiar estado', { id: tid }); }
     };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('¿Eliminar este usuario permanentemente?')) return;
+    const handleEliminar = (id) => setConfirmDelete(id);
+
+    const ejecutarEliminar = async () => {
+        const id = confirmDelete;
+        setConfirmDelete(null);
         const tid = toast.loading('Eliminando...');
         try {
             await deleteUsuario(id);
@@ -51,9 +58,11 @@ export default function TabUsuarios() {
 
     const nombreRol = (id) => roles.find((r) => r.id === id)?.nombre_rol || '—';
 
-    const filtrados = usuarios.filter((u) =>
-        `${u.nombre} ${u.apellido_paterno} ${u.email}`.toLowerCase().includes(filtro.toLowerCase())
-    );
+    const filtrados = usuarios
+        .filter((u) => currentUser ? u.id !== currentUser.id : true)
+        .filter((u) =>
+            `${u.nombre} ${u.apellido_paterno} ${u.email}`.toLowerCase().includes(filtro.toLowerCase())
+        );
 
     return (
         <div>
@@ -132,6 +141,16 @@ export default function TabUsuarios() {
                     </table>
                 </div>
             )}
+
+            <ModalAlert
+                open={!!confirmDelete}
+                type="warning"
+                title="¿Eliminar usuario?"
+                message="Se eliminará este usuario permanentemente. Esta acción no se puede deshacer."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminar(); else setConfirmDelete(null); }}
+            />
         </div>
     );
 }

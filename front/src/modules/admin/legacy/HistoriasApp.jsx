@@ -6,6 +6,7 @@ import {
 import Navbar from '../../../components/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import toast, { Toaster } from 'react-hot-toast';
+import ModalAlert from '../../../components/ModalAlert';
 
 const FORM_INICIAL = {
     titulo: '',
@@ -25,6 +26,7 @@ export default function HistoriasApp() {
     const [cargando, setCargando] = useState(false);
     const [cargandoGuardar, setCargandoGuardar] = useState(false);
     const [errores, setErrores] = useState({});
+    const [confirmDelete, setConfirmDelete] = useState(null);
 
     useEffect(() => {
         cargarHistorias();
@@ -45,11 +47,11 @@ export default function HistoriasApp() {
     };
 
     const cargarUsuarios = async () => {
-        try { setUsuarios((await readUsuarios()).data); } catch { /* silencioso */ }
+        try { setUsuarios((await readUsuarios()).data); } catch { toast.error('Error al cargar usuarios'); }
     };
 
     const cargarNodos = async () => {
-        try { setNodos((await readNodos()).data); } catch { /* silencioso */ }
+        try { setNodos((await readNodos()).data); } catch { toast.error('Error al cargar nodos'); }
     };
 
     const handleChange = (e) => {
@@ -109,8 +111,11 @@ export default function HistoriasApp() {
         setErrores({});
     };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('Seguro que deseas eliminar esta historia?')) return;
+    const handleEliminar = (id) => setConfirmDelete(id);
+
+    const ejecutarEliminar = async () => {
+        const id = confirmDelete;
+        setConfirmDelete(null);
         const tid = toast.loading('Eliminando...');
         try {
             await deleteHistoria(id);
@@ -288,6 +293,16 @@ export default function HistoriasApp() {
                     </div>
                 </div>
             </div>
+
+            <ModalAlert
+                open={!!confirmDelete}
+                type="warning"
+                title="¿Eliminar historia?"
+                message="Se eliminará esta historia y todos sus datos asociados. Esta acción no se puede deshacer."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminar(); else setConfirmDelete(null); }}
+            />
         </div>
     );
 }
