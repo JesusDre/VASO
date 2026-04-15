@@ -6,6 +6,7 @@ import {
 import Navbar from '../../../components/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import toast, { Toaster } from 'react-hot-toast';
+import ModalAlert from '../../../components/ModalAlert';
 
 // -----------------------------------------------------------
 // Panel de Usuarios (listado + eliminar)
@@ -15,10 +16,11 @@ function UsuariosPanel() {
     const [roles, setRoles] = useState([]);
     const [filtro, setFiltro] = useState('');
     const [cargando, setCargando] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(null);
 
     useEffect(() => {
         cargar();
-        readRoles().then((r) => setRoles(r.data)).catch(() => {});
+        readRoles().then((r) => setRoles(r.data)).catch(() => toast.error('Error al cargar roles'));
     }, []);
 
     const cargar = async () => {
@@ -28,8 +30,11 @@ function UsuariosPanel() {
         finally { setCargando(false); }
     };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('Seguro que deseas eliminar este usuario?')) return;
+    const handleEliminar = (id) => setConfirmDelete(id);
+
+    const ejecutarEliminar = async () => {
+        const id = confirmDelete;
+        setConfirmDelete(null);
         const tid = toast.loading('Eliminando...');
         try { await deleteUsuario(id); toast.success('Usuario eliminado', { id: tid }); cargar(); }
         catch { toast.error('Error al eliminar', { id: tid }); }
@@ -91,6 +96,16 @@ function UsuariosPanel() {
                     </div>
                 )}
             </div>
+
+            <ModalAlert
+                open={!!confirmDelete}
+                type="warning"
+                title="¿Eliminar usuario?"
+                message="Se eliminará este usuario permanentemente. Esta acción no se puede deshacer."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminar(); else setConfirmDelete(null); }}
+            />
         </div>
     );
 }
@@ -108,6 +123,7 @@ function RolesPanel() {
     const [cargando, setCargando] = useState(false);
     const [cargandoGuardar, setCargandoGuardar] = useState(false);
     const [errores, setErrores] = useState({});
+    const [confirmDeleteRol, setConfirmDeleteRol] = useState(null);
 
     useEffect(() => { cargar(); }, []);
 
@@ -144,8 +160,11 @@ function RolesPanel() {
 
     const cancelar = () => { setFormData(FORM_INICIAL); setEditandoId(null); setErrores({}); };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('Eliminar este rol?')) return;
+    const handleEliminar = (id) => setConfirmDeleteRol(id);
+
+    const ejecutarEliminarRol = async () => {
+        const id = confirmDeleteRol;
+        setConfirmDeleteRol(null);
         const tid = toast.loading('Eliminando...');
         try { await deleteRol(id); toast.success('Rol eliminado', { id: tid }); cargar(); }
         catch { toast.error('Error al eliminar', { id: tid }); }
@@ -231,6 +250,16 @@ function RolesPanel() {
                     </div>
                 </div>
             </div>
+
+            <ModalAlert
+                open={!!confirmDeleteRol}
+                type="warning"
+                title="¿Eliminar rol?"
+                message="Se eliminará este rol permanentemente. Los usuarios asignados podrían verse afectados."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminarRol(); else setConfirmDeleteRol(null); }}
+            />
         </div>
     );
 }

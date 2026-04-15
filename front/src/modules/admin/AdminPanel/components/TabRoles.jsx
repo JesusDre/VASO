@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { readRoles, createRol, updateRol, deleteRol } from '../../../../services/api';
 import toast from 'react-hot-toast';
+import ModalAlert from '../../../../components/ModalAlert';
 import Spinner from './Spinner';
 import Empty from './Empty';
 
@@ -11,6 +12,7 @@ export default function TabRoles() {
     const [editandoId, setEditandoId] = useState(null);
     const [guardando, setGuardando] = useState(false);
     const [cargando, setCargando] = useState(true);
+    const [confirmDelete, setConfirmDelete] = useState(null);
 
     useEffect(() => { cargar(); }, []);
 
@@ -34,8 +36,11 @@ export default function TabRoles() {
 
     const editar = (r) => { setForm({ nombre_rol: r.nombre_rol }); setEditandoId(r.id); };
 
-    const eliminar = async (id) => {
-        if (!window.confirm('¿Eliminar este rol?')) return;
+    const eliminar = (id) => setConfirmDelete(id);
+
+    const ejecutarEliminar = async () => {
+        const id = confirmDelete;
+        setConfirmDelete(null);
         try { await deleteRol(id); toast.success('Rol eliminado'); cargar(); }
         catch { toast.error('Error al eliminar'); }
     };
@@ -120,6 +125,16 @@ export default function TabRoles() {
                     </div>
                 )}
             </div>
+
+            <ModalAlert
+                open={!!confirmDelete}
+                type="warning"
+                title="¿Eliminar rol?"
+                message="Se eliminará este rol permanentemente. Los usuarios asignados podrían verse afectados."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminar(); else setConfirmDelete(null); }}
+            />
         </div>
     );
 }

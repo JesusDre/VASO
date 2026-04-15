@@ -4,7 +4,7 @@ import Navbar from '../../../components/Navbar';
 import { Toaster } from 'react-hot-toast';
 import TabHistorias from './components/TabHistorias';
 import TabUsuarios from './components/TabUsuarios';
-import TabRoles from './components/TabRoles';
+
 import TabCategorias from './components/TabCategorias';
 import TabBitacora from './components/TabBitacora';
 
@@ -14,7 +14,7 @@ export default function AdminPanel() {
     const tabs = [
         { key: 'historias',  label: 'Historias' },
         { key: 'usuarios',   label: 'Usuarios' },
-        { key: 'roles',      label: 'Roles' },
+
         { key: 'categorias', label: 'Categorías' },
         { key: 'bitacora',   label: 'Bitácora' },
     ];
@@ -30,7 +30,7 @@ export default function AdminPanel() {
                         Panel de Administración
                     </h2>
                     <p style={{ marginTop: 4, color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-                        Gestiona historias, usuarios y roles del sistema
+                        Gestiona historias, usuarios y categorías del sistema
                     </p>
                 </div>
 
@@ -51,7 +51,7 @@ export default function AdminPanel() {
 
                 {tab === 'historias'  && <TabHistorias />}
                 {tab === 'usuarios'   && <TabUsuarios />}
-                {tab === 'roles'      && <TabRoles />}
+
                 {tab === 'categorias' && <TabCategorias />}
                 {tab === 'bitacora'   && <TabBitacora />}
             </div>
