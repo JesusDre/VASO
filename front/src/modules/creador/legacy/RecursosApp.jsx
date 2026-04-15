@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
+    API_BASE,
     readMisImagenes, createMiImagen, updateImagen, deleteMiImagen,
     readMisAudios, createMiAudio, updateAudio, deleteMiAudio,
 } from '../../../services/api';
@@ -79,7 +80,7 @@ function ImagenesPanel() {
         catch { toast.error('Error al eliminar', { id: tid }); }
     };
 
-    const imgBase = (url) => url?.startsWith('http') ? url : `http://localhost:8000${url}`;
+    const imgBase = (url) => url?.startsWith('http') ? url : `${API_BASE}${url}`;
 
     const filtradas = imagenes.filter((img) =>
         img.tipo.toLowerCase().includes(filtro.toLowerCase()) ||
@@ -259,7 +260,7 @@ function AudiosPanel() {
         catch { toast.error('Error al eliminar', { id: tid }); }
     };
 
-    const audioBase = (url) => url?.startsWith('http') ? url : `http://localhost:8000${url}`;
+    const audioBase = (url) => url?.startsWith('http') ? url : `${API_BASE}${url}`;
 
     const filtrados = audios.filter((a) =>
         (a.descripcion || '').toLowerCase().includes(filtro.toLowerCase())

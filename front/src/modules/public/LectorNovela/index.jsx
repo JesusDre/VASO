@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
+    API_BASE,
     readHistoria, readNodos, readOpciones,
     readNodoPersonajes, readPersonajes, readImagenes, readAudios,
     readProgresos, createProgreso, updateProgreso,
@@ -14,7 +15,7 @@ import './LectorNovela.css';
 const resolverImagen = (img) => {
     if (!img) return null;
     if (img.imagen_base64_display) return `data:image/png;base64,${img.imagen_base64_display}`;
-    if (img.url) return img.url.startsWith('http') ? img.url : `http://localhost:8000${img.url}`;
+    if (img.url) return img.url.startsWith('http') ? img.url : `${API_BASE}${img.url}`;
     return null;
 };
 
@@ -128,7 +129,7 @@ export default function LectorNovela() {
         if (!nodoActual) return;
         const audio = audiosMap[nodoActual.id_audio_fondo];
         const url = audio?.archivo
-            ? (audio.archivo.startsWith('http') ? audio.archivo : `http://localhost:8000${audio.archivo}`)
+            ? (audio.archivo.startsWith('http') ? audio.archivo : `${API_BASE}${audio.archivo}`)
             : null;
 
         audioRef.current?.pause();

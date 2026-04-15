@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { readUsuarios, readRoles, deleteUsuario } from '../../../../services/api';
+import { API_BASE, readUsuarios, readRoles, deleteUsuario } from '../../../../services/api';
 import toast from 'react-hot-toast';
 import Spinner from './Spinner';
 import Empty from './Empty';
@@ -25,7 +25,7 @@ export default function TabUsuarios() {
     const toggleActivo = async (u) => {
         const tid = toast.loading(u.activo ? 'Desactivando...' : 'Activando...');
         try {
-            const res = await fetch(`http://localhost:8000/api/usuarios/${u.id}/`, {
+            const res = await fetch(`${API_BASE}/api/usuarios/${u.id}/`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',

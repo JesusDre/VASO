@@ -1,9 +1,9 @@
 // Servicio central de API — Novelas Visuales
 import axios from 'axios';
 
-const BASE = 'http://localhost:8000';
+export const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
-const api = axios.create({ baseURL: BASE });
+const api = axios.create({ baseURL: API_BASE });
 
 // -----------------------------------------------------------
 // Interceptor de Solicitud: agrega el token JWT
@@ -30,7 +30,7 @@ api.interceptors.response.use(
             // Sin refresh token no habia sesion activa — no redirigir
             if (!refresh) return Promise.reject(error);
             try {
-                const res = await axios.post(`${BASE}/api/token/refresh/`, { refresh });
+                const res = await axios.post(`${API_BASE}/api/token/refresh/`, { refresh });
                 localStorage.setItem('access_token', res.data.access);
                 if (res.data.refresh) localStorage.setItem('refresh_token', res.data.refresh);
                 original.headers['Authorization'] = `Bearer ${res.data.access}`;

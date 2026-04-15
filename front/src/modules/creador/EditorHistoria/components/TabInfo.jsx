@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import {
+    API_BASE,
     readHistoria, createHistoria, updateHistoria,
     readNodos, readMisImagenes, createMiImagen, readCategorias,
 } from '../../../../services/api';
@@ -161,7 +162,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
         ? (portadaSeleccionada.imagen_base64_display
             ? `data:image/png;base64,${portadaSeleccionada.imagen_base64_display}`
             : portadaSeleccionada.url
-                ? `http://localhost:8000${portadaSeleccionada.url}`
+                ? `${API_BASE}${portadaSeleccionada.url}`
                 : null)
         : null;
 
