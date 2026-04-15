@@ -5,6 +5,7 @@ from decouple import config
 from datetime import timedelta
 from pathlib import Path
 from loguru import logger
+import logging.config
 import os
 
 # Ruta base del proyecto
@@ -200,7 +201,9 @@ logger.configure(handlers=[
     },
 ])
 
-LOGGING = {
+# Registra el InterceptorHandler manualmente ya que LOGGING_CONFIG = None
+# hace que Django ignore el dict LOGGING sin esta llamada explicita
+_LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
@@ -213,3 +216,4 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+logging.config.dictConfig(_LOGGING)

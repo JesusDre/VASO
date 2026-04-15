@@ -1,5 +1,6 @@
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAdminUser
+from loguru import logger
 from .models import BitacoraMovimiento
 from .serializers import BitacoraMovimientoSerializer
 
@@ -34,3 +35,7 @@ class BitacoraViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(fecha_hora__date__lte=fecha_hasta)
 
         return qs
+
+    def list(self, request, *args, **kwargs):
+        logger.info("Bitacora consultada | admin={}", request.user.email)
+        return super().list(request, *args, **kwargs)
