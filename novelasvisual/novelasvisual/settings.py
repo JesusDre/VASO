@@ -1,10 +1,11 @@
 # Configuracion principal del proyecto Novelas Visuales
 # Utiliza python-decouple para leer variables del archivo .env
 
-from decouple import config
+from decouple import config, Csv
 from datetime import timedelta
 from pathlib import Path
 from loguru import logger
+import logging.config
 import os
 
 # Ruta base del proyecto
@@ -14,8 +15,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Seguridad
 # -----------------------------------------------------------
 SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
 # -----------------------------------------------------------
 # Aplicaciones instaladas
@@ -119,6 +120,7 @@ USE_TZ = True
 # -----------------------------------------------------------
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'   # para collectstatic en produccion
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -131,10 +133,25 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # -----------------------------------------------------------
 # CORS: permite peticiones desde el frontend en Vite
 # -----------------------------------------------------------
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-]
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:5173,http://127.0.0.1:5173',
+    cast=Csv(),
+)
+
+# -----------------------------------------------------------
+# Seguridad adicional (solo activa en produccion, DEBUG=False)
+# -----------------------------------------------------------
+if not DEBUG:
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000          # 1 año
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
 
 # -----------------------------------------------------------
 # Django REST Framework: JWT global por defecto
@@ -200,7 +217,9 @@ logger.configure(handlers=[
     },
 ])
 
-LOGGING = {
+# Registra el InterceptorHandler manualmente ya que LOGGING_CONFIG = None
+# hace que Django ignore el dict LOGGING sin esta llamada explicita
+_LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
@@ -213,3 +232,4 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+logging.config.dictConfig(_LOGGING)
