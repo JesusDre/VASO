@@ -1,11 +1,13 @@
 # Vistas de la app core
 from django.shortcuts import render
+from django.views.decorators.http import require_GET
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from .models import ContadorVisitas
 
 
+@require_GET
 def index(request):
     # Renderiza la pagina de inicio
     return render(request, 'index.html')

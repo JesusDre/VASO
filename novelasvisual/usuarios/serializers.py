@@ -37,7 +37,7 @@ class RegistroSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate_password(self, data):
-        if not re.match(r'^(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$', data):
+        if not re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$', data):
             raise ValidationError(
                 'La contrasena debe tener al menos 8 caracteres, una mayuscula, un numero y un caracter especial.'
             )
