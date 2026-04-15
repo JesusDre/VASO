@@ -128,9 +128,10 @@ export default function LectorNovela() {
     useEffect(() => {
         if (!nodoActual) return;
         const audio = audiosMap[nodoActual.id_audio_fondo];
-        const url = audio?.archivo
-            ? (audio.archivo.startsWith('http') ? audio.archivo : `${API_BASE}${audio.archivo}`)
-            : null;
+        let url = null;
+        if (audio?.archivo) {
+            url = audio.archivo.startsWith('http') ? audio.archivo : `${API_BASE}${audio.archivo}`;
+        }
 
         audioRef.current?.pause();
         if (url) {
@@ -271,7 +272,13 @@ export default function LectorNovela() {
                         <IconVolume muted={muted} />
                     </button>
 
-                    <div className="ln-text-panel" onClick={handleTextClick}>
+                    <div
+                        className="ln-text-panel"
+                        onClick={handleTextClick}
+                        onKeyDown={(e) => e.key === 'Enter' && handleTextClick()}
+                        role="button"
+                        tabIndex={0}
+                    >
                         {personajeHablando && <div className="ln-character-name">{personajeHablando}</div>}
 
                         <div className="ln-panel-body">
@@ -284,7 +291,7 @@ export default function LectorNovela() {
                                 <div className="ln-options">
                                     {opciones.map((op, idx) => (
                                         <button key={op.id} className="ln-option-btn" onClick={() => irANodo(op.id_nodo_destino)}>
-                                            {String.fromCharCode(65 + idx)}. {op.texto_opcion}
+                                            {String.fromCodePoint(65 + idx)}. {op.texto_opcion}
                                         </button>
                                     ))}
                                 </div>

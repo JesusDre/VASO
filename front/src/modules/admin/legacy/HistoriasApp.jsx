@@ -131,6 +131,10 @@ export default function HistoriasApp() {
         (h.publicada ? 'publicada' : 'borrador').includes(filtro.toLowerCase())
     );
 
+    const historiasSubmitLabel = cargandoGuardar
+        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
+        : editandoId ? 'Actualizar' : 'Guardar';
+
     return (
         <div>
             <Toaster position="top-right" />
@@ -147,9 +151,9 @@ export default function HistoriasApp() {
                             <div className="card-body">
                                 <form onSubmit={handleSubmit}>
                                     <div className="mb-3">
-                                        <label className="form-label">Titulo</label>
+                                        <label htmlFor="titulo_historia" className="form-label">Titulo</label>
                                         <input
-                                            type="text" name="titulo"
+                                            id="titulo_historia" type="text" name="titulo"
                                             className={`form-control ${errores.titulo ? 'is-invalid' : ''}`}
                                             value={formData.titulo} onChange={handleChange}
                                             required disabled={cargandoGuardar}
@@ -159,9 +163,9 @@ export default function HistoriasApp() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Descripcion</label>
+                                        <label htmlFor="descripcion_historia" className="form-label">Descripcion</label>
                                         <textarea
-                                            name="descripcion" rows="3"
+                                            id="descripcion_historia" name="descripcion" rows="3"
                                             className={`form-control ${errores.descripcion ? 'is-invalid' : ''}`}
                                             value={formData.descripcion} onChange={handleChange}
                                             disabled={cargandoGuardar} placeholder="Sinopsis"
@@ -170,9 +174,9 @@ export default function HistoriasApp() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Creador</label>
+                                        <label htmlFor="id_creador_historia" className="form-label">Creador</label>
                                         <select
-                                            name="id_creador"
+                                            id="id_creador_historia" name="id_creador"
                                             className={`form-select ${errores.id_creador ? 'is-invalid' : ''}`}
                                             value={formData.id_creador} onChange={handleChange}
                                             required disabled={cargandoGuardar}
@@ -188,9 +192,9 @@ export default function HistoriasApp() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Nodo de inicio (opcional)</label>
+                                        <label htmlFor="id_nodo_inicio_historia" className="form-label">Nodo de inicio (opcional)</label>
                                         <select
-                                            name="id_nodo_inicio"
+                                            id="id_nodo_inicio_historia" name="id_nodo_inicio"
                                             className={`form-select ${errores.id_nodo_inicio ? 'is-invalid' : ''}`}
                                             value={formData.id_nodo_inicio} onChange={handleChange}
                                             disabled={cargandoGuardar}
@@ -217,9 +221,7 @@ export default function HistoriasApp() {
 
                                     <div className="d-grid gap-2">
                                         <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                            {cargandoGuardar
-                                                ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                                : editandoId ? 'Actualizar' : 'Guardar'}
+                                            {historiasSubmitLabel}
                                         </button>
                                         {editandoId && (
                                             <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>

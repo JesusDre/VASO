@@ -81,6 +81,9 @@ export default function Navbar() {
         navigate('/login');
     };
 
+    const rolLabel = rol === 'creador' ? 'Creator' : rol === 'admin' ? 'Admin' : 'Lector';
+    const rolBadge = rol === 'creador' ? 'Creador' : rol === 'admin' ? 'Admin' : 'Lector';
+
     return (
         <nav className="nv-navbar">
             <div className="nv-navbar-inner">
@@ -157,7 +160,7 @@ export default function Navbar() {
                                 <div className="nv-user-info">
                                     <div className="nv-user-meta">
                                         <div className="nv-user-role-label">
-                                            {rol === 'creador' ? 'Creator' : rol === 'admin' ? 'Admin' : 'Lector'}
+                                            {rolLabel}
                                         </div>
                                         <div className="nv-user-name">{usuario.nombre}</div>
                                     </div>
@@ -166,7 +169,7 @@ export default function Navbar() {
                                     </div>
                                 </div>
                                 <span className={`nv-role-badge nv-role-${rol}`}>
-                                    {rol === 'creador' ? 'Creador' : rol === 'admin' ? 'Admin' : 'Lector'}
+                                    {rolBadge}
                                 </span>
                                 <button className="nv-btn-logout" onClick={handleLogout}>
                                     Salir

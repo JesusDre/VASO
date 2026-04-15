@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 import '../styles/modal-alert.css';
 
 const icons = {
@@ -54,12 +55,16 @@ export default function ModalAlert({
     if (!open) return null;
 
     return (
-        <div className="modal-alert-backdrop" onClick={handleCancel}>
-            <div
+        <div
+            className="modal-alert-backdrop"
+            onClick={handleCancel}
+            onKeyDown={(e) => e.key === 'Escape' && handleCancel()}
+            role="presentation"
+        >
+            <dialog
+                open
                 className={`modal-alert-box alert-${type}`}
                 onClick={(e) => e.stopPropagation()}
-                role="dialog"
-                aria-modal="true"
                 aria-labelledby="modal-alert-title"
                 aria-describedby="modal-alert-description"
             >
@@ -79,7 +84,18 @@ export default function ModalAlert({
                         {confirmText}
                     </button>
                 </div>
-            </div>
+            </dialog>
         </div>
     );
 }
+
+ModalAlert.propTypes = {
+    open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
+    message: PropTypes.string.isRequired,
+    type: PropTypes.oneOf(['success', 'error', 'warning', 'info']),
+    confirmText: PropTypes.string,
+    cancelText: PropTypes.string,
+    hideCancel: PropTypes.bool,
+};

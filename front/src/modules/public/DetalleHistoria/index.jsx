@@ -152,7 +152,12 @@ export default function DetalleHistoria() {
 
                         {!usuario && (
                             <p className="dh-login-hint">
-                                <span onClick={() => navigate('/login')}>Inicia sesión</span> para guardar tu progreso.
+                                <span
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() => navigate('/login')}
+                                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/login'); }}
+                                >Inicia sesión</span> para guardar tu progreso.
                             </p>
                         )}
                     </div>

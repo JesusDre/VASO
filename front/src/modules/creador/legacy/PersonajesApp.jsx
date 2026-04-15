@@ -92,6 +92,10 @@ function PersonajesPanel() {
         p.nombre.toLowerCase().includes(filtro.toLowerCase())
     );
 
+    const personajesSubmitLabel = cargandoGuardar
+        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
+        : editandoId ? 'Actualizar' : 'Guardar';
+
     return (
         <div className="row">
             <div className="col-md-4 mb-4">
@@ -102,8 +106,8 @@ function PersonajesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Nombre</label>
-                                <input type="text" name="nombre"
+                                <label htmlFor="nombre_personaje" className="form-label">Nombre</label>
+                                <input id="nombre_personaje" type="text" name="nombre"
                                     className={`form-control ${errores.nombre ? 'is-invalid' : ''}`}
                                     value={formData.nombre} onChange={handleChange}
                                     required disabled={cargandoGuardar} placeholder="Nombre del personaje" />
@@ -111,8 +115,8 @@ function PersonajesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Historia</label>
-                                <select name="id_historia"
+                                <label htmlFor="id_historia_personaje" className="form-label">Historia</label>
+                                <select id="id_historia_personaje" name="id_historia"
                                     className={`form-select ${errores.id_historia ? 'is-invalid' : ''}`}
                                     value={formData.id_historia} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -125,8 +129,8 @@ function PersonajesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Imagen del personaje (opcional)</label>
-                                <select name="id_imagen"
+                                <label htmlFor="id_imagen_personaje" className="form-label">Imagen del personaje (opcional)</label>
+                                <select id="id_imagen_personaje" name="id_imagen"
                                     className="form-select"
                                     value={formData.id_imagen} onChange={handleChange}
                                     disabled={cargandoGuardar}>
@@ -139,9 +143,7 @@ function PersonajesPanel() {
 
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                    {personajesSubmitLabel}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
@@ -294,6 +296,10 @@ function NodoPersonajesPanel() {
 
     const badgePosicion = { izquierda: 'bg-primary', centro: 'bg-success', derecha: 'bg-warning text-dark' };
 
+    const npSubmitLabel = cargandoGuardar
+        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
+        : editandoId ? 'Actualizar' : 'Asignar';
+
     return (
         <div className="row">
             <div className="col-md-4 mb-4">
@@ -304,8 +310,8 @@ function NodoPersonajesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Nodo</label>
-                                <select name="id_nodo"
+                                <label htmlFor="id_nodo_np" className="form-label">Nodo</label>
+                                <select id="id_nodo_np" name="id_nodo"
                                     className={`form-select ${errores.id_nodo ? 'is-invalid' : ''}`}
                                     value={formData.id_nodo} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -318,8 +324,8 @@ function NodoPersonajesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Personaje</label>
-                                <select name="id_personaje"
+                                <label htmlFor="id_personaje_np" className="form-label">Personaje</label>
+                                <select id="id_personaje_np" name="id_personaje"
                                     className={`form-select ${errores.id_personaje ? 'is-invalid' : ''}`}
                                     value={formData.id_personaje} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -332,8 +338,8 @@ function NodoPersonajesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Posicion en pantalla</label>
-                                <select name="posicion"
+                                <label htmlFor="posicion_np" className="form-label">Posicion en pantalla</label>
+                                <select id="posicion_np" name="posicion"
                                     className="form-select"
                                     value={formData.posicion} onChange={handleChange}
                                     disabled={cargandoGuardar}>
@@ -345,9 +351,7 @@ function NodoPersonajesPanel() {
 
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Asignar'}
+                                    {npSubmitLabel}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>

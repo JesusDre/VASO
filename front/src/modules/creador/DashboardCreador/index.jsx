@@ -82,6 +82,65 @@ export default function DashboardCreador() {
         }
     };
 
+    const tableContenido = historias.length === 0 ? (
+        <div style={styles.empty}>
+            <div style={{ color: 'var(--text-muted)', marginBottom: 12 }}>
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+                </svg>
+            </div>
+            <p style={styles.emptyText}>Aún no tienes historias. Crea tu primera novela visual.</p>
+            <button style={{ ...styles.btnNew, margin: '0 auto' }} onClick={() => navigate('/creador/nueva')}>
+                Crear historia
+            </button>
+        </div>
+    ) : (
+        <table style={styles.table}>
+            <thead style={styles.thead}>
+                <tr>
+                    <th style={styles.th}>Título</th>
+                    <th style={styles.th}>Estado</th>
+                    <th style={styles.thRight}>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {historias.map((h) => (
+                    <tr
+                        key={h.id}
+                        style={styles.tr}
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surface-2)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    >
+                        <td style={styles.td}>{h.titulo}</td>
+                        <td style={{ ...styles.td, fontWeight: 400 }}>
+                            <BadgeEstado publicada={h.publicada} />
+                        </td>
+                        <td style={styles.tdRight}>
+                            <div style={styles.actions}>
+                                <button
+                                    title="Editar" style={styles.btnEdit}
+                                    onClick={() => navigate(`/creador/historia/${h.id}`)}
+                                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent-light)'; e.currentTarget.style.borderColor = 'var(--accent)'; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--surface)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
+                                >
+                                    <IconEdit />
+                                </button>
+                                <button
+                                    title="Eliminar" style={styles.btnDelete}
+                                    onClick={() => handleEliminar(h.id)}
+                                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--red-bg)'; e.currentTarget.style.borderColor = 'var(--red)'; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--surface)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
+                                >
+                                    <IconDelete />
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+
     return (
         <div style={styles.page}>
             <Toaster position="top-right" />
@@ -111,64 +170,7 @@ export default function DashboardCreador() {
                         <div style={styles.empty}>
                             <div style={{ width: 28, height: 28, border: '3px solid var(--border)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 0.7s linear infinite', margin: '0 auto' }} />
                         </div>
-                    ) : historias.length === 0 ? (
-                        <div style={styles.empty}>
-                            <div style={{ color: 'var(--text-muted)', marginBottom: 12 }}>
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
-                                </svg>
-                            </div>
-                            <p style={styles.emptyText}>Aún no tienes historias. Crea tu primera novela visual.</p>
-                            <button style={{ ...styles.btnNew, margin: '0 auto' }} onClick={() => navigate('/creador/nueva')}>
-                                Crear historia
-                            </button>
-                        </div>
-                    ) : (
-                        <table style={styles.table}>
-                            <thead style={styles.thead}>
-                                <tr>
-                                    <th style={styles.th}>Título</th>
-                                    <th style={styles.th}>Estado</th>
-                                    <th style={styles.thRight}>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {historias.map((h) => (
-                                    <tr
-                                        key={h.id}
-                                        style={styles.tr}
-                                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surface-2)'}
-                                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                                    >
-                                        <td style={styles.td}>{h.titulo}</td>
-                                        <td style={{ ...styles.td, fontWeight: 400 }}>
-                                            <BadgeEstado publicada={h.publicada} />
-                                        </td>
-                                        <td style={styles.tdRight}>
-                                            <div style={styles.actions}>
-                                                <button
-                                                    title="Editar" style={styles.btnEdit}
-                                                    onClick={() => navigate(`/creador/historia/${h.id}`)}
-                                                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--accent-light)'; e.currentTarget.style.borderColor = 'var(--accent)'; }}
-                                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--surface)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-                                                >
-                                                    <IconEdit />
-                                                </button>
-                                                <button
-                                                    title="Eliminar" style={styles.btnDelete}
-                                                    onClick={() => handleEliminar(h.id)}
-                                                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--red-bg)'; e.currentTarget.style.borderColor = 'var(--red)'; }}
-                                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--surface)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
-                                                >
-                                                    <IconDelete />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
+                    ) : tableContenido}
                 </div>
             </div>
 

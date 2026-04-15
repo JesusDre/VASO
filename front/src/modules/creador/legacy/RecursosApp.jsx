@@ -92,6 +92,10 @@ function ImagenesPanel() {
         (img.descripcion || '').toLowerCase().includes(filtro.toLowerCase())
     );
 
+    const imagenesSubmitLabel = cargandoGuardar
+        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
+        : editandoId ? 'Actualizar' : 'Guardar';
+
     return (
         <div className="row">
             {/* Formulario */}
@@ -103,8 +107,8 @@ function ImagenesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Tipo</label>
-                                <select name="tipo" className={`form-select ${errores.tipo ? 'is-invalid' : ''}`}
+                                <label htmlFor="tipo_imagen" className="form-label">Tipo</label>
+                                <select id="tipo_imagen" name="tipo" className={`form-select ${errores.tipo ? 'is-invalid' : ''}`}
                                     value={formData.tipo} onChange={handleChange} required disabled={cargandoGuardar}>
                                     <option value="escenario">Escenario</option>
                                     <option value="personaje">Personaje</option>
@@ -113,32 +117,30 @@ function ImagenesPanel() {
                                 {errores.tipo && <div className="invalid-feedback">{errores.tipo.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Descripcion</label>
-                                <input type="text" name="descripcion"
+                                <label htmlFor="descripcion_imagen" className="form-label">Descripcion</label>
+                                <input id="descripcion_imagen" type="text" name="descripcion"
                                     className={`form-control ${errores.descripcion ? 'is-invalid' : ''}`}
                                     value={formData.descripcion} onChange={handleChange}
                                     disabled={cargandoGuardar} placeholder="Descripcion de la imagen" />
                                 {errores.descripcion && <div className="invalid-feedback">{errores.descripcion.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Imagen (archivo en servidor)</label>
-                                <input type="file" name="url"
+                                <label htmlFor="url_imagen" className="form-label">Imagen (archivo en servidor)</label>
+                                <input id="url_imagen" type="file" name="url"
                                     className={`form-control ${errores.url ? 'is-invalid' : ''}`}
                                     onChange={handleChange} accept="image/*" disabled={cargandoGuardar} />
                                 {errores.url && <div className="invalid-feedback">{errores.url.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Imagen binaria (en BD)</label>
-                                <input type="file" name="imagen_para_binario"
+                                <label htmlFor="imagen_para_binario" className="form-label">Imagen binaria (en BD)</label>
+                                <input id="imagen_para_binario" type="file" name="imagen_para_binario"
                                     className={`form-control ${errores.imagen_para_binario ? 'is-invalid' : ''}`}
                                     onChange={handleChange} accept="image/*" disabled={cargandoGuardar} />
                                 {errores.imagen_para_binario && <div className="invalid-feedback">{errores.imagen_para_binario.join(', ')}</div>}
                             </div>
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                    {imagenesSubmitLabel}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
@@ -285,6 +287,10 @@ function AudiosPanel() {
         (a.descripcion || '').toLowerCase().includes(filtro.toLowerCase())
     );
 
+    const audiosSubmitLabel = cargandoGuardar
+        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
+        : editandoId ? 'Actualizar' : 'Guardar';
+
     return (
         <div className="row">
             {/* Formulario */}
@@ -296,25 +302,23 @@ function AudiosPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Descripcion</label>
-                                <input type="text" name="descripcion"
+                                <label htmlFor="descripcion_audio" className="form-label">Descripcion</label>
+                                <input id="descripcion_audio" type="text" name="descripcion"
                                     className={`form-control ${errores.descripcion ? 'is-invalid' : ''}`}
                                     value={formData.descripcion} onChange={handleChange}
                                     disabled={cargandoGuardar} placeholder="Nombre del audio" />
                                 {errores.descripcion && <div className="invalid-feedback">{errores.descripcion.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Archivo de audio</label>
-                                <input type="file" name="archivo"
+                                <label htmlFor="archivo_audio" className="form-label">Archivo de audio</label>
+                                <input id="archivo_audio" type="file" name="archivo"
                                     className={`form-control ${errores.archivo ? 'is-invalid' : ''}`}
                                     onChange={handleChange} accept="audio/*" disabled={cargandoGuardar} />
                                 {errores.archivo && <div className="invalid-feedback">{errores.archivo.join(', ')}</div>}
                             </div>
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                    {audiosSubmitLabel}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
@@ -356,6 +360,7 @@ function AudiosPanel() {
                                                     {a.archivo ? (
                                                         <audio controls style={{ height: 32 }}>
                                                             <source src={audioBase(a.archivo)} />
+                                                            <track kind="captions" src="" label="Captions" default />
                                                         </audio>
                                                     ) : <span className="text-muted">—</span>}
                                                 </td>

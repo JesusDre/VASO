@@ -122,6 +122,9 @@ export default function EditorHistoria() {
                     {TABS.map((t) => {
                         const deshabilitado = t.key !== 'info' && !historiaId;
                         const activo = tab === t.key;
+                        const tabColor = activo ? 'var(--accent)' : (deshabilitado ? '#c0cfe0' : 'var(--text-muted)');
+                        const badgeBg = activo ? 'var(--accent)' : (deshabilitado ? '#e2e8f0' : 'var(--surface-2)');
+                        const badgeColor = activo ? '#fff' : (deshabilitado ? '#b0bec5' : 'var(--text-muted)');
                         return (
                             <button
                                 key={t.key}
@@ -135,7 +138,7 @@ export default function EditorHistoria() {
                                     padding: '14px 18px',
                                     cursor: deshabilitado ? 'not-allowed' : 'pointer',
                                     whiteSpace: 'nowrap',
-                                    color: activo ? 'var(--accent)' : deshabilitado ? '#c0cfe0' : 'var(--text-muted)',
+                                    color: tabColor,
                                     fontWeight: activo ? 700 : 500,
                                     fontSize: '0.88rem',
                                     transition: 'color 0.15s',
@@ -147,8 +150,8 @@ export default function EditorHistoria() {
                                 <span style={{
                                     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                                     width: 18, height: 18, borderRadius: '50%', fontSize: '0.68rem', fontWeight: 800,
-                                    background: activo ? 'var(--accent)' : deshabilitado ? '#e2e8f0' : 'var(--surface-2)',
-                                    color: activo ? '#fff' : deshabilitado ? '#b0bec5' : 'var(--text-muted)',
+                                    background: badgeBg,
+                                    color: badgeColor,
                                     flexShrink: 0,
                                 }}>
                                     {t.numero}

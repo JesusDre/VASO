@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }) {
     useEffect(() => {
@@ -12,7 +13,10 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
 
     return (
         <div
+            role="button"
+            tabIndex={0}
             onClick={onClose}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClose(e); }}
             style={{
                 position: 'fixed', inset: 0, zIndex: 1000,
                 background: 'rgba(15,23,42,0.45)',
@@ -21,7 +25,10 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
             }}
         >
             <div
+                role="button"
+                tabIndex={0}
                 onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); }}
                 style={{
                     background: 'var(--surface)',
                     border: '1px solid var(--border)',
@@ -45,3 +52,11 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
         </div>
     );
 }
+
+Modal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    titulo: PropTypes.string.isRequired,
+    children: PropTypes.node,
+    onClose: PropTypes.func.isRequired,
+    ancho: PropTypes.number,
+};

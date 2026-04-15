@@ -99,83 +99,13 @@ export default function TabCategorias() {
         letterSpacing: '0.05em',
     };
 
-    return (
-        <div>
-            {/* Cabecera */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: 0 }}>
-                    {categorias.length} categoría{categorias.length !== 1 ? 's' : ''} activa{categorias.length !== 1 ? 's' : ''}
-                </p>
-                {!modoFormulario && (
-                    <button onClick={abrirCrear} style={{
-                        height: 34, padding: '0 16px', borderRadius: 8,
-                        background: 'var(--accent)', border: 'none',
-                        color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
-                    }}>
-                        + Nueva categoría
-                    </button>
-                )}
-            </div>
+    const catSubmitLabel = guardando ? 'Guardando...' : editandoId ? 'Guardar cambios' : 'Crear';
 
-            {/* Formulario crear/editar */}
-            {modoFormulario && (
-                <form onSubmit={handleGuardar} style={{
-                    background: 'var(--surface)', border: '1px solid var(--border)',
-                    borderRadius: 10, padding: '20px', marginBottom: 20,
-                    boxShadow: 'var(--shadow-sm)',
-                }}>
-                    <p style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: 16, color: 'var(--text)' }}>
-                        {editandoId ? 'Editar categoría' : 'Nueva categoría'}
-                    </p>
-                    <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-                        <div style={{ flex: 1, minWidth: 200 }}>
-                            <label style={labelStyle}>Nombre *</label>
-                            <input
-                                name="nombre"
-                                value={form.nombre}
-                                onChange={handleChange}
-                                placeholder="Ej. Terror"
-                                disabled={guardando}
-                                style={inputStyle}
-                            />
-                        </div>
-                        <div style={{ flex: 2, minWidth: 260 }}>
-                            <label style={labelStyle}>Descripción</label>
-                            <input
-                                name="descripcion"
-                                value={form.descripcion}
-                                onChange={handleChange}
-                                placeholder="Breve descripción de la categoría"
-                                disabled={guardando}
-                                style={inputStyle}
-                            />
-                        </div>
-                    </div>
-                    <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-                        <button type="submit" disabled={guardando} style={{
-                            height: 34, padding: '0 18px', borderRadius: 8,
-                            background: 'var(--accent)', border: 'none',
-                            color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
-                        }}>
-                            {guardando ? 'Guardando...' : editandoId ? 'Guardar cambios' : 'Crear'}
-                        </button>
-                        <button type="button" onClick={cancelar} disabled={guardando} style={{
-                            height: 34, padding: '0 16px', borderRadius: 8,
-                            background: 'none', border: '1px solid var(--border)',
-                            color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem', cursor: 'pointer',
-                        }}>
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
-            )}
-
-            {/* Listado */}
-            {cargando ? (
-                <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>
-            ) : categorias.length === 0 ? (
-                <Empty texto="No hay categorías activas. Crea la primera." />
-            ) : (
+    const catListado = cargando
+        ? <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>
+        : categorias.length === 0
+            ? <Empty texto="No hay categorías activas. Crea la primera." />
+            : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {categorias.map((cat) => (
                         <div key={cat.id} style={{
@@ -216,7 +146,83 @@ export default function TabCategorias() {
                         </div>
                     ))}
                 </div>
+            );
+
+    return (
+        <div>
+            {/* Cabecera */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: 0 }}>
+                    {categorias.length} categoría{categorias.length === 1 ? '' : 's'} activa{categorias.length === 1 ? '' : 's'}
+                </p>
+                {!modoFormulario && (
+                    <button onClick={abrirCrear} style={{
+                        height: 34, padding: '0 16px', borderRadius: 8,
+                        background: 'var(--accent)', border: 'none',
+                        color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
+                    }}>
+                        + Nueva categoría
+                    </button>
+                )}
+            </div>
+
+            {/* Formulario crear/editar */}
+            {modoFormulario && (
+                <form onSubmit={handleGuardar} style={{
+                    background: 'var(--surface)', border: '1px solid var(--border)',
+                    borderRadius: 10, padding: '20px', marginBottom: 20,
+                    boxShadow: 'var(--shadow-sm)',
+                }}>
+                    <p style={{ fontWeight: 700, fontSize: '0.95rem', marginBottom: 16, color: 'var(--text)' }}>
+                        {editandoId ? 'Editar categoría' : 'Nueva categoría'}
+                    </p>
+                    <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                        <div style={{ flex: 1, minWidth: 200 }}>
+                            <label htmlFor="cat_nombre" style={labelStyle}>Nombre *</label>
+                            <input
+                                id="cat_nombre"
+                                name="nombre"
+                                value={form.nombre}
+                                onChange={handleChange}
+                                placeholder="Ej. Terror"
+                                disabled={guardando}
+                                style={inputStyle}
+                            />
+                        </div>
+                        <div style={{ flex: 2, minWidth: 260 }}>
+                            <label htmlFor="cat_descripcion" style={labelStyle}>Descripción</label>
+                            <input
+                                id="cat_descripcion"
+                                name="descripcion"
+                                value={form.descripcion}
+                                onChange={handleChange}
+                                placeholder="Breve descripción de la categoría"
+                                disabled={guardando}
+                                style={inputStyle}
+                            />
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                        <button type="submit" disabled={guardando} style={{
+                            height: 34, padding: '0 18px', borderRadius: 8,
+                            background: 'var(--accent)', border: 'none',
+                            color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
+                        }}>
+                            {catSubmitLabel}
+                        </button>
+                        <button type="button" onClick={cancelar} disabled={guardando} style={{
+                            height: 34, padding: '0 16px', borderRadius: 8,
+                            background: 'none', border: '1px solid var(--border)',
+                            color: 'var(--text-muted)', fontWeight: 500, fontSize: '0.85rem', cursor: 'pointer',
+                        }}>
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
             )}
+
+            {/* Listado */}
+            {catListado}
         </div>
     );
 }

@@ -105,6 +105,10 @@ function NodosPanel() {
         n.texto.toLowerCase().includes(filtro.toLowerCase())
     );
 
+    const nodosSubmitLabel = cargandoGuardar
+        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
+        : editandoId ? 'Actualizar' : 'Guardar';
+
     return (
         <div className="row">
             <div className="col-md-4 mb-4">
@@ -115,8 +119,8 @@ function NodosPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Titulo del nodo</label>
-                                <input type="text" name="titulo_nodo"
+                                <label htmlFor="titulo_nodo" className="form-label">Titulo del nodo</label>
+                                <input id="titulo_nodo" type="text" name="titulo_nodo"
                                     className={`form-control ${errores.titulo_nodo ? 'is-invalid' : ''}`}
                                     value={formData.titulo_nodo} onChange={handleChange}
                                     required disabled={cargandoGuardar} placeholder="Nombre interno del nodo" />
@@ -124,8 +128,8 @@ function NodosPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Texto narrativo</label>
-                                <textarea name="texto" rows="4"
+                                <label htmlFor="texto_nodo" className="form-label">Texto narrativo</label>
+                                <textarea id="texto_nodo" name="texto" rows="4"
                                     className={`form-control ${errores.texto ? 'is-invalid' : ''}`}
                                     value={formData.texto} onChange={handleChange}
                                     required disabled={cargandoGuardar} placeholder="Texto que vera el jugador" />
@@ -133,8 +137,8 @@ function NodosPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Historia</label>
-                                <select name="id_historia"
+                                <label htmlFor="id_historia_nodo" className="form-label">Historia</label>
+                                <select id="id_historia_nodo" name="id_historia"
                                     className={`form-select ${errores.id_historia ? 'is-invalid' : ''}`}
                                     value={formData.id_historia} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -147,8 +151,8 @@ function NodosPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Imagen de escenario (opcional)</label>
-                                <select name="id_imagen_escenario"
+                                <label htmlFor="id_imagen_escenario" className="form-label">Imagen de escenario (opcional)</label>
+                                <select id="id_imagen_escenario" name="id_imagen_escenario"
                                     className="form-select"
                                     value={formData.id_imagen_escenario} onChange={handleChange}
                                     disabled={cargandoGuardar}>
@@ -160,8 +164,8 @@ function NodosPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Audio de fondo (opcional)</label>
-                                <select name="id_audio_fondo"
+                                <label htmlFor="id_audio_fondo" className="form-label">Audio de fondo (opcional)</label>
+                                <select id="id_audio_fondo" name="id_audio_fondo"
                                     className="form-select"
                                     value={formData.id_audio_fondo} onChange={handleChange}
                                     disabled={cargandoGuardar}>
@@ -182,9 +186,7 @@ function NodosPanel() {
 
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                    {nodosSubmitLabel}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
@@ -333,6 +335,10 @@ function OpcionesPanel() {
         o.texto_opcion.toLowerCase().includes(filtro.toLowerCase())
     );
 
+    const opcionesSubmitLabel = cargandoGuardar
+        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
+        : editandoId ? 'Actualizar' : 'Guardar';
+
     return (
         <div className="row">
             <div className="col-md-4 mb-4">
@@ -343,8 +349,8 @@ function OpcionesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Texto de la opcion</label>
-                                <input type="text" name="texto_opcion"
+                                <label htmlFor="texto_opcion" className="form-label">Texto de la opcion</label>
+                                <input id="texto_opcion" type="text" name="texto_opcion"
                                     className={`form-control ${errores.texto_opcion ? 'is-invalid' : ''}`}
                                     value={formData.texto_opcion} onChange={handleChange}
                                     required disabled={cargandoGuardar} placeholder="Lo que ve el jugador" />
@@ -352,8 +358,8 @@ function OpcionesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Nodo origen</label>
-                                <select name="id_nodo_origen"
+                                <label htmlFor="id_nodo_origen" className="form-label">Nodo origen</label>
+                                <select id="id_nodo_origen" name="id_nodo_origen"
                                     className={`form-select ${errores.id_nodo_origen ? 'is-invalid' : ''}`}
                                     value={formData.id_nodo_origen} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -366,8 +372,8 @@ function OpcionesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Nodo destino</label>
-                                <select name="id_nodo_destino"
+                                <label htmlFor="id_nodo_destino" className="form-label">Nodo destino</label>
+                                <select id="id_nodo_destino" name="id_nodo_destino"
                                     className={`form-select ${errores.id_nodo_destino ? 'is-invalid' : ''}`}
                                     value={formData.id_nodo_destino} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -381,9 +387,7 @@ function OpcionesPanel() {
 
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                    {opcionesSubmitLabel}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
-import {    
+import {
     API_BASE, createHistoria, updateHistoria,
     readNodos, readMisImagenes, createMiImagen, readCategorias, readOpciones,
 } from '../../../../services/api';
@@ -42,13 +43,16 @@ function ItemChecklist({ ok, label, hint, advertencia }) {
         colorTexto = 'var(--text-muted)';
     }
 
+    const iconBg = advertencia ? '#fef9c3' : (ok ? 'var(--green-bg)' : 'var(--surface-2)');
+    const iconBorderColor = advertencia ? '#fde68a' : (ok ? 'var(--green)' : 'var(--border)');
+
     return (
         <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', padding: '9px 0', borderBottom: '1px solid var(--border)' }}>
             <div style={{
                 width: 20, height: 20, borderRadius: '50%', flexShrink: 0, marginTop: 1,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: advertencia ? '#fef9c3' : ok ? 'var(--green-bg)' : 'var(--surface-2)',
-                border: `1px solid ${advertencia ? '#fde68a' : ok ? 'var(--green)' : 'var(--border)'}`,
+                background: iconBg,
+                border: `1px solid ${iconBorderColor}`,
             }}>
                 {icono}
             </div>
@@ -59,6 +63,13 @@ function ItemChecklist({ ok, label, hint, advertencia }) {
         </div>
     );
 }
+
+ItemChecklist.propTypes = {
+    ok: PropTypes.bool,
+    label: PropTypes.string,
+    hint: PropTypes.string,
+    advertencia: PropTypes.bool,
+};
 
 export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
     const FORM_INICIAL = { titulo: '', descripcion: '', publicada: false, id_nodo_inicio: '', id_portada: '', categoria: '' };
@@ -174,8 +185,10 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
             if (!form.titulo.trim()) problemas.push('Define el título de la historia.');
             if (nodos.length === 0) problemas.push('Crea al menos una escena en la pestaña Escenas.');
             if (!form.id_nodo_inicio) problemas.push('Selecciona la escena de inicio.');
-            if (nodosHuerfanos.length > 0)
-                problemas.push(`${nodosHuerfanos.length} escena(s) no tienen decisiones ni están marcadas como final: ${nodosHuerfanos.map(n => `"${n.titulo_nodo}"`).join(', ')}.`);
+            if (nodosHuerfanos.length > 0) {
+                const nombresHuerfanos = nodosHuerfanos.map(n => `"${n.titulo_nodo}"`).join(', ');
+                problemas.push(`${nodosHuerfanos.length} escena(s) no tienen decisiones ni están marcadas como final: ${nombresHuerfanos}.`);
+            }
             setAlerta({
                 type: 'warning',
                 title: 'Completa los requisitos primero',
@@ -225,6 +238,23 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                 : null)
         : null;
 
+    const nodosPlural = nodos.length > 1 ? 's' : '';
+    const nodosLabel = nodos.length > 0 ? `${nodos.length} escena${nodosPlural} creada${nodosPlural}` : 'Al menos 1 escena';
+    const nombresNodosHuerfanos = nodosHuerfanos.map(n => `"${n.titulo_nodo}"`).join(', ');
+
+    const btnPublicarBg = puedePublicar ? 'var(--green)' : 'var(--surface-2)';
+    const btnPublicarBorder = puedePublicar ? 'var(--green)' : 'var(--border)';
+    const btnPublicarColor = puedePublicar ? '#fff' : 'var(--text-muted)';
+    const btnPublicarCursor = puedePublicar ? 'pointer' : 'not-allowed';
+    const btnPublicarLabel = guardando ? 'Publicando...' : (puedePublicar ? 'Publicar historia' : 'Completa los requisitos');
+
+    const estadoBadgeBg = form.publicada ? 'var(--green-bg)' : '#fef9c3';
+    const estadoBadgeColor = form.publicada ? 'var(--green)' : '#92400e';
+    const estadoBadgeBorder = form.publicada ? 'var(--green)' : '#fde68a';
+    const estadoLabel = form.publicada ? 'Publicado' : 'Borrador';
+
+    const btnGuardarLabel = guardando ? 'Guardando...' : (historiaId ? 'Guardar cambios' : 'Guardar y Continuar →');
+
     return (
         <>
         <form onSubmit={handleGuardar}>
@@ -236,7 +266,10 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                     <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePortadaChange} />
 
                     <div
+                        role="button"
+                        tabIndex={0}
                         onClick={() => fileInputRef.current?.click()}
+                        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') fileInputRef.current?.click(); }}
                         style={{
                             border: '2px dashed var(--border)', borderRadius: 10,
                             overflow: 'hidden', position: 'relative', cursor: 'pointer',
@@ -284,8 +317,8 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                     </div>
 
                     <div style={{ marginTop: 10 }}>
-                        <label style={labelStyle}>O seleccionar existente</label>
-                        <select name="id_portada" value={form.id_portada} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                        <label htmlFor="select-portada" style={labelStyle}>O seleccionar existente</label>
+                        <select id="select-portada" name="id_portada" value={form.id_portada} onChange={handleChange} disabled={guardando} style={selectStyle}>
                             <option value="">-- Sin portada --</option>
                             {portadas.map(p => <option key={p.id} value={p.id}>{p.descripcion || `Portada ${p.id}`}</option>)}
                         </select>
@@ -301,24 +334,24 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                                 <ItemChecklist
                                     ok={form.titulo.trim().length > 0}
                                     label="Título definido"
-                                    hint={!form.titulo.trim() ? 'Escribe el nombre de tu historia.' : undefined}
+                                    hint={form.titulo.trim() ? undefined : 'Escribe el nombre de tu historia.'}
                                 />
                                 <ItemChecklist
                                     ok={nodos.length > 0}
-                                    label={nodos.length > 0 ? `${nodos.length} escena${nodos.length > 1 ? 's' : ''} creada${nodos.length > 1 ? 's' : ''}` : 'Al menos 1 escena'}
+                                    label={nodosLabel}
                                     hint={nodos.length === 0 ? 'Ve a la pestaña Escenas.' : undefined}
                                 />
                                 <ItemChecklist
                                     ok={!!form.id_nodo_inicio}
                                     label="Escena de inicio seleccionada"
-                                    hint={!form.id_nodo_inicio ? 'Elige la escena con la que empieza.' : undefined}
+                                    hint={form.id_nodo_inicio ? undefined : 'Elige la escena con la que empieza.'}
                                 />
                                 {nodosHuerfanos.length > 0 && (
                                     <ItemChecklist
                                         ok={false}
                                         advertencia
-                                        label={`${nodosHuerfanos.length} escena${nodosHuerfanos.length > 1 ? 's' : ''} sin salida`}
-                                        hint={`El lector quedaría bloqueado en: ${nodosHuerfanos.map(n => `"${n.titulo_nodo}"`).join(', ')}`}
+                                        label={`${nodosHuerfanos.length} escena${nodosPlural} sin salida`}
+                                        hint={`El lector quedaría bloqueado en: ${nombresNodosHuerfanos}`}
                                     />
                                 )}
                             </div>
@@ -328,16 +361,16 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                                 disabled={guardando || !puedePublicar}
                                 style={{
                                     marginTop: 12, width: '100%',
-                                    background: puedePublicar ? 'var(--green)' : 'var(--surface-2)',
-                                    border: `1px solid ${puedePublicar ? 'var(--green)' : 'var(--border)'}`,
-                                    color: puedePublicar ? '#fff' : 'var(--text-muted)',
+                                    background: btnPublicarBg,
+                                    border: `1px solid ${btnPublicarBorder}`,
+                                    color: btnPublicarColor,
                                     borderRadius: 8, padding: '8px 0',
-                                    cursor: puedePublicar ? 'pointer' : 'not-allowed',
+                                    cursor: btnPublicarCursor,
                                     fontWeight: 600, fontSize: '0.88rem',
                                     transition: 'all 0.15s',
                                 }}
                             >
-                                {guardando ? 'Publicando...' : puedePublicar ? 'Publicar historia' : 'Completa los requisitos'}
+                                {btnPublicarLabel}
                             </button>
                         </div>
                     )}
@@ -357,50 +390,50 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                 {/* Columna derecha: formulario */}
                 <div style={{ flex: 1, minWidth: 280, display: 'flex', flexDirection: 'column', gap: 16 }}>
                     <div>
-                        <label style={labelStyle}>Título de la Historia *</label>
-                        <input type="text" name="titulo" value={form.titulo} onChange={handleChange} required disabled={guardando}
+                        <label htmlFor="input-titulo" style={labelStyle}>Título de la Historia *</label>
+                        <input id="input-titulo" type="text" name="titulo" value={form.titulo} onChange={handleChange} required disabled={guardando}
                             placeholder="Ej. El Misterio del Edificio A" style={inputStyle} />
                         {errores.titulo && <p style={{ color: 'var(--red)', fontSize: '0.8rem', marginTop: 4 }}>{errores.titulo.join(', ')}</p>}
                     </div>
 
                     <div style={{ display: 'flex', gap: 12 }}>
                         <div style={{ flex: 1 }}>
-                            <label style={labelStyle}>Categoría</label>
-                            <select name="categoria" value={form.categoria} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                            <label htmlFor="select-categoria" style={labelStyle}>Categoría</label>
+                            <select id="select-categoria" name="categoria" value={form.categoria} onChange={handleChange} disabled={guardando} style={selectStyle}>
                                 <option value="">-- Sin categoría --</option>
                                 {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
                             </select>
                         </div>
                         <div style={{ flex: 1 }}>
-                            <label style={labelStyle}>Estado</label>
+                            <label htmlFor="estado-badge" style={labelStyle}>Estado</label>
                             <div style={{ display: 'flex', alignItems: 'center', height: 42 }}>
-                                <span style={{
+                                <span id="estado-badge" style={{
                                     display: 'inline-flex', alignItems: 'center', height: 28,
                                     padding: '0 12px', borderRadius: 20, fontSize: '0.8rem', fontWeight: 700,
-                                    background: form.publicada ? 'var(--green-bg)' : '#fef9c3',
-                                    color: form.publicada ? 'var(--green)' : '#92400e',
-                                    border: `1px solid ${form.publicada ? 'var(--green)' : '#fde68a'}`,
+                                    background: estadoBadgeBg,
+                                    color: estadoBadgeColor,
+                                    border: `1px solid ${estadoBadgeBorder}`,
                                 }}>
-                                    {form.publicada ? 'Publicado' : 'Borrador'}
+                                    {estadoLabel}
                                 </span>
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <label style={labelStyle}>Sinopsis / Prólogo</label>
-                        <textarea name="descripcion" rows={5} value={form.descripcion} onChange={handleChange}
+                        <label htmlFor="textarea-descripcion" style={labelStyle}>Sinopsis / Prólogo</label>
+                        <textarea id="textarea-descripcion" name="descripcion" rows={5} value={form.descripcion} onChange={handleChange}
                             disabled={guardando} placeholder="Este texto se mostrará al inicio de la historia..."
                             style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} />
                     </div>
 
                     {historiaId && nodos.length > 0 && (
                         <div>
-                            <label style={labelStyle}>Escena de inicio *</label>
+                            <label htmlFor="select-nodo-inicio" style={labelStyle}>Escena de inicio *</label>
                             <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0 0 6px' }}>
                                 La primera escena que verá el lector al comenzar la historia.
                             </p>
-                            <select name="id_nodo_inicio" value={form.id_nodo_inicio} onChange={handleChange} disabled={guardando}
+                            <select id="select-nodo-inicio" name="id_nodo_inicio" value={form.id_nodo_inicio} onChange={handleChange} disabled={guardando}
                                 style={{ ...selectStyle, ...(errores.id_nodo_inicio ? { borderColor: 'var(--red)' } : {}) }}>
                                 <option value="">-- Selecciona una escena --</option>
                                 {nodos.map(n => <option key={n.id} value={n.id}>{n.titulo_nodo}</option>)}
@@ -413,7 +446,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
 
                     <div style={{ marginTop: 'auto', paddingTop: 8 }}>
                         <button type="submit" disabled={guardando} style={btnPrimary}>
-                            {guardando ? 'Guardando...' : historiaId ? 'Guardar cambios' : 'Guardar y Continuar →'}
+                            {btnGuardarLabel}
                         </button>
                     </div>
                 </div>
@@ -432,3 +465,19 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
         </>
     );
 }
+
+TabInfo.propTypes = {
+    historia: PropTypes.shape({
+        titulo: PropTypes.string,
+        descripcion: PropTypes.string,
+        publicada: PropTypes.bool,
+        id_nodo_inicio: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        id_portada: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        categoria: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    }),
+    historiaId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    usuario: PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    }),
+    onGuardado: PropTypes.func,
+};

@@ -41,6 +41,58 @@ export default function TabHistorias() {
         return true;
     });
 
+    const historiasContenido = filtradas.length === 0 ? (
+        <Empty texto="Sin historias en esta categoría." />
+    ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {filtradas.map((h) => (
+                <div key={h.id} style={{
+                    background: 'var(--surface)', border: '1px solid var(--border)',
+                    borderRadius: 10, padding: '14px 18px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    gap: 12, boxShadow: 'var(--shadow-sm)',
+                }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 3 }}>
+                            <span style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.93rem' }}>
+                                {h.titulo}
+                            </span>
+                            <span className={`nv-badge ${h.publicada ? 'nv-badge-green' : 'nv-badge-yellow'}`}>
+                                {h.publicada ? 'Publicada' : 'Borrador'}
+                            </span>
+                        </div>
+                        <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                            {h.nombre_creador && <span>Autor: {h.nombre_creador}</span>}
+                            <span>·</span>
+                            <span>ID {h.id}</span>
+                            <span>·</span>
+                            <span>{new Date(h.fecha_creacion).toLocaleDateString('es-MX')}</span>
+                        </div>
+                        {h.descripcion && (
+                            <p style={{
+                                color: 'var(--text-muted)', fontSize: '0.82rem', marginTop: 4,
+                                overflow: 'hidden', display: '-webkit-box',
+                                WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
+                            }}>
+                                {h.descripcion}
+                            </p>
+                        )}
+                    </div>
+                    <button onClick={() => togglePublicar(h)} style={{
+                        height: 32, padding: '0 14px', borderRadius: 7,
+                        border: `1px solid ${h.publicada ? 'var(--red)' : 'var(--green)'}`,
+                        background: h.publicada ? 'var(--red-bg)' : 'var(--green-bg)',
+                        color: h.publicada ? 'var(--red)' : 'var(--green)',
+                        fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer',
+                        whiteSpace: 'nowrap', transition: 'opacity 0.15s',
+                    }}>
+                        {h.publicada ? 'Despublicar' : 'Publicar'}
+                    </button>
+                </div>
+            ))}
+        </div>
+    );
+
     return (
         <div>
             <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
@@ -60,57 +112,7 @@ export default function TabHistorias() {
 
             {cargando ? (
                 <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>
-            ) : filtradas.length === 0 ? (
-                <Empty texto="Sin historias en esta categoría." />
-            ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {filtradas.map((h) => (
-                        <div key={h.id} style={{
-                            background: 'var(--surface)', border: '1px solid var(--border)',
-                            borderRadius: 10, padding: '14px 18px',
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            gap: 12, boxShadow: 'var(--shadow-sm)',
-                        }}>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 3 }}>
-                                    <span style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.93rem' }}>
-                                        {h.titulo}
-                                    </span>
-                                    <span className={`nv-badge ${h.publicada ? 'nv-badge-green' : 'nv-badge-yellow'}`}>
-                                        {h.publicada ? 'Publicada' : 'Borrador'}
-                                    </span>
-                                </div>
-                                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                                    {h.nombre_creador && <span>Autor: {h.nombre_creador}</span>}
-                                    <span>·</span>
-                                    <span>ID {h.id}</span>
-                                    <span>·</span>
-                                    <span>{new Date(h.fecha_creacion).toLocaleDateString('es-MX')}</span>
-                                </div>
-                                {h.descripcion && (
-                                    <p style={{
-                                        color: 'var(--text-muted)', fontSize: '0.82rem', marginTop: 4,
-                                        overflow: 'hidden', display: '-webkit-box',
-                                        WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',
-                                    }}>
-                                        {h.descripcion}
-                                    </p>
-                                )}
-                            </div>
-                            <button onClick={() => togglePublicar(h)} style={{
-                                height: 32, padding: '0 14px', borderRadius: 7,
-                                border: `1px solid ${h.publicada ? 'var(--red)' : 'var(--green)'}`,
-                                background: h.publicada ? 'var(--red-bg)' : 'var(--green-bg)',
-                                color: h.publicada ? 'var(--red)' : 'var(--green)',
-                                fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer',
-                                whiteSpace: 'nowrap', transition: 'opacity 0.15s',
-                            }}>
-                                {h.publicada ? 'Despublicar' : 'Publicar'}
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            )}
+            ) : historiasContenido}
         </div>
     );
 }

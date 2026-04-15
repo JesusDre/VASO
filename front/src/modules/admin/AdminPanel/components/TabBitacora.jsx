@@ -63,52 +63,11 @@ export default function TabBitacora() {
         color: 'var(--text)', fontSize: '0.83rem',
     };
 
-    return (
-        <div>
-            {/* Filtros */}
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20, alignItems: 'flex-end' }}>
-                <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase' }}>Tabla</div>
-                    <select name="nombre_dato" value={filtros.nombre_dato} onChange={handleFiltro} style={selectStyle}>
-                        {MODELOS.map((m) => <option key={m} value={m}>{m || 'Todas'}</option>)}
-                    </select>
-                </div>
-                <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase' }}>Movimiento</div>
-                    <select name="tipo_movimiento" value={filtros.tipo_movimiento} onChange={handleFiltro} style={selectStyle}>
-                        {TIPOS.map((t) => <option key={t} value={t}>{t || 'Todos'}</option>)}
-                    </select>
-                </div>
-                <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase' }}>Desde</div>
-                    <input type="date" name="fecha_desde" value={filtros.fecha_desde} onChange={handleFiltro} style={inputStyle} />
-                </div>
-                <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase' }}>Hasta</div>
-                    <input type="date" name="fecha_hasta" value={filtros.fecha_hasta} onChange={handleFiltro} style={inputStyle} />
-                </div>
-                <button onClick={limpiarFiltros} style={{
-                    height: 34, padding: '0 14px', borderRadius: 7,
-                    border: '1px solid var(--border)', background: 'var(--surface)',
-                    color: 'var(--text-muted)', fontSize: '0.83rem', cursor: 'pointer',
-                }}>
-                    Limpiar
-                </button>
-            </div>
-
-            {/* Conteo */}
-            {!cargando && (
-                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 12 }}>
-                    {registros.length} registro{registros.length !== 1 ? 's' : ''} encontrado{registros.length !== 1 ? 's' : ''}
-                </p>
-            )}
-
-            {/* Tabla */}
-            {cargando ? (
-                <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>
-            ) : registros.length === 0 ? (
-                <Empty texto="Sin registros en la bitácora." />
-            ) : (
+    const bitacoraContenido = cargando
+        ? <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>
+        : registros.length === 0
+            ? <Empty texto="Sin registros en la bitácora." />
+            : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     {registros.map((r) => {
                         const badge = BADGE_COLOR[r.tipo_movimiento] || {};
@@ -125,7 +84,10 @@ export default function TabBitacora() {
                             }}>
                                 {/* Fila principal */}
                                 <div
+                                    role="button"
+                                    tabIndex={0}
                                     onClick={() => setExpandido(isOpen ? null : r.id)}
+                                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setExpandido(isOpen ? null : r.id); }}
                                     style={{
                                         padding: '12px 16px', cursor: 'pointer',
                                         display: 'flex', alignItems: 'center',
@@ -216,7 +178,50 @@ export default function TabBitacora() {
                         );
                     })}
                 </div>
+            );
+
+    return (
+        <div>
+            {/* Filtros */}
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 20, alignItems: 'flex-end' }}>
+                <div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase' }}>Tabla</div>
+                    <select name="nombre_dato" value={filtros.nombre_dato} onChange={handleFiltro} style={selectStyle}>
+                        {MODELOS.map((m) => <option key={m} value={m}>{m || 'Todas'}</option>)}
+                    </select>
+                </div>
+                <div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase' }}>Movimiento</div>
+                    <select name="tipo_movimiento" value={filtros.tipo_movimiento} onChange={handleFiltro} style={selectStyle}>
+                        {TIPOS.map((t) => <option key={t} value={t}>{t || 'Todos'}</option>)}
+                    </select>
+                </div>
+                <div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase' }}>Desde</div>
+                    <input type="date" name="fecha_desde" value={filtros.fecha_desde} onChange={handleFiltro} style={inputStyle} />
+                </div>
+                <div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 4, fontWeight: 600, textTransform: 'uppercase' }}>Hasta</div>
+                    <input type="date" name="fecha_hasta" value={filtros.fecha_hasta} onChange={handleFiltro} style={inputStyle} />
+                </div>
+                <button onClick={limpiarFiltros} style={{
+                    height: 34, padding: '0 14px', borderRadius: 7,
+                    border: '1px solid var(--border)', background: 'var(--surface)',
+                    color: 'var(--text-muted)', fontSize: '0.83rem', cursor: 'pointer',
+                }}>
+                    Limpiar
+                </button>
+            </div>
+
+            {/* Conteo */}
+            {!cargando && (
+                <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 12 }}>
+                    {registros.length} registro{registros.length === 1 ? '' : 's'} encontrado{registros.length === 1 ? '' : 's'}
+                </p>
             )}
+
+            {/* Tabla */}
+            {bitacoraContenido}
         </div>
     );
 }

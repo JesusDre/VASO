@@ -174,6 +174,10 @@ function RolesPanel() {
         r.nombre_rol.toLowerCase().includes(filtro.toLowerCase())
     );
 
+    const rolesUsuariosSubmitLabel = cargandoGuardar
+        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
+        : editandoId ? 'Actualizar' : 'Guardar';
+
     return (
         <div className="row">
             <div className="col-md-4 mb-4">
@@ -184,8 +188,8 @@ function RolesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Nombre del rol</label>
-                                <input type="text" name="nombre_rol"
+                                <label htmlFor="nombre_rol_usuarios" className="form-label">Nombre del rol</label>
+                                <input id="nombre_rol_usuarios" type="text" name="nombre_rol"
                                     className={`form-control ${errores.nombre_rol ? 'is-invalid' : ''}`}
                                     value={formData.nombre_rol} onChange={handleChange}
                                     required disabled={cargandoGuardar}
@@ -194,9 +198,7 @@ function RolesPanel() {
                             </div>
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                    {rolesUsuariosSubmitLabel}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>

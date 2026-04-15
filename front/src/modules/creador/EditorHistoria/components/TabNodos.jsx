@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import {
     readNodos, createNodo, updateNodo, deleteNodo,
@@ -41,6 +42,11 @@ function ToggleModo({ modo, onChange }) {
         </div>
     );
 }
+
+ToggleModo.propTypes = {
+    modo: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+};
 
 export default function TabNodos({ historiaId }) {
     const [confirmDelete, setConfirmDelete] = useState(null);
@@ -222,26 +228,26 @@ export default function TabNodos({ historiaId }) {
                 <form onSubmit={handleGuardar}>
                     {/* Título */}
                     <div style={{ marginBottom: 12 }}>
-                        <label style={labelStyle}>Título interno</label>
-                        <input type="text" name="titulo_nodo" value={form.titulo_nodo} onChange={handleChange} required disabled={guardando} style={inputStyle} placeholder="Ej: Escena 1" />
+                        <label htmlFor="titulo_nodo" style={labelStyle}>Título interno</label>
+                        <input id="titulo_nodo" type="text" name="titulo_nodo" value={form.titulo_nodo} onChange={handleChange} required disabled={guardando} style={inputStyle} placeholder="Ej: Escena 1" />
                         {errores.titulo_nodo && <p style={{ color: 'var(--red)', fontSize: '0.8rem' }}>{errores.titulo_nodo.join(', ')}</p>}
                     </div>
 
                     {/* Texto */}
                     <div style={{ marginBottom: 12 }}>
-                        <label style={labelStyle}>Texto narrativo / Diálogo</label>
-                        <textarea name="texto" rows={4} value={form.texto} onChange={handleChange} required disabled={guardando} style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} placeholder="Lo que verá el lector..." />
+                        <label htmlFor="texto_nodo" style={labelStyle}>Texto narrativo / Diálogo</label>
+                        <textarea id="texto_nodo" name="texto" rows={4} value={form.texto} onChange={handleChange} required disabled={guardando} style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} placeholder="Lo que verá el lector..." />
                     </div>
 
                     {/* Imagen de fondo */}
                     <div style={{ marginBottom: 12 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                            <label style={{ ...labelStyle, marginBottom: 0 }}>Imagen de fondo</label>
+                            <label htmlFor="id_imagen_escenario" style={{ ...labelStyle, marginBottom: 0 }}>Imagen de fondo</label>
                             <ToggleModo modo={modoImagen} onChange={setModoImagen} />
                         </div>
 
                         {modoImagen === 'seleccionar' ? (
-                            <select name="id_imagen_escenario" value={form.id_imagen_escenario} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                            <select id="id_imagen_escenario" name="id_imagen_escenario" value={form.id_imagen_escenario} onChange={handleChange} disabled={guardando} style={selectStyle}>
                                 <option value="">-- Sin imagen --</option>
                                 {imagenesFondo.map((i) => (
                                     <option key={i.id} value={i.id}>{i.descripcion || `Imagen ${i.id}`}</option>
@@ -267,7 +273,7 @@ export default function TabNodos({ historiaId }) {
                                     type="button"
                                     onClick={handleSubirImagen}
                                     disabled={subiendoImg || !imgFile}
-                                    style={{ ...btnPrimary, fontSize: '0.84rem', padding: '7px 14px', opacity: !imgFile ? 0.5 : 1 }}
+                                    style={{ ...btnPrimary, fontSize: '0.84rem', padding: '7px 14px', opacity: imgFile ? 1 : 0.5 }}
                                 >
                                     {subiendoImg ? 'Subiendo...' : 'Subir y seleccionar'}
                                 </button>
@@ -278,12 +284,12 @@ export default function TabNodos({ historiaId }) {
                     {/* Audio de fondo */}
                     <div style={{ marginBottom: 14 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                            <label style={{ ...labelStyle, marginBottom: 0 }}>Audio de fondo</label>
+                            <label htmlFor="id_audio_fondo" style={{ ...labelStyle, marginBottom: 0 }}>Audio de fondo</label>
                             <ToggleModo modo={modoAudio} onChange={setModoAudio} />
                         </div>
 
                         {modoAudio === 'seleccionar' ? (
-                            <select name="id_audio_fondo" value={form.id_audio_fondo} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                            <select id="id_audio_fondo" name="id_audio_fondo" value={form.id_audio_fondo} onChange={handleChange} disabled={guardando} style={selectStyle}>
                                 <option value="">-- Sin audio --</option>
                                 {audios.map((a) => (
                                     <option key={a.id} value={a.id}>{a.descripcion || `Audio ${a.id}`}</option>
@@ -309,7 +315,7 @@ export default function TabNodos({ historiaId }) {
                                     type="button"
                                     onClick={handleSubirAudio}
                                     disabled={subiendoAud || !audFile}
-                                    style={{ ...btnPrimary, fontSize: '0.84rem', padding: '7px 14px', opacity: !audFile ? 0.5 : 1 }}
+                                    style={{ ...btnPrimary, fontSize: '0.84rem', padding: '7px 14px', opacity: audFile ? 1 : 0.5 }}
                                 >
                                     {subiendoAud ? 'Subiendo...' : 'Subir y seleccionar'}
                                 </button>
@@ -410,20 +416,20 @@ export default function TabNodos({ historiaId }) {
             {modalEditar && (
                 <form onSubmit={handleGuardarEdit}>
                     <div style={{ marginBottom: 12 }}>
-                        <label style={labelStyle}>Título interno</label>
-                        <input type="text" name="titulo_nodo" value={formEditar.titulo_nodo} onChange={handleChangeEdit} required disabled={guardandoEdit} style={inputStyle} />
+                        <label htmlFor="edit_titulo_nodo" style={labelStyle}>Título interno</label>
+                        <input id="edit_titulo_nodo" type="text" name="titulo_nodo" value={formEditar.titulo_nodo} onChange={handleChangeEdit} required disabled={guardandoEdit} style={inputStyle} />
                         {erroresEdit.titulo_nodo && <p style={{ color: 'var(--red)', fontSize: '0.8rem' }}>{erroresEdit.titulo_nodo.join(', ')}</p>}
                     </div>
 
                     <div style={{ marginBottom: 12 }}>
-                        <label style={labelStyle}>Texto narrativo / Diálogo</label>
-                        <textarea name="texto" rows={4} value={formEditar.texto} onChange={handleChangeEdit} required disabled={guardandoEdit} style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} />
+                        <label htmlFor="edit_texto_nodo" style={labelStyle}>Texto narrativo / Diálogo</label>
+                        <textarea id="edit_texto_nodo" name="texto" rows={4} value={formEditar.texto} onChange={handleChangeEdit} required disabled={guardandoEdit} style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} />
                         {erroresEdit.texto && <p style={{ color: 'var(--red)', fontSize: '0.8rem' }}>{erroresEdit.texto.join(', ')}</p>}
                     </div>
 
                     <div style={{ marginBottom: 12 }}>
-                        <label style={labelStyle}>Imagen de fondo</label>
-                        <select name="id_imagen_escenario" value={formEditar.id_imagen_escenario} onChange={handleChangeEdit} disabled={guardandoEdit} style={selectStyle}>
+                        <label htmlFor="edit_id_imagen_escenario" style={labelStyle}>Imagen de fondo</label>
+                        <select id="edit_id_imagen_escenario" name="id_imagen_escenario" value={formEditar.id_imagen_escenario} onChange={handleChangeEdit} disabled={guardandoEdit} style={selectStyle}>
                             <option value="">-- Sin imagen --</option>
                             {imagenesFondo.map((i) => (
                                 <option key={i.id} value={i.id}>{i.descripcion || `Imagen ${i.id}`}</option>
@@ -432,8 +438,8 @@ export default function TabNodos({ historiaId }) {
                     </div>
 
                     <div style={{ marginBottom: 14 }}>
-                        <label style={labelStyle}>Audio de fondo</label>
-                        <select name="id_audio_fondo" value={formEditar.id_audio_fondo} onChange={handleChangeEdit} disabled={guardandoEdit} style={selectStyle}>
+                        <label htmlFor="edit_id_audio_fondo" style={labelStyle}>Audio de fondo</label>
+                        <select id="edit_id_audio_fondo" name="id_audio_fondo" value={formEditar.id_audio_fondo} onChange={handleChangeEdit} disabled={guardandoEdit} style={selectStyle}>
                             <option value="">-- Sin audio --</option>
                             {audios.map((a) => (
                                 <option key={a.id} value={a.id}>{a.descripcion || `Audio ${a.id}`}</option>
@@ -468,3 +474,7 @@ export default function TabNodos({ historiaId }) {
         </>
     );
 }
+
+TabNodos.propTypes = {
+    historiaId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};
