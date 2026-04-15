@@ -99,12 +99,17 @@ export default function TabCategorias() {
         letterSpacing: '0.05em',
     };
 
+    let textoGuardar;
+    if (guardando) textoGuardar = 'Guardando...';
+    else if (editandoId) textoGuardar = 'Guardar cambios';
+    else textoGuardar = 'Crear';
+
     return (
         <div>
             {/* Cabecera */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: 0 }}>
-                    {categorias.length} categoría{categorias.length !== 1 ? 's' : ''} activa{categorias.length !== 1 ? 's' : ''}
+                    {categorias.length} categoría{categorias.length === 1 ? '' : 's'} activa{categorias.length === 1 ? '' : 's'}
                 </p>
                 {!modoFormulario && (
                     <button onClick={abrirCrear} style={{
@@ -129,8 +134,9 @@ export default function TabCategorias() {
                     </p>
                     <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                         <div style={{ flex: 1, minWidth: 200 }}>
-                            <label style={labelStyle}>Nombre *</label>
+                            <label style={labelStyle} htmlFor="cat-nombre">Nombre *</label>
                             <input
+                                id="cat-nombre"
                                 name="nombre"
                                 value={form.nombre}
                                 onChange={handleChange}
@@ -140,8 +146,9 @@ export default function TabCategorias() {
                             />
                         </div>
                         <div style={{ flex: 2, minWidth: 260 }}>
-                            <label style={labelStyle}>Descripción</label>
+                            <label style={labelStyle} htmlFor="cat-desc">Descripción</label>
                             <input
+                                id="cat-desc"
                                 name="descripcion"
                                 value={form.descripcion}
                                 onChange={handleChange}
@@ -157,7 +164,7 @@ export default function TabCategorias() {
                             background: 'var(--accent)', border: 'none',
                             color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
                         }}>
-                            {guardando ? 'Guardando...' : editandoId ? 'Guardar cambios' : 'Crear'}
+                            {textoGuardar}
                         </button>
                         <button type="button" onClick={cancelar} disabled={guardando} style={{
                             height: 34, padding: '0 16px', borderRadius: 8,
@@ -171,11 +178,10 @@ export default function TabCategorias() {
             )}
 
             {/* Listado */}
-            {cargando ? (
-                <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>
-            ) : categorias.length === 0 ? (
-                <Empty texto="No hay categorías activas. Crea la primera." />
-            ) : (
+                {(() => {
+                    if (cargando) return <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>;
+                    if (categorias.length === 0) return <Empty texto="No hay categorías activas. Crea la primera." />;
+                    return (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {categorias.map((cat) => (
                         <div key={cat.id} style={{
@@ -216,7 +222,8 @@ export default function TabCategorias() {
                         </div>
                     ))}
                 </div>
-            )}
+                    );
+                })()}
         </div>
     );
 }

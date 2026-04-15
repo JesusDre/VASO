@@ -184,8 +184,8 @@ function RolesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Nombre del rol</label>
-                                <input type="text" name="nombre_rol"
+                                <label className="form-label" htmlFor="lg-rol-nombre">Nombre del rol</label>
+                                <input id="lg-rol-nombre" type="text" name="nombre_rol"
                                     className={`form-control ${errores.nombre_rol ? 'is-invalid' : ''}`}
                                     value={formData.nombre_rol} onChange={handleChange}
                                     required disabled={cargandoGuardar}
@@ -196,7 +196,7 @@ function RolesPanel() {
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
                                     {cargandoGuardar
                                         ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                        : (editandoId ? 'Actualizar' : 'Guardar')}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>

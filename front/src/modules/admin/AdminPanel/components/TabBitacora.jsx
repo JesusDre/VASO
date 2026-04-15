@@ -99,7 +99,7 @@ export default function TabBitacora() {
             {/* Conteo */}
             {!cargando && (
                 <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 12 }}>
-                    {registros.length} registro{registros.length !== 1 ? 's' : ''} encontrado{registros.length !== 1 ? 's' : ''}
+                    {registros.length} registro{registros.length === 1 ? '' : 's'} encontrado{registros.length === 1 ? '' : 's'}
                 </p>
             )}
 
@@ -124,12 +124,16 @@ export default function TabBitacora() {
                                 borderRadius: 10, overflow: 'hidden', boxShadow: 'var(--shadow-sm)',
                             }}>
                                 {/* Fila principal */}
-                                <div
+                                <button
+                                    type="button"
                                     onClick={() => setExpandido(isOpen ? null : r.id)}
                                     style={{
+                                        width: '100%', textAlign: 'left',
                                         padding: '12px 16px', cursor: 'pointer',
                                         display: 'flex', alignItems: 'center',
                                         gap: 12, flexWrap: 'wrap',
+                                        background: 'none', border: 'none',
+                                        color: 'inherit', font: 'inherit',
                                     }}
                                 >
                                     {/* Badge tipo */}
@@ -173,7 +177,7 @@ export default function TabBitacora() {
                                     <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: '0.78rem', flexShrink: 0 }}>
                                         {isOpen ? '▲ Ocultar' : '▼ Ver valores'}
                                     </span>
-                                </div>
+                                </button>
 
                                 {/* Detalle expandido */}
                                 {isOpen && (

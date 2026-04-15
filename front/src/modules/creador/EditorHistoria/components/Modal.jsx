@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import PropTypes from 'prop-types';
 
 export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }) {
     useEffect(() => {
@@ -12,7 +13,8 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
 
     return (
         <div
-            onClick={onClose}
+            role="presentation"
+            onMouseDown={onClose}
             style={{
                 position: 'fixed', inset: 0, zIndex: 1000,
                 background: 'rgba(15,23,42,0.45)',
@@ -20,8 +22,9 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
                 padding: '1rem',
             }}
         >
-            <div
-                onClick={(e) => e.stopPropagation()}
+            <dialog
+                open
+                onMouseDown={(e) => e.stopPropagation()}
                 style={{
                     background: 'var(--surface)',
                     border: '1px solid var(--border)',
@@ -41,7 +44,15 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
                     </button>
                 </div>
                 {children}
-            </div>
+            </dialog>
         </div>
     );
 }
+
+Modal.propTypes = {
+    isOpen: PropTypes.bool.isRequired,
+    titulo: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired,
+    onClose: PropTypes.func.isRequired,
+    ancho: PropTypes.number,
+};

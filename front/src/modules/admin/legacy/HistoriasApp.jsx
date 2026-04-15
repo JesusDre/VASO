@@ -147,8 +147,9 @@ export default function HistoriasApp() {
                             <div className="card-body">
                                 <form onSubmit={handleSubmit}>
                                     <div className="mb-3">
-                                        <label className="form-label">Titulo</label>
+                                        <label className="form-label" htmlFor="lg-hist-titulo">Titulo</label>
                                         <input
+                                            id="lg-hist-titulo"
                                             type="text" name="titulo"
                                             className={`form-control ${errores.titulo ? 'is-invalid' : ''}`}
                                             value={formData.titulo} onChange={handleChange}
@@ -159,8 +160,9 @@ export default function HistoriasApp() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Descripcion</label>
+                                        <label className="form-label" htmlFor="lg-hist-desc">Descripcion</label>
                                         <textarea
+                                            id="lg-hist-desc"
                                             name="descripcion" rows="3"
                                             className={`form-control ${errores.descripcion ? 'is-invalid' : ''}`}
                                             value={formData.descripcion} onChange={handleChange}
@@ -170,8 +172,9 @@ export default function HistoriasApp() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Creador</label>
+                                        <label className="form-label" htmlFor="lg-hist-creador">Creador</label>
                                         <select
+                                            id="lg-hist-creador"
                                             name="id_creador"
                                             className={`form-select ${errores.id_creador ? 'is-invalid' : ''}`}
                                             value={formData.id_creador} onChange={handleChange}
@@ -188,8 +191,9 @@ export default function HistoriasApp() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Nodo de inicio (opcional)</label>
+                                        <label className="form-label" htmlFor="lg-hist-nodo">Nodo de inicio (opcional)</label>
                                         <select
+                                            id="lg-hist-nodo"
                                             name="id_nodo_inicio"
                                             className={`form-select ${errores.id_nodo_inicio ? 'is-invalid' : ''}`}
                                             value={formData.id_nodo_inicio} onChange={handleChange}
@@ -219,7 +223,7 @@ export default function HistoriasApp() {
                                         <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
                                             {cargandoGuardar
                                                 ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                                : editandoId ? 'Actualizar' : 'Guardar'}
+                                                : (editandoId ? 'Actualizar' : 'Guardar')}
                                         </button>
                                         {editandoId && (
                                             <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>

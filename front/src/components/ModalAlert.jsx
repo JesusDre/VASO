@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import '../styles/modal-alert.css';
 
 const icons = {
@@ -41,6 +42,7 @@ export default function ModalAlert({
     cancelText = 'Cancelar',
     hideCancel = false,
 }) {
+    const dialogRef = useRef(null);
     const handleCancel = () => onClose(false);
     const handleConfirm = () => onClose(true);
 
@@ -51,17 +53,29 @@ export default function ModalAlert({
         return () => document.removeEventListener('keydown', handleKey);
     }, [open]);
 
+    // Focus trap: focus the dialog when opened
+    useEffect(() => {
+        if (open && dialogRef.current) {
+            dialogRef.current.focus();
+        }
+    }, [open]);
+
     if (!open) return null;
 
     return (
-        <div className="modal-alert-backdrop" onClick={handleCancel}>
-            <div
+        <div
+            className="modal-alert-backdrop"
+            role="presentation"
+            onMouseDown={handleCancel}
+        >
+            <dialog
+                ref={dialogRef}
                 className={`modal-alert-box alert-${type}`}
-                onClick={(e) => e.stopPropagation()}
-                role="dialog"
-                aria-modal="true"
+                open
+                onMouseDown={(e) => e.stopPropagation()}
                 aria-labelledby="modal-alert-title"
                 aria-describedby="modal-alert-description"
+                tabIndex={-1}
             >
                 <div className="modal-alert-body">
                     {icons[type] ?? icons.info}
@@ -79,7 +93,18 @@ export default function ModalAlert({
                         {confirmText}
                     </button>
                 </div>
-            </div>
+            </dialog>
         </div>
     );
 }
+
+ModalAlert.propTypes = {
+    open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
+    message: PropTypes.string.isRequired,
+    type: PropTypes.oneOf(['success', 'error', 'warning', 'info']),
+    confirmText: PropTypes.string,
+    cancelText: PropTypes.string,
+    hideCancel: PropTypes.bool,
+};

@@ -6,6 +6,7 @@ import { inputStyle, labelStyle, selectStyle, btnPrimary, btnGhost, cardStyle } 
 import Modal from './Modal';
 import ModalAlert from '../../../../components/ModalAlert';
 import toast from 'react-hot-toast';
+import PropTypes from 'prop-types';
 
 export default function TabOpciones({ historiaId }) {
     const FORM = { texto_opcion: '', id_nodo_origen: '', id_nodo_destino: '' };
@@ -173,8 +174,8 @@ export default function TabOpciones({ historiaId }) {
                 <form onSubmit={handleGuardar}>
                     {/* Texto de la opción */}
                     <div style={{ marginBottom: 14 }}>
-                        <label style={labelStyle}>¿Qué ve el lector?</label>
-                        <input
+                        <label style={labelStyle} htmlFor="opc-texto">¿Qué ve el lector?</label>
+                        <input id="opc-texto"
                             type="text" name="texto_opcion" value={form.texto_opcion}
                             onChange={handleChange} required disabled={guardando}
                             style={inputStyle} placeholder='Ej: "Entrar al bosque oscuro"'
@@ -187,8 +188,8 @@ export default function TabOpciones({ historiaId }) {
 
                     {/* Nodo origen */}
                     <div style={{ marginBottom: 14 }}>
-                        <label style={labelStyle}>¿En qué escena aparece?</label>
-                        <select name="id_nodo_origen" value={form.id_nodo_origen} onChange={handleChange} required disabled={guardando} style={selectStyle}>
+                        <label style={labelStyle} htmlFor="opc-origen">¿En qué escena aparece?</label>
+                        <select id="opc-origen" name="id_nodo_origen" value={form.id_nodo_origen} onChange={handleChange} required disabled={guardando} style={selectStyle}>
                             <option value="">-- Selecciona la escena --</option>
                             {nodos.map(n => (
                                 <option key={n.id} value={n.id}>
@@ -203,8 +204,8 @@ export default function TabOpciones({ historiaId }) {
 
                     {/* Nodo destino */}
                     <div style={{ marginBottom: 14 }}>
-                        <label style={labelStyle}>¿A qué escena lleva?</label>
-                        <select name="id_nodo_destino" value={form.id_nodo_destino} onChange={handleChange} required disabled={guardando || !form.id_nodo_origen} style={selectStyle}>
+                        <label style={labelStyle} htmlFor="opc-destino">¿A qué escena lleva?</label>
+                        <select id="opc-destino" name="id_nodo_destino" value={form.id_nodo_destino} onChange={handleChange} required disabled={guardando || !form.id_nodo_origen} style={selectStyle}>
                             <option value="">-- Selecciona la escena --</option>
                             {nodosDestino.map(n => (
                                 <option key={n.id} value={n.id}>{n.titulo_nodo}</option>
@@ -323,8 +324,9 @@ export default function TabOpciones({ historiaId }) {
             {modalEditar && (
                 <form onSubmit={handleGuardarEdit}>
                     <div style={{ marginBottom: 14 }}>
-                        <label style={labelStyle}>¿Qué ve el lector?</label>
+                        <label style={labelStyle} htmlFor="edit-opc-texto">¿Qué ve el lector?</label>
                         <input
+                            id="edit-opc-texto"
                             type="text" name="texto_opcion" value={formEditar.texto_opcion}
                             onChange={handleChangeEdit} required disabled={guardandoEdit}
                             style={inputStyle} placeholder='Ej: "Entrar al bosque oscuro"'
@@ -336,8 +338,8 @@ export default function TabOpciones({ historiaId }) {
                     </div>
 
                     <div style={{ marginBottom: 14 }}>
-                        <label style={labelStyle}>¿En qué escena aparece?</label>
-                        <select name="id_nodo_origen" value={formEditar.id_nodo_origen} onChange={handleChangeEdit} required disabled={guardandoEdit} style={selectStyle}>
+                        <label style={labelStyle} htmlFor="edit-opc-origen">¿En qué escena aparece?</label>
+                        <select id="edit-opc-origen" name="id_nodo_origen" value={formEditar.id_nodo_origen} onChange={handleChangeEdit} required disabled={guardandoEdit} style={selectStyle}>
                             <option value="">-- Selecciona la escena --</option>
                             {nodos.map(n => (
                                 <option key={n.id} value={n.id}>{n.titulo_nodo}{n.es_final ? ' (final)' : ''}</option>
@@ -346,8 +348,8 @@ export default function TabOpciones({ historiaId }) {
                     </div>
 
                     <div style={{ marginBottom: 14 }}>
-                        <label style={labelStyle}>¿A qué escena lleva?</label>
-                        <select name="id_nodo_destino" value={formEditar.id_nodo_destino} onChange={handleChangeEdit} required disabled={guardandoEdit || !formEditar.id_nodo_origen} style={selectStyle}>
+                        <label style={labelStyle} htmlFor="edit-opc-destino">¿A qué escena lleva?</label>
+                        <select id="edit-opc-destino" name="id_nodo_destino" value={formEditar.id_nodo_destino} onChange={handleChangeEdit} required disabled={guardandoEdit || !formEditar.id_nodo_origen} style={selectStyle}>
                             <option value="">-- Selecciona la escena --</option>
                             {nodos.filter(n => String(n.id) !== String(formEditar.id_nodo_origen)).map(n => (
                                 <option key={n.id} value={n.id}>{n.titulo_nodo}</option>
@@ -397,3 +399,7 @@ export default function TabOpciones({ historiaId }) {
         </>
     );
 }
+
+TabOpciones.propTypes = {
+    historiaId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+};

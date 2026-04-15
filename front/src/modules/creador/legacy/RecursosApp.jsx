@@ -102,8 +102,8 @@ function ImagenesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Tipo</label>
-                                <select name="tipo" className={`form-select ${errores.tipo ? 'is-invalid' : ''}`}
+                                <label className="form-label" htmlFor="lg-rec-tipo">Tipo</label>
+                                <select id="lg-rec-tipo" name="tipo" className={`form-select ${errores.tipo ? 'is-invalid' : ''}`}
                                     value={formData.tipo} onChange={handleChange} required disabled={cargandoGuardar}>
                                     <option value="escenario">Escenario</option>
                                     <option value="personaje">Personaje</option>
@@ -112,23 +112,23 @@ function ImagenesPanel() {
                                 {errores.tipo && <div className="invalid-feedback">{errores.tipo.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Descripcion</label>
-                                <input type="text" name="descripcion"
+                                <label className="form-label" htmlFor="lg-rec-desc">Descripcion</label>
+                                <input id="lg-rec-desc" type="text" name="descripcion"
                                     className={`form-control ${errores.descripcion ? 'is-invalid' : ''}`}
                                     value={formData.descripcion} onChange={handleChange}
                                     disabled={cargandoGuardar} placeholder="Descripcion de la imagen" />
                                 {errores.descripcion && <div className="invalid-feedback">{errores.descripcion.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Imagen (archivo en servidor)</label>
-                                <input type="file" name="url"
+                                <label className="form-label" htmlFor="lg-rec-url">Imagen (archivo en servidor)</label>
+                                <input id="lg-rec-url" type="file" name="url"
                                     className={`form-control ${errores.url ? 'is-invalid' : ''}`}
                                     onChange={handleChange} accept="image/*" disabled={cargandoGuardar} />
                                 {errores.url && <div className="invalid-feedback">{errores.url.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Imagen binaria (en BD)</label>
-                                <input type="file" name="imagen_para_binario"
+                                <label className="form-label" htmlFor="lg-rec-bin">Imagen binaria (en BD)</label>
+                                <input id="lg-rec-bin" type="file" name="imagen_para_binario"
                                     className={`form-control ${errores.imagen_para_binario ? 'is-invalid' : ''}`}
                                     onChange={handleChange} accept="image/*" disabled={cargandoGuardar} />
                                 {errores.imagen_para_binario && <div className="invalid-feedback">{errores.imagen_para_binario.join(', ')}</div>}
@@ -137,7 +137,7 @@ function ImagenesPanel() {
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
                                     {cargandoGuardar
                                         ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                        : (editandoId ? 'Actualizar' : 'Guardar')}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
@@ -295,16 +295,16 @@ function AudiosPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Descripcion</label>
-                                <input type="text" name="descripcion"
+                                <label className="form-label" htmlFor="lg-aud-desc">Descripcion</label>
+                                <input id="lg-aud-desc" type="text" name="descripcion"
                                     className={`form-control ${errores.descripcion ? 'is-invalid' : ''}`}
                                     value={formData.descripcion} onChange={handleChange}
                                     disabled={cargandoGuardar} placeholder="Nombre del audio" />
                                 {errores.descripcion && <div className="invalid-feedback">{errores.descripcion.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Archivo de audio</label>
-                                <input type="file" name="archivo"
+                                <label className="form-label" htmlFor="lg-aud-file">Archivo de audio</label>
+                                <input id="lg-aud-file" type="file" name="archivo"
                                     className={`form-control ${errores.archivo ? 'is-invalid' : ''}`}
                                     onChange={handleChange} accept="audio/*" disabled={cargandoGuardar} />
                                 {errores.archivo && <div className="invalid-feedback">{errores.archivo.join(', ')}</div>}
@@ -313,7 +313,7 @@ function AudiosPanel() {
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
                                     {cargandoGuardar
                                         ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                        : (editandoId ? 'Actualizar' : 'Guardar')}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>

@@ -17,7 +17,7 @@ function validarPassword(password) {
     const errores = [];
     if (password.length < 8) errores.push('mínimo 8 caracteres');
     if (!/[A-Z]/.test(password)) errores.push('al menos una mayúscula');
-    if (!/[0-9]/.test(password)) errores.push('al menos un número');
+    if (!/\d/.test(password)) errores.push('al menos un número');
     if (!/[^a-zA-Z0-9]/.test(password)) errores.push('al menos un carácter especial');
     return errores;
 }
@@ -280,7 +280,7 @@ function Register() {
                             <div className="login-error" role="alert">{error}</div>
                         )}
                         {success && (
-                            <div className="login-success" role="status">{success}</div>
+                            <output className="login-success">{success}</output>
                         )}
 
                         <button type="submit" disabled={loading} className="login-btn">

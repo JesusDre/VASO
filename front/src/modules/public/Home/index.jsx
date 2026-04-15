@@ -54,16 +54,18 @@ export default function Home() {
             </div>
 
             <div className="nv-home-results">
-                {cargando ? (
+                {cargando && (
                     <div className="nv-home-feedback">
                         <div className="nv-spinner" />
                         <p>Cargando historias...</p>
                     </div>
-                ) : filtradas.length === 0 ? (
+                )}
+                {!cargando && filtradas.length === 0 && (
                     <div className="nv-home-feedback">
                         <p>{sinResultados}</p>
                     </div>
-                ) : (
+                )}
+                {!cargando && filtradas.length > 0 && (
                     <div className="nv-stories-grid">
                         {filtradas.map((h) => (
                             <HistoriaCard key={h.id} historia={h} />

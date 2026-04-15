@@ -6,6 +6,7 @@ import {
 } from '../../../../services/api';
 import { inputStyle, labelStyle, selectStyle, btnPrimary } from '../styles/editorStyles';
 import ModalAlert from '../../../../components/ModalAlert';
+import PropTypes from 'prop-types';
 
 function extraerMensajeError(err, fallback) {
     const data = err.response?.data;
@@ -59,6 +60,13 @@ function ItemChecklist({ ok, label, hint, advertencia }) {
         </div>
     );
 }
+
+ItemChecklist.propTypes = {
+    ok: PropTypes.bool,
+    label: PropTypes.string.isRequired,
+    hint: PropTypes.string,
+    advertencia: PropTypes.bool,
+};
 
 export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
     const FORM_INICIAL = { titulo: '', descripcion: '', publicada: false, id_nodo_inicio: '', id_portada: '', categoria: '' };
@@ -217,11 +225,33 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
     };
 
     const portadaSeleccionada = portadas.find(p => p.id === Number(form.id_portada));
-    const portadaSrc = portadaSeleccionada
-        ? (portadaSeleccionada.imagen_base64_display
-            ? `data:image/png;base64,${portadaSeleccionada.imagen_base64_display}`
-            : portadaSeleccionada.url ? `http://localhost:8000${portadaSeleccionada.url}` : null)
-        : null;
+    let portadaSrc = null;
+    if (portadaSeleccionada) {
+        if (portadaSeleccionada.imagen_base64_display) {
+            portadaSrc = `data:image/png;base64,${portadaSeleccionada.imagen_base64_display}`;
+        } else if (portadaSeleccionada.url) {
+            portadaSrc = `http://localhost:8000${portadaSeleccionada.url}`;
+        }
+    }
+
+    const sufEscenas = nodos.length > 1 ? 's' : '';
+    const labelEscenas = nodos.length > 0
+        ? `${nodos.length} escena${sufEscenas} creada${sufEscenas}`
+        : 'Al menos 1 escena';
+    const hintEscenas = nodos.length === 0 ? 'Ve a la pestaña Escenas.' : undefined;
+    const sufHuerfanos = nodosHuerfanos.length > 1 ? 's' : '';
+    const labelHuerfanos = `${nodosHuerfanos.length} escena${sufHuerfanos} sin salida`;
+    const hintHuerfanos = 'El lector quedaría bloqueado en: ' + nodosHuerfanos.map(n => '"' + n.titulo_nodo + '"').join(', ');
+
+    let textoPublicar;
+    if (guardando) textoPublicar = 'Publicando...';
+    else if (puedePublicar) textoPublicar = 'Publicar historia';
+    else textoPublicar = 'Completa los requisitos';
+
+    let textoGuardar;
+    if (guardando) textoGuardar = 'Guardando...';
+    else if (historiaId) textoGuardar = 'Guardar cambios';
+    else textoGuardar = 'Guardar y Continuar →';
 
     return (
         <>
@@ -233,7 +263,8 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                     <p style={labelStyle}>Imagen de Portada</p>
                     <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePortadaChange} />
 
-                    <div
+                    <button
+                        type="button"
                         onClick={() => fileInputRef.current?.click()}
                         style={{
                             border: '2px dashed var(--border)', borderRadius: 10,
@@ -241,6 +272,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                             background: 'var(--surface-2)',
                             ...(portadaSrc && !imgError ? {} : { height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }),
                         }}
+                        aria-label="Subir portada"
                     >
                         {portadaSrc && !imgError && (
                             <img src={portadaSrc} alt="Portada" onError={() => setImgError(true)} style={{ display: 'block', width: '100%', height: 'auto' }} />
@@ -279,11 +311,11 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                                 <span style={{ color: '#fff', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Cambiar imagen</span>
                             </div>
                         )}
-                    </div>
+                    </button>
 
                     <div style={{ marginTop: 10 }}>
-                        <label style={labelStyle}>O seleccionar existente</label>
-                        <select name="id_portada" value={form.id_portada} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                        <label style={labelStyle} htmlFor="info-portada">O seleccionar existente</label>
+                        <select id="info-portada" name="id_portada" value={form.id_portada} onChange={handleChange} disabled={guardando} style={selectStyle}>
                             <option value="">-- Sin portada --</option>
                             {portadas.map(p => <option key={p.id} value={p.id}>{p.descripcion || `Portada ${p.id}`}</option>)}
                         </select>
@@ -303,8 +335,8 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                                 />
                                 <ItemChecklist
                                     ok={nodos.length > 0}
-                                    label={nodos.length > 0 ? `${nodos.length} escena${nodos.length > 1 ? 's' : ''} creada${nodos.length > 1 ? 's' : ''}` : 'Al menos 1 escena'}
-                                    hint={nodos.length === 0 ? 'Ve a la pestaña Escenas.' : undefined}
+                                    label={labelEscenas}
+                                    hint={hintEscenas}
                                 />
                                 <ItemChecklist
                                     ok={!!form.id_nodo_inicio}
@@ -315,8 +347,8 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                                     <ItemChecklist
                                         ok={false}
                                         advertencia
-                                        label={`${nodosHuerfanos.length} escena${nodosHuerfanos.length > 1 ? 's' : ''} sin salida`}
-                                        hint={`El lector quedaría bloqueado en: ${nodosHuerfanos.map(n => `"${n.titulo_nodo}"`).join(', ')}`}
+                                        label={labelHuerfanos}
+                                        hint={hintHuerfanos}
                                     />
                                 )}
                             </div>
@@ -335,7 +367,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                                     transition: 'all 0.15s',
                                 }}
                             >
-                                {guardando ? 'Publicando...' : puedePublicar ? 'Publicar historia' : 'Completa los requisitos'}
+                                {textoPublicar}
                             </button>
                         </div>
                     )}
@@ -355,22 +387,22 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                 {/* Columna derecha: formulario */}
                 <div style={{ flex: 1, minWidth: 280, display: 'flex', flexDirection: 'column', gap: 16 }}>
                     <div>
-                        <label style={labelStyle}>Título de la Historia *</label>
-                        <input type="text" name="titulo" value={form.titulo} onChange={handleChange} required disabled={guardando}
+                        <label style={labelStyle} htmlFor="info-titulo">Título de la Historia *</label>
+                        <input id="info-titulo" type="text" name="titulo" value={form.titulo} onChange={handleChange} required disabled={guardando}
                             placeholder="Ej. El Misterio del Edificio A" style={inputStyle} />
                         {errores.titulo && <p style={{ color: 'var(--red)', fontSize: '0.8rem', marginTop: 4 }}>{errores.titulo.join(', ')}</p>}
                     </div>
 
                     <div style={{ display: 'flex', gap: 12 }}>
                         <div style={{ flex: 1 }}>
-                            <label style={labelStyle}>Categoría</label>
-                            <select name="categoria" value={form.categoria} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                            <label style={labelStyle} htmlFor="info-cat">Categoría</label>
+                            <select id="info-cat" name="categoria" value={form.categoria} onChange={handleChange} disabled={guardando} style={selectStyle}>
                                 <option value="">-- Sin categoría --</option>
                                 {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
                             </select>
                         </div>
                         <div style={{ flex: 1 }}>
-                            <label style={labelStyle}>Estado</label>
+                            <p style={labelStyle}>Estado</p>
                             <div style={{ display: 'flex', alignItems: 'center', height: 42 }}>
                                 <span style={{
                                     display: 'inline-flex', alignItems: 'center', height: 28,
@@ -386,19 +418,19 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                     </div>
 
                     <div>
-                        <label style={labelStyle}>Sinopsis / Prólogo</label>
-                        <textarea name="descripcion" rows={5} value={form.descripcion} onChange={handleChange}
+                        <label style={labelStyle} htmlFor="info-desc">Sinopsis / Prólogo</label>
+                        <textarea id="info-desc" name="descripcion" rows={5} value={form.descripcion} onChange={handleChange}
                             disabled={guardando} placeholder="Este texto se mostrará al inicio de la historia..."
                             style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} />
                     </div>
 
                     {historiaId && nodos.length > 0 && (
                         <div>
-                            <label style={labelStyle}>Escena de inicio *</label>
+                            <label style={labelStyle} htmlFor="info-nodo-inicio">Escena de inicio *</label>
                             <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0 0 6px' }}>
                                 La primera escena que verá el lector al comenzar la historia.
                             </p>
-                            <select name="id_nodo_inicio" value={form.id_nodo_inicio} onChange={handleChange} disabled={guardando}
+                            <select id="info-nodo-inicio" name="id_nodo_inicio" value={form.id_nodo_inicio} onChange={handleChange} disabled={guardando}
                                 style={{ ...selectStyle, ...(errores.id_nodo_inicio ? { borderColor: 'var(--red)' } : {}) }}>
                                 <option value="">-- Selecciona una escena --</option>
                                 {nodos.map(n => <option key={n.id} value={n.id}>{n.titulo_nodo}</option>)}
@@ -411,7 +443,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
 
                     <div style={{ marginTop: 'auto', paddingTop: 8 }}>
                         <button type="submit" disabled={guardando} style={btnPrimary}>
-                            {guardando ? 'Guardando...' : historiaId ? 'Guardar cambios' : 'Guardar y Continuar →'}
+                            {textoGuardar}
                         </button>
                     </div>
                 </div>
@@ -430,3 +462,12 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
         </>
     );
 }
+
+TabInfo.propTypes = {
+    historia: PropTypes.object,
+    historiaId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    usuario: PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+    }).isRequired,
+    onGuardado: PropTypes.func.isRequired,
+};

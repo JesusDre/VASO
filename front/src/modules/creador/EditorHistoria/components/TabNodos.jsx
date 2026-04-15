@@ -7,6 +7,7 @@ import {
 import { inputStyle, labelStyle, selectStyle, btnPrimary, btnGhost, cardStyle } from '../styles/editorStyles';
 import Modal from './Modal';
 import ModalAlert from '../../../../components/ModalAlert';
+import PropTypes from 'prop-types';
 
 function extraerMensajeError(err, fallback) {
     const data = err.response?.data;
@@ -41,6 +42,11 @@ function ToggleModo({ modo, onChange }) {
         </div>
     );
 }
+
+ToggleModo.propTypes = {
+    modo: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
+};
 
 export default function TabNodos({ historiaId }) {
     const [confirmDelete, setConfirmDelete] = useState(null);
@@ -222,26 +228,26 @@ export default function TabNodos({ historiaId }) {
                 <form onSubmit={handleGuardar}>
                     {/* Título */}
                     <div style={{ marginBottom: 12 }}>
-                        <label style={labelStyle}>Título interno</label>
-                        <input type="text" name="titulo_nodo" value={form.titulo_nodo} onChange={handleChange} required disabled={guardando} style={inputStyle} placeholder="Ej: Escena 1" />
+                        <label style={labelStyle} htmlFor="nodo-titulo">Título interno</label>
+                        <input id="nodo-titulo" type="text" name="titulo_nodo" value={form.titulo_nodo} onChange={handleChange} required disabled={guardando} style={inputStyle} placeholder="Ej: Escena 1" />
                         {errores.titulo_nodo && <p style={{ color: 'var(--red)', fontSize: '0.8rem' }}>{errores.titulo_nodo.join(', ')}</p>}
                     </div>
 
                     {/* Texto */}
                     <div style={{ marginBottom: 12 }}>
-                        <label style={labelStyle}>Texto narrativo / Diálogo</label>
-                        <textarea name="texto" rows={4} value={form.texto} onChange={handleChange} required disabled={guardando} style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} placeholder="Lo que verá el lector..." />
+                        <label style={labelStyle} htmlFor="nodo-texto">Texto narrativo / Diálogo</label>
+                        <textarea id="nodo-texto" name="texto" rows={4} value={form.texto} onChange={handleChange} required disabled={guardando} style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} placeholder="Lo que verá el lector..." />
                     </div>
 
                     {/* Imagen de fondo */}
                     <div style={{ marginBottom: 12 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                            <label style={{ ...labelStyle, marginBottom: 0 }}>Imagen de fondo</label>
+                            <label style={{ ...labelStyle, marginBottom: 0 }} htmlFor="nodo-img">Imagen de fondo</label>
                             <ToggleModo modo={modoImagen} onChange={setModoImagen} />
                         </div>
 
                         {modoImagen === 'seleccionar' ? (
-                            <select name="id_imagen_escenario" value={form.id_imagen_escenario} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                            <select id="nodo-img" name="id_imagen_escenario" value={form.id_imagen_escenario} onChange={handleChange} disabled={guardando} style={selectStyle}>
                                 <option value="">-- Sin imagen --</option>
                                 {imagenesFondo.map((i) => (
                                     <option key={i.id} value={i.id}>{i.descripcion || `Imagen ${i.id}`}</option>
@@ -278,12 +284,12 @@ export default function TabNodos({ historiaId }) {
                     {/* Audio de fondo */}
                     <div style={{ marginBottom: 14 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                            <label style={{ ...labelStyle, marginBottom: 0 }}>Audio de fondo</label>
+                            <label style={{ ...labelStyle, marginBottom: 0 }} htmlFor="nodo-audio">Audio de fondo</label>
                             <ToggleModo modo={modoAudio} onChange={setModoAudio} />
                         </div>
 
                         {modoAudio === 'seleccionar' ? (
-                            <select name="id_audio_fondo" value={form.id_audio_fondo} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                            <select id="nodo-audio" name="id_audio_fondo" value={form.id_audio_fondo} onChange={handleChange} disabled={guardando} style={selectStyle}>
                                 <option value="">-- Sin audio --</option>
                                 {audios.map((a) => (
                                     <option key={a.id} value={a.id}>{a.descripcion || `Audio ${a.id}`}</option>
@@ -410,20 +416,20 @@ export default function TabNodos({ historiaId }) {
             {modalEditar && (
                 <form onSubmit={handleGuardarEdit}>
                     <div style={{ marginBottom: 12 }}>
-                        <label style={labelStyle}>Título interno</label>
-                        <input type="text" name="titulo_nodo" value={formEditar.titulo_nodo} onChange={handleChangeEdit} required disabled={guardandoEdit} style={inputStyle} />
+                        <label style={labelStyle} htmlFor="edit-nodo-titulo">Título interno</label>
+                        <input id="edit-nodo-titulo" type="text" name="titulo_nodo" value={formEditar.titulo_nodo} onChange={handleChangeEdit} required disabled={guardandoEdit} style={inputStyle} />
                         {erroresEdit.titulo_nodo && <p style={{ color: 'var(--red)', fontSize: '0.8rem' }}>{erroresEdit.titulo_nodo.join(', ')}</p>}
                     </div>
 
                     <div style={{ marginBottom: 12 }}>
-                        <label style={labelStyle}>Texto narrativo / Diálogo</label>
-                        <textarea name="texto" rows={4} value={formEditar.texto} onChange={handleChangeEdit} required disabled={guardandoEdit} style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} />
+                        <label style={labelStyle} htmlFor="edit-nodo-texto">Texto narrativo / Diálogo</label>
+                        <textarea id="edit-nodo-texto" name="texto" rows={4} value={formEditar.texto} onChange={handleChangeEdit} required disabled={guardandoEdit} style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} />
                         {erroresEdit.texto && <p style={{ color: 'var(--red)', fontSize: '0.8rem' }}>{erroresEdit.texto.join(', ')}</p>}
                     </div>
 
                     <div style={{ marginBottom: 12 }}>
-                        <label style={labelStyle}>Imagen de fondo</label>
-                        <select name="id_imagen_escenario" value={formEditar.id_imagen_escenario} onChange={handleChangeEdit} disabled={guardandoEdit} style={selectStyle}>
+                        <label style={labelStyle} htmlFor="edit-nodo-img">Imagen de fondo</label>
+                        <select id="edit-nodo-img" name="id_imagen_escenario" value={formEditar.id_imagen_escenario} onChange={handleChangeEdit} disabled={guardandoEdit} style={selectStyle}>
                             <option value="">-- Sin imagen --</option>
                             {imagenesFondo.map((i) => (
                                 <option key={i.id} value={i.id}>{i.descripcion || `Imagen ${i.id}`}</option>
@@ -432,8 +438,8 @@ export default function TabNodos({ historiaId }) {
                     </div>
 
                     <div style={{ marginBottom: 14 }}>
-                        <label style={labelStyle}>Audio de fondo</label>
-                        <select name="id_audio_fondo" value={formEditar.id_audio_fondo} onChange={handleChangeEdit} disabled={guardandoEdit} style={selectStyle}>
+                        <label style={labelStyle} htmlFor="edit-nodo-audio">Audio de fondo</label>
+                        <select id="edit-nodo-audio" name="id_audio_fondo" value={formEditar.id_audio_fondo} onChange={handleChangeEdit} disabled={guardandoEdit} style={selectStyle}>
                             <option value="">-- Sin audio --</option>
                             {audios.map((a) => (
                                 <option key={a.id} value={a.id}>{a.descripcion || `Audio ${a.id}`}</option>
@@ -468,3 +474,7 @@ export default function TabNodos({ historiaId }) {
         </>
     );
 }
+
+TabNodos.propTypes = {
+    historiaId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+};

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import '../styles/historia-card.css';
 
@@ -34,17 +35,10 @@ export default function HistoriaCard({ historia }) {
     });
 
     return (
-        <article
+        <button
+            type="button"
             className="nv-story-card"
-            role="button"
-            tabIndex={0}
             onClick={openHistoria}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openHistoria();
-                }
-            }}
         >
             <div
                 className="nv-story-cover"
@@ -69,14 +63,26 @@ export default function HistoriaCard({ historia }) {
                         <IconEye />
                         {fecha}
                     </span>
-                    <button
+                    <span
                         className="nv-story-btn"
-                        onClick={(e) => { e.stopPropagation(); openHistoria(); }}
+                        aria-hidden="true"
                     >
                         Leer ahora
-                    </button>
+                    </span>
                 </div>
             </div>
-        </article>
+        </button>
     );
 }
+
+HistoriaCard.propTypes = {
+    historia: PropTypes.shape({
+        id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+        titulo: PropTypes.string.isRequired,
+        descripcion: PropTypes.string,
+        portada_base64: PropTypes.string,
+        portada_url: PropTypes.string,
+        fecha_creacion: PropTypes.string,
+        nombre_categoria: PropTypes.string,
+    }).isRequired,
+};

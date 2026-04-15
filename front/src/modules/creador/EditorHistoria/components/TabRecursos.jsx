@@ -124,7 +124,7 @@ export default function TabRecursos() {
                 {['imagenes', 'audios'].map((s) => (
                     <button key={s} onClick={() => setSeccion(s)} style={{
                         background: seccion === s ? 'var(--accent-light)' : 'transparent',
-                        border: '1px solid ' + (seccion === s ? 'var(--accent)' : 'var(--border)'),
+                        border: seccion === s ? `1px solid var(--accent)` : '1px solid var(--border)',
                         color: seccion === s ? 'var(--accent)' : 'var(--text-muted)',
                         borderRadius: 8, padding: '6px 18px', cursor: 'pointer', fontWeight: 600, fontSize: '0.88rem',
                     }}>
@@ -139,20 +139,20 @@ export default function TabRecursos() {
                         <h6 style={{ color: 'var(--text)', fontWeight: 700, marginBottom: 16, fontSize: '0.95rem' }}>Subir imagen</h6>
                         <form onSubmit={subirImagen}>
                             <div style={{ marginBottom: 12 }}>
-                                <label style={labelStyle}>Tipo de imagen</label>
-                                <select value={imgTipo} onChange={(e) => setImgTipo(e.target.value)} style={selectStyle}>
+                                <label style={labelStyle} htmlFor="rec-img-tipo">Tipo de imagen</label>
+                                <select id="rec-img-tipo" value={imgTipo} onChange={(e) => setImgTipo(e.target.value)} style={selectStyle}>
                                     <option value="escenario">Fondo de escena</option>
                                     <option value="personaje">Sprite de personaje</option>
                                     <option value="portada">Portada de historia</option>
                                 </select>
                             </div>
                             <div style={{ marginBottom: 12 }}>
-                                <label style={labelStyle}>Descripción</label>
-                                <input type="text" value={imgDesc} onChange={(e) => setImgDesc(e.target.value)} placeholder="Ej: Bosque nocturno" style={inputStyle} />
+                                <label style={labelStyle} htmlFor="rec-img-desc">Descripción</label>
+                                <input id="rec-img-desc" type="text" value={imgDesc} onChange={(e) => setImgDesc(e.target.value)} placeholder="Ej: Bosque nocturno" style={inputStyle} />
                             </div>
                             <div style={{ marginBottom: 16 }}>
-                                <label style={labelStyle}>Archivo (PNG, JPG, WebP)</label>
-                                <input type="file" accept="image/*" onChange={(e) => setImgFile(e.target.files[0])} style={{ ...inputStyle, padding: '6px 10px' }} />
+                                <label style={labelStyle} htmlFor="rec-img-file">Archivo (PNG, JPG, WebP)</label>
+                                <input id="rec-img-file" type="file" accept="image/*" onChange={(e) => setImgFile(e.target.files[0])} style={{ ...inputStyle, padding: '6px 10px' }} />
                             </div>
                             <button type="submit" disabled={subiendo} style={{ ...btnPrimary, width: '100%' }}>
                                 {subiendo ? 'Subiendo...' : 'Subir imagen'}
@@ -176,11 +176,13 @@ export default function TabRecursos() {
                                         {FILTROS.map(({ key, label, color }) => {
                                             const activo = filtroTipo === key;
                                             const count = key === 'todos' ? imagenes.length : imagenes.filter(i => i.tipo === key).length;
+                                            const activoBg = color ? `${color}18` : 'var(--accent-light)';
+                                            const btnBg = activo ? activoBg : 'var(--surface)';
                                             return (
                                                 <button key={key} onClick={() => setFiltroTipo(key)} style={{
                                                     height: 30, padding: '0 14px', borderRadius: 20, cursor: 'pointer',
                                                     border: `1px solid ${activo ? (color || 'var(--accent)') : 'var(--border)'}`,
-                                                    background: activo ? (color ? `${color}18` : 'var(--accent-light)') : 'var(--surface)',
+                                                    background: btnBg,
                                                     color: activo ? (color || 'var(--accent)') : 'var(--text-muted)',
                                                     fontWeight: activo ? 700 : 500, fontSize: '0.82rem',
                                                     transition: 'all 0.15s',
@@ -238,12 +240,12 @@ export default function TabRecursos() {
                         <h6 style={{ color: 'var(--text)', fontWeight: 700, marginBottom: 16, fontSize: '0.95rem' }}>Subir audio</h6>
                         <form onSubmit={subirAudio}>
                             <div style={{ marginBottom: 12 }}>
-                                <label style={labelStyle}>Descripción</label>
-                                <input type="text" value={audDesc} onChange={(e) => setAudDesc(e.target.value)} placeholder="Ej: Música de tensión" style={inputStyle} />
+                                <label style={labelStyle} htmlFor="rec-aud-desc">Descripción</label>
+                                <input id="rec-aud-desc" type="text" value={audDesc} onChange={(e) => setAudDesc(e.target.value)} placeholder="Ej: Música de tensión" style={inputStyle} />
                             </div>
                             <div style={{ marginBottom: 16 }}>
-                                <label style={labelStyle}>Archivo (MP3, OGG, WAV)</label>
-                                <input type="file" accept="audio/*" onChange={(e) => setAudFile(e.target.files[0])} style={{ ...inputStyle, padding: '6px 10px' }} />
+                                <label style={labelStyle} htmlFor="rec-aud-file">Archivo (MP3, OGG, WAV)</label>
+                                <input id="rec-aud-file" type="file" accept="audio/*" onChange={(e) => setAudFile(e.target.files[0])} style={{ ...inputStyle, padding: '6px 10px' }} />
                             </div>
                             <button type="submit" disabled={subiendo} style={{ ...btnPrimary, width: '100%' }}>
                                 {subiendo ? 'Subiendo...' : 'Subir audio'}
@@ -260,6 +262,7 @@ export default function TabRecursos() {
                                     {a.archivo && (
                                         <audio controls style={{ height: 32, width: '100%' }}>
                                             <source src={`http://localhost:8000${a.archivo}`} />
+                                            <track kind="captions" />
                                         </audio>
                                     )}
                                 </div>
@@ -310,14 +313,14 @@ export default function TabRecursos() {
                 <Modal isOpen titulo={`Editar ${modalEditar.tipo === 'imagen' ? 'imagen' : 'audio'}`} onClose={() => !guardandoEdit && setModalEditar(null)} ancho={420}>
                     <form onSubmit={confirmarEditar} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                         <div>
-                            <label style={labelStyle}>Descripción</label>
-                            <input type="text" value={editForm.descripcion} onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })}
+                            <label style={labelStyle} htmlFor="edit-desc">Descripción</label>
+                            <input id="edit-desc" type="text" value={editForm.descripcion} onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })}
                                 placeholder="Descripción del recurso" style={inputStyle} autoFocus />
                         </div>
                         {modalEditar.tipo === 'imagen' && (
                             <div>
-                                <label style={labelStyle}>Tipo de imagen</label>
-                                <select value={editForm.tipo} onChange={(e) => setEditForm({ ...editForm, tipo: e.target.value })} style={selectStyle}>
+                                <label style={labelStyle} htmlFor="edit-tipo">Tipo de imagen</label>
+                                <select id="edit-tipo" value={editForm.tipo} onChange={(e) => setEditForm({ ...editForm, tipo: e.target.value })} style={selectStyle}>
                                     <option value="escenario">Fondo de escena</option>
                                     <option value="personaje">Sprite de personaje</option>
                                     <option value="portada">Portada de historia</option>

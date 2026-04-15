@@ -102,8 +102,8 @@ function PersonajesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Nombre</label>
-                                <input type="text" name="nombre"
+                                <label className="form-label" htmlFor="lg-pers-nombre">Nombre</label>
+                                <input id="lg-pers-nombre" type="text" name="nombre"
                                     className={`form-control ${errores.nombre ? 'is-invalid' : ''}`}
                                     value={formData.nombre} onChange={handleChange}
                                     required disabled={cargandoGuardar} placeholder="Nombre del personaje" />
@@ -111,8 +111,8 @@ function PersonajesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Historia</label>
-                                <select name="id_historia"
+                                <label className="form-label" htmlFor="lg-pers-hist">Historia</label>
+                                <select id="lg-pers-hist" name="id_historia"
                                     className={`form-select ${errores.id_historia ? 'is-invalid' : ''}`}
                                     value={formData.id_historia} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -125,8 +125,8 @@ function PersonajesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Imagen del personaje (opcional)</label>
-                                <select name="id_imagen"
+                                <label className="form-label" htmlFor="lg-pers-img">Imagen del personaje (opcional)</label>
+                                <select id="lg-pers-img" name="id_imagen"
                                     className="form-select"
                                     value={formData.id_imagen} onChange={handleChange}
                                     disabled={cargandoGuardar}>
@@ -141,7 +141,7 @@ function PersonajesPanel() {
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
                                     {cargandoGuardar
                                         ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                        : (editandoId ? 'Actualizar' : 'Guardar')}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
@@ -304,8 +304,8 @@ function NodoPersonajesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Nodo</label>
-                                <select name="id_nodo"
+                                <label className="form-label" htmlFor="lg-asig-nodo">Nodo</label>
+                                <select id="lg-asig-nodo" name="id_nodo"
                                     className={`form-select ${errores.id_nodo ? 'is-invalid' : ''}`}
                                     value={formData.id_nodo} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -318,8 +318,8 @@ function NodoPersonajesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Personaje</label>
-                                <select name="id_personaje"
+                                <label className="form-label" htmlFor="lg-asig-pers">Personaje</label>
+                                <select id="lg-asig-pers" name="id_personaje"
                                     className={`form-select ${errores.id_personaje ? 'is-invalid' : ''}`}
                                     value={formData.id_personaje} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -332,8 +332,8 @@ function NodoPersonajesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Posicion en pantalla</label>
-                                <select name="posicion"
+                                <label className="form-label" htmlFor="lg-asig-pos">Posicion en pantalla</label>
+                                <select id="lg-asig-pos" name="posicion"
                                     className="form-select"
                                     value={formData.posicion} onChange={handleChange}
                                     disabled={cargandoGuardar}>
@@ -347,7 +347,7 @@ function NodoPersonajesPanel() {
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
                                     {cargandoGuardar
                                         ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Asignar'}
+                                        : (editandoId ? 'Actualizar' : 'Asignar')}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
