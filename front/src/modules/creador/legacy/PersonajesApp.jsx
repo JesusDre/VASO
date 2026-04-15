@@ -7,6 +7,7 @@ import {
 import Navbar from '../../../components/Navbar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import toast, { Toaster } from 'react-hot-toast';
+import ModalAlert from '../../../components/ModalAlert';
 
 // -----------------------------------------------------------
 // Panel de Personajes
@@ -23,13 +24,14 @@ function PersonajesPanel() {
     const [cargando, setCargando] = useState(false);
     const [cargandoGuardar, setCargandoGuardar] = useState(false);
     const [errores, setErrores] = useState({});
+    const [confirmDelete, setConfirmDelete] = useState(null);
 
     useEffect(() => {
         cargar();
         Promise.all([readHistorias(), readMisImagenes()]).then(([h, i]) => {
             setHistorias(h.data);
             setImagenes(i.data);
-        }).catch(() => {});
+        }).catch(() => toast.error('Error al cargar datos auxiliares'));
     }, []);
 
     const cargar = async () => {
@@ -74,8 +76,11 @@ function PersonajesPanel() {
 
     const cancelar = () => { setFormData(FORM_INICIAL); setEditandoId(null); setErrores({}); };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('Eliminar este personaje?')) return;
+    const handleEliminar = (id) => setConfirmDelete(id);
+
+    const ejecutarEliminar = async () => {
+        const id = confirmDelete;
+        setConfirmDelete(null);
         const tid = toast.loading('Eliminando...');
         try { await deletePersonaje(id); toast.success('Personaje eliminado', { id: tid }); cargar(); }
         catch { toast.error('Error al eliminar', { id: tid }); }
@@ -188,6 +193,16 @@ function PersonajesPanel() {
                     </div>
                 </div>
             </div>
+
+            <ModalAlert
+                open={!!confirmDelete}
+                type="warning"
+                title="¿Eliminar personaje?"
+                message="Se eliminará este personaje y todas sus asignaciones. Esta acción no se puede deshacer."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminar(); else setConfirmDelete(null); }}
+            />
         </div>
     );
 }
@@ -207,13 +222,14 @@ function NodoPersonajesPanel() {
     const [cargando, setCargando] = useState(false);
     const [cargandoGuardar, setCargandoGuardar] = useState(false);
     const [errores, setErrores] = useState({});
+    const [confirmDeleteNP, setConfirmDeleteNP] = useState(null);
 
     useEffect(() => {
         cargar();
         Promise.all([readNodos(), readPersonajes()]).then(([n, p]) => {
             setNodos(n.data);
             setPersonajes(p.data);
-        }).catch(() => {});
+        }).catch(() => toast.error('Error al cargar nodos/personajes'));
     }, []);
 
     const cargar = async () => {
@@ -258,8 +274,11 @@ function NodoPersonajesPanel() {
 
     const cancelar = () => { setFormData(FORM_INICIAL); setEditandoId(null); setErrores({}); };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('Eliminar esta asignacion?')) return;
+    const handleEliminar = (id) => setConfirmDeleteNP(id);
+
+    const ejecutarEliminarNP = async () => {
+        const id = confirmDeleteNP;
+        setConfirmDeleteNP(null);
         const tid = toast.loading('Eliminando...');
         try { await deleteNodoPersonaje(id); toast.success('Eliminado', { id: tid }); cargar(); }
         catch { toast.error('Error al eliminar', { id: tid }); }
@@ -384,6 +403,16 @@ function NodoPersonajesPanel() {
                     </div>
                 </div>
             </div>
+
+            <ModalAlert
+                open={!!confirmDeleteNP}
+                type="warning"
+                title="¿Eliminar asignación?"
+                message="Se eliminará esta asignación de personaje-nodo. Esta acción no se puede deshacer."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminarNP(); else setConfirmDeleteNP(null); }}
+            />
         </div>
     );
 }
