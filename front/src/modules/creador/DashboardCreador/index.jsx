@@ -6,6 +6,7 @@ import { useAuth } from '../../../context/AuthContext';
 import toast, { Toaster } from 'react-hot-toast';
 import { BadgeEstado } from './components/BadgeEstado';
 import { IconEdit, IconDelete } from './components/Icons';
+import ModalAlert from '../../../components/ModalAlert';
 
 const styles = {
     page: { minHeight: '100vh', background: 'var(--bg)' },
@@ -50,6 +51,7 @@ export default function DashboardCreador() {
     const navigate = useNavigate();
     const [historias, setHistorias] = useState([]);
     const [cargando, setCargando] = useState(true);
+    const [confirmDelete, setConfirmDelete] = useState(null);
 
     useEffect(() => { cargar(); }, []);
 
@@ -65,8 +67,11 @@ export default function DashboardCreador() {
         }
     };
 
-    const handleEliminar = async (id) => {
-        if (!window.confirm('¿Eliminar esta historia? Se eliminarán todos sus nodos.')) return;
+    const handleEliminar = (id) => setConfirmDelete(id);
+
+    const ejecutarEliminar = async () => {
+        const id = confirmDelete;
+        setConfirmDelete(null);
         const tid = toast.loading('Eliminando...');
         try {
             await deleteHistoria(id);
@@ -166,6 +171,16 @@ export default function DashboardCreador() {
                     )}
                 </div>
             </div>
+
+            <ModalAlert
+                open={!!confirmDelete}
+                type="warning"
+                title="¿Eliminar historia?"
+                message="Se eliminarán todos sus nodos y recursos asociados. Esta acción no se puede deshacer."
+                confirmText="Sí, eliminar"
+                cancelText="Cancelar"
+                onClose={(ok) => { if (ok) ejecutarEliminar(); else setConfirmDelete(null); }}
+            />
 
             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
