@@ -14,7 +14,7 @@ api.interceptors.request.use(
         if (token) config.headers['Authorization'] = `Bearer ${token}`;
         return config;
     },
-    (error) => Promise.reject(error)
+    (error) => { throw error; }
 );
 
 // -----------------------------------------------------------
@@ -28,7 +28,7 @@ api.interceptors.response.use(
             original._retry = true;
             const refresh = localStorage.getItem('refresh_token');
             // Sin refresh token no habia sesion activa — no redirigir
-            if (!refresh) return Promise.reject(error);
+            if (!refresh) throw error;
             try {
                 const res = await axios.post(`${API_BASE}/api/token/refresh/`, { refresh });
                 localStorage.setItem('access_token', res.data.access);
@@ -41,10 +41,10 @@ api.interceptors.response.use(
                 localStorage.removeItem('refresh_token');
                 localStorage.removeItem('usuario');
                 localStorage.removeItem('rol');
-                window.location.href = '/login';
+                globalThis.location.href = '/login';
             }
         }
-        return Promise.reject(error);
+        throw error;
     }
 );
 
