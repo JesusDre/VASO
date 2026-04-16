@@ -142,6 +142,15 @@ CORS_ALLOWED_ORIGINS = config(
 # -----------------------------------------------------------
 # Seguridad adicional (solo activa en produccion, DEBUG=False)
 # -----------------------------------------------------------
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='https://app.genidas.com',
+    cast=Csv(),
+)
+
 if not DEBUG:
     SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=True, cast=bool)
     SESSION_COOKIE_SECURE = True
