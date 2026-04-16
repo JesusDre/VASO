@@ -26,13 +26,12 @@ export default function Home() {
         );
     } else {
         resultsContent = (
-            <div className="nv-stories-grid">
-                {filtradas.map((h) => (
-                    <HistoriaCard key={h.id} historia={h} />
-                ))}
-            </div>
-        );
-    }
+        <div className="nv-stories-grid">
+            {filtradas.map((h) => (
+                <HistoriaCard key={h.id} historia={h} />
+            ))}
+        </div>
+    );
 
     return (
         <div className="nv-home-page">
