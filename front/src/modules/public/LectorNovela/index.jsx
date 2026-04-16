@@ -128,9 +128,15 @@ export default function LectorNovela() {
     useEffect(() => {
         if (!nodoActual) return;
         const audio = audiosMap[nodoActual.id_audio_fondo];
-        const url = audio?.archivo
-            ? (audio.archivo.startsWith('http') ? audio.archivo : `${API_BASE}${audio.archivo}`)
-            : null;
+        let url = null;
+        if (audio?.archivo) {
+            try {
+                new URL(audio.archivo);
+                url = audio.archivo;
+            } catch {
+                url = `${API_BASE}${audio.archivo.startsWith('/') ? '' : '/'}${audio.archivo}`;
+            }
+        }
 
         audioRef.current?.pause();
         if (url) {
