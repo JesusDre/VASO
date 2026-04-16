@@ -177,11 +177,13 @@ export default function TabRecursos() {
                                         {FILTROS.map(({ key, label, color }) => {
                                             const activo = filtroTipo === key;
                                             const count = key === 'todos' ? imagenes.length : imagenes.filter(i => i.tipo === key).length;
+                                            let bgColor = 'var(--surface)';
+                                            if (activo) bgColor = color ? `${color}18` : 'var(--accent-light)';
                                             return (
                                                 <button key={key} onClick={() => setFiltroTipo(key)} style={{
                                                     height: 30, padding: '0 14px', borderRadius: 20, cursor: 'pointer',
                                                     border: `1px solid ${activo ? (color || 'var(--accent)') : 'var(--border)'}`,
-                                                    background: activo ? (color ? `${color}18` : 'var(--accent-light)') : 'var(--surface)',
+                                                    background: bgColor,
                                                     color: activo ? (color || 'var(--accent)') : 'var(--text-muted)',
                                                     fontWeight: activo ? 700 : 500, fontSize: '0.82rem',
                                                     transition: 'all 0.15s',

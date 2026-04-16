@@ -14,7 +14,7 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
     return (
         <button
             type="button"
-            onClick={onClose}
+            onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
             aria-label="Cerrar modal"
             style={{
                 position: 'fixed', inset: 0, zIndex: 1000,
@@ -26,10 +26,8 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
                 width: '100%',
             }}
         >
-            <div
-                onClick={(e) => e.stopPropagation()}
-                onKeyDown={(e) => e.stopPropagation()}
-                role="dialog"
+            <dialog
+                open
                 aria-modal="true"
                 aria-labelledby="modal-titulo"
                 style={{
@@ -51,7 +49,7 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
                     </button>
                 </div>
                 {children}
-            </div>
+            </dialog>
         </button>
     );
 }

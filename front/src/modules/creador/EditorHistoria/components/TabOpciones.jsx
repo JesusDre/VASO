@@ -278,7 +278,7 @@ export default function TabOpciones({ historiaId }) {
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                         <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0 0 4px', fontWeight: 600 }}>
-                            {opciones.length} decisión{opciones.length !== 1 ? 'es' : ''} configurada{opciones.length !== 1 ? 's' : ''}
+                            {opciones.length} decisión{opciones.length === 1 ? '' : 'es'} configurada{opciones.length === 1 ? '' : 's'}
                         </p>
                         {opciones.map(o => (
                             <div key={o.id} style={cardStyle}>

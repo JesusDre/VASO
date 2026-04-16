@@ -252,7 +252,7 @@ export default function TabPersonajes({ historiaId }) {
                                             ...btnPrimary,
                                             fontSize: '0.84rem',
                                             padding: '7px 14px',
-                                            opacity: !spriteFile ? 0.5 : 1,
+                                            opacity: spriteFile ? 1 : 0.5,
                                         }}
                                     >
                                         {subiendoSprite ? 'Subiendo...' : 'Subir y seleccionar'}
@@ -322,7 +322,7 @@ export default function TabPersonajes({ historiaId }) {
                                         </div>
                                         <div style={{ flex: 1 }}>
                                             <div style={{ fontWeight: 600, color: 'var(--text)' }}>{p.nombre}</div>
-                                            <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>{asignaciones.length} nodo{asignaciones.length !== 1 ? 's' : ''}</div>
+                                            <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>{asignaciones.length} nodo{asignaciones.length === 1 ? '' : 's'}</div>
                                         </div>
                                         <div style={{ display: 'flex', gap: 6 }}>
                                             <button onClick={() => abrirEditar(p)} style={{ background: '#fef9c3', border: '1px solid #fde68a', color: '#92400e', borderRadius: 6, padding: '4px 12px', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600 }}>Editar</button>

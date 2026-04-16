@@ -10,6 +10,30 @@ export default function Home() {
         ? 'Aún no hay historias publicadas.'
         : 'No hay historias que coincidan con los filtros.';
 
+    let resultsContent;
+    if (cargando) {
+        resultsContent = (
+            <div className="nv-home-feedback">
+                <div className="nv-spinner" />
+                <p>Cargando historias...</p>
+            </div>
+        );
+    } else if (filtradas.length === 0) {
+        resultsContent = (
+            <div className="nv-home-feedback">
+                <p>{sinResultados}</p>
+            </div>
+        );
+    } else {
+        resultsContent = (
+            <div className="nv-stories-grid">
+                {filtradas.map((h) => (
+                    <HistoriaCard key={h.id} historia={h} />
+                ))}
+            </div>
+        );
+    }
+
     return (
         <div className="nv-home-page">
             <Navbar />
@@ -54,22 +78,7 @@ export default function Home() {
             </div>
 
             <div className="nv-home-results">
-                {cargando ? (
-                    <div className="nv-home-feedback">
-                        <div className="nv-spinner" />
-                        <p>Cargando historias...</p>
-                    </div>
-                ) : filtradas.length === 0 ? (
-                    <div className="nv-home-feedback">
-                        <p>{sinResultados}</p>
-                    </div>
-                ) : (
-                    <div className="nv-stories-grid">
-                        {filtradas.map((h) => (
-                            <HistoriaCard key={h.id} historia={h} />
-                        ))}
-                    </div>
-                )}
+                {resultsContent}
             </div>
         </div>
     );

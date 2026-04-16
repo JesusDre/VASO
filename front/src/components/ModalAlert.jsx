@@ -58,14 +58,12 @@ export default function ModalAlert({
         <button
             type="button"
             className="modal-alert-backdrop"
-            onClick={handleCancel}
             aria-label="Cerrar modal"
+            onClick={(e) => { if (e.target === e.currentTarget) handleCancel(); }}
         >
-            <div
+            <dialog
+                open
                 className={`modal-alert-box alert-${type}`}
-                onClick={(e) => e.stopPropagation()}
-                onKeyDown={(e) => e.stopPropagation()}
-                role="dialog"
                 aria-modal="true"
                 aria-labelledby="modal-alert-title"
                 aria-describedby="modal-alert-description"
@@ -86,7 +84,7 @@ export default function ModalAlert({
                         {confirmText}
                     </button>
                 </div>
-            </div>
+            </dialog>
         </button>
     );
 }

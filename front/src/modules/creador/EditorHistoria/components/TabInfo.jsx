@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
 import {    
     API_BASE, createHistoria, updateHistoria,
@@ -42,13 +43,25 @@ function ItemChecklist({ ok, label, hint, advertencia }) {
         colorTexto = 'var(--text-muted)';
     }
 
+    let bgColor, borderColor2;
+    if (advertencia) {
+        bgColor = '#fef9c3';
+        borderColor2 = '#fde68a';
+    } else if (ok) {
+        bgColor = 'var(--green-bg)';
+        borderColor2 = 'var(--green)';
+    } else {
+        bgColor = 'var(--surface-2)';
+        borderColor2 = 'var(--border)';
+    }
+
     return (
         <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', padding: '9px 0', borderBottom: '1px solid var(--border)' }}>
             <div style={{
                 width: 20, height: 20, borderRadius: '50%', flexShrink: 0, marginTop: 1,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: advertencia ? '#fef9c3' : ok ? 'var(--green-bg)' : 'var(--surface-2)',
-                border: `1px solid ${advertencia ? '#fde68a' : ok ? 'var(--green)' : 'var(--border)'}`,
+                background: bgColor,
+                border: `1px solid ${borderColor2}`,
             }}>
                 {icono}
             </div>
@@ -58,6 +71,93 @@ function ItemChecklist({ ok, label, hint, advertencia }) {
             </div>
         </div>
     );
+}
+
+ItemChecklist.propTypes = {
+    ok: PropTypes.bool,
+    label: PropTypes.string.isRequired,
+    hint: PropTypes.string,
+    advertencia: PropTypes.bool,
+};
+
+function PortadaPreview({ portadaSrc, imgError, subiendoPortada, hovPortada, onImgError }) {
+    if (portadaSrc && !imgError) {
+        return (
+            <>
+                <img src={portadaSrc} alt="Portada" onError={onImgError} style={{ display: 'block', width: '100%', height: 'auto' }} />
+                {!subiendoPortada && (
+                    <div style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: hovPortada ? 1 : 0, transition: 'opacity 0.15s' }}>
+                        <span style={{ color: '#fff', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Cambiar imagen</span>
+                    </div>
+                )}
+            </>
+        );
+    }
+    if (subiendoPortada) return null;
+    if (imgError) {
+        return (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'var(--text-muted)' }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--red)' }}>No se pudo cargar</span>
+                <span style={{ fontSize: '0.72rem' }}>Haz clic para subir otra</span>
+            </div>
+        );
+    }
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'var(--text-muted)' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span style={{ fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Haz clic para subir portada</span>
+        </div>
+    );
+}
+
+function getChecklistData(form, nodos, nodosHuerfanos, puedePublicar) {
+    const tituloHint = form.titulo.trim() ? undefined : 'Escribe el nombre de tu historia.';
+    const plural = nodos.length > 1 ? 's' : '';
+    const escenasLabel = nodos.length > 0 ? `${nodos.length} escena${plural} creada${plural}` : 'Al menos 1 escena';
+    const escenasHint = nodos.length === 0 ? 'Ve a la pestaña Escenas.' : undefined;
+    const nodoInicioHint = form.id_nodo_inicio ? undefined : 'Elige la escena con la que empieza.';
+    const pluralH = nodosHuerfanos.length > 1 ? 's' : '';
+    const huerfanosLabel = `${nodosHuerfanos.length} escena${pluralH} sin salida`;
+    const nombres = nodosHuerfanos.map(n => `"${n.titulo_nodo}"`).join(', ');
+    const huerfanosHint = `El lector quedaría bloqueado en: ${nombres}`;
+    const publicarBorderColor = puedePublicar ? 'var(--green)' : 'var(--border)';
+    return { tituloHint, escenasLabel, escenasHint, nodoInicioHint, huerfanosLabel, huerfanosHint, publicarBorderColor };
+}
+
+function getPortadaSrc(portada) {
+    if (!portada) return null;
+    if (portada.imagen_base64_display) return `data:image/png;base64,${portada.imagen_base64_display}`;
+    if (portada.url) return `${API_BASE}${portada.url}`;
+    return null;
+}
+
+function buildPayload(form, usuario) {
+    return {
+        titulo: form.titulo,
+        descripcion: form.descripcion,
+        publicada: form.publicada,
+        id_creador: usuario.id,
+        id_nodo_inicio: form.id_nodo_inicio || null,
+        id_portada: form.id_portada || null,
+        categoria: form.categoria || null,
+    };
+}
+
+function getPublicationProblems(form, nodos, nodosHuerfanos) {
+    const problemas = [];
+    if (!form.titulo.trim()) problemas.push('Define el título de la historia.');
+    if (nodos.length === 0) problemas.push('Crea al menos una escena en la pestaña Escenas.');
+    if (!form.id_nodo_inicio) problemas.push('Selecciona la escena de inicio.');
+    if (nodosHuerfanos.length > 0) {
+        const nombres = nodosHuerfanos.map(n => `"${n.titulo_nodo}"`).join(', ');
+        problemas.push(`${nodosHuerfanos.length} escena(s) no tienen decisiones ni están marcadas como final: ${nombres}.`);
+    }
+    return problemas;
 }
 
 export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
@@ -81,6 +181,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
     const [errores, setErrores] = useState({});
     const [subiendoPortada, setSubiendoPortada] = useState(false);
     const [imgError, setImgError] = useState(false);
+    const [hovPortada, setHovPortada] = useState(false);
     const [alerta, setAlerta] = useState(null);
     const fileInputRef = useRef(null);
 
@@ -142,15 +243,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
             return;
         }
         setGuardando(true);
-        const payload = {
-            titulo: form.titulo,
-            descripcion: form.descripcion,
-            publicada: form.publicada,
-            id_creador: usuario.id,
-            id_nodo_inicio: form.id_nodo_inicio || null,
-            id_portada: form.id_portada || null,
-            categoria: form.categoria || null,
-        };
+        const payload = buildPayload(form, usuario);
         try {
             if (historiaId) {
                 await updateHistoria(historiaId, payload);
@@ -170,26 +263,13 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
 
     const handlePublicar = async () => {
         if (!puedePublicar) {
-            const problemas = [];
-            if (!form.titulo.trim()) problemas.push('Define el título de la historia.');
-            if (nodos.length === 0) problemas.push('Crea al menos una escena en la pestaña Escenas.');
-            if (!form.id_nodo_inicio) problemas.push('Selecciona la escena de inicio.');
-            if (nodosHuerfanos.length > 0)
-                problemas.push(`${nodosHuerfanos.length} escena(s) no tienen decisiones ni están marcadas como final: ${nodosHuerfanos.map(n => `"${n.titulo_nodo}"`).join(', ')}.`);
-            setAlerta({
-                type: 'warning',
-                title: 'Completa los requisitos primero',
-                message: problemas[0],
-            });
+            const problemas = getPublicationProblems(form, nodos, nodosHuerfanos);
+            setAlerta({ type: 'warning', title: 'Completa los requisitos primero', message: problemas[0] });
             return;
         }
         setGuardando(true);
         try {
-            await updateHistoria(historiaId, {
-                titulo: form.titulo, descripcion: form.descripcion, publicada: true,
-                id_creador: usuario.id, id_nodo_inicio: form.id_nodo_inicio || null,
-                id_portada: form.id_portada || null, categoria: form.categoria || null,
-            });
+            await updateHistoria(historiaId, { ...buildPayload(form, usuario), publicada: true });
             setForm(prev => ({ ...prev, publicada: true }));
             toast.success('¡Historia publicada! Ya está disponible para los lectores.');
         } catch {
@@ -202,11 +282,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
     const handleDespublicar = async () => {
         setGuardando(true);
         try {
-            await updateHistoria(historiaId, {
-                titulo: form.titulo, descripcion: form.descripcion, publicada: false,
-                id_creador: usuario.id, id_nodo_inicio: form.id_nodo_inicio || null,
-                id_portada: form.id_portada || null, categoria: form.categoria || null,
-            });
+            await updateHistoria(historiaId, { ...buildPayload(form, usuario), publicada: false });
             setForm(prev => ({ ...prev, publicada: false }));
             toast.success('Historia movida a borrador');
         } catch {
@@ -217,13 +293,22 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
     };
 
     const portadaSeleccionada = portadas.find(p => p.id === Number(form.id_portada));
-    const portadaSrc = portadaSeleccionada
-        ? (portadaSeleccionada.imagen_base64_display
-            ? `data:image/png;base64,${portadaSeleccionada.imagen_base64_display}`
-            : portadaSeleccionada.url
-                ? `${API_BASE}${portadaSeleccionada.url}`
-                : null)
-        : null;
+    const portadaSrc = getPortadaSrc(portadaSeleccionada);
+
+    const checklistData = getChecklistData(form, nodos, nodosHuerfanos, puedePublicar);
+
+    let publicarTexto;
+    if (guardando) publicarTexto = 'Publicando...';
+    else if (puedePublicar) publicarTexto = 'Publicar historia';
+    else publicarTexto = 'Completa los requisitos';
+
+    let guardarTexto;
+    if (guardando) guardarTexto = 'Guardando...';
+    else if (historiaId) guardarTexto = 'Guardar cambios';
+    else guardarTexto = 'Guardar y Continuar →';
+
+    const estadoBorderColor = form.publicada ? 'var(--green)' : '#fde68a';
+    const portadaExtraStyle = portadaSrc && !imgError ? {} : { height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' };
 
     return (
         <>
@@ -235,57 +320,29 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                     <p style={labelStyle}>Imagen de Portada</p>
                     <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handlePortadaChange} />
 
-                    <div
+                    <button
+                        type="button"
                         onClick={() => fileInputRef.current?.click()}
+                        onMouseEnter={() => setHovPortada(true)}
+                        onMouseLeave={() => setHovPortada(false)}
                         style={{
                             border: '2px dashed var(--border)', borderRadius: 10,
                             overflow: 'hidden', position: 'relative', cursor: 'pointer',
-                            background: 'var(--surface-2)',
-                            ...(portadaSrc && !imgError ? {} : { height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }),
+                            background: 'var(--surface-2)', padding: 0, textAlign: 'left', width: '100%',
+                            ...portadaExtraStyle,
                         }}
                     >
-                        {portadaSrc && !imgError && (
-                            <img src={portadaSrc} alt="Portada" onError={() => setImgError(true)} style={{ display: 'block', width: '100%', height: 'auto' }} />
-                        )}
                         {subiendoPortada && (
                             <div style={{ position: 'absolute', inset: 0, zIndex: 2, background: 'rgba(255,255,255,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <div style={{ width: 28, height: 28, border: '3px solid var(--border)', borderTopColor: 'var(--accent)', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
                             </div>
                         )}
-                        {(!portadaSrc || imgError) && !subiendoPortada && (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, color: 'var(--text-muted)' }}>
-                                {imgError ? (
-                                    <>
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                                        </svg>
-                                        <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--red)' }}>No se pudo cargar</span>
-                                        <span style={{ fontSize: '0.72rem' }}>Haz clic para subir otra</span>
-                                    </>
-                                ) : (
-                                    <>
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-                                            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
-                                        </svg>
-                                        <span style={{ fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Haz clic para subir portada</span>
-                                    </>
-                                )}
-                            </div>
-                        )}
-                        {portadaSrc && !imgError && !subiendoPortada && (
-                            <div
-                                style={{ position: 'absolute', inset: 0, zIndex: 1, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 0.15s' }}
-                                onMouseEnter={e => e.currentTarget.style.opacity = 1}
-                                onMouseLeave={e => e.currentTarget.style.opacity = 0}
-                            >
-                                <span style={{ color: '#fff', fontSize: '0.78rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Cambiar imagen</span>
-                            </div>
-                        )}
-                    </div>
+                        <PortadaPreview portadaSrc={portadaSrc} imgError={imgError} subiendoPortada={subiendoPortada} hovPortada={hovPortada} onImgError={() => setImgError(true)} />
+                    </button>
 
                     <div style={{ marginTop: 10 }}>
-                        <label style={labelStyle}>O seleccionar existente</label>
-                        <select name="id_portada" value={form.id_portada} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                        <label htmlFor="tabinfo-portada" style={labelStyle}>O seleccionar existente</label>
+                        <select id="tabinfo-portada" name="id_portada" value={form.id_portada} onChange={handleChange} disabled={guardando} style={selectStyle}>
                             <option value="">-- Sin portada --</option>
                             {portadas.map(p => <option key={p.id} value={p.id}>{p.descripcion || `Portada ${p.id}`}</option>)}
                         </select>
@@ -301,24 +358,24 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                                 <ItemChecklist
                                     ok={form.titulo.trim().length > 0}
                                     label="Título definido"
-                                    hint={!form.titulo.trim() ? 'Escribe el nombre de tu historia.' : undefined}
+                                    hint={checklistData.tituloHint}
                                 />
                                 <ItemChecklist
                                     ok={nodos.length > 0}
-                                    label={nodos.length > 0 ? `${nodos.length} escena${nodos.length > 1 ? 's' : ''} creada${nodos.length > 1 ? 's' : ''}` : 'Al menos 1 escena'}
-                                    hint={nodos.length === 0 ? 'Ve a la pestaña Escenas.' : undefined}
+                                    label={checklistData.escenasLabel}
+                                    hint={checklistData.escenasHint}
                                 />
                                 <ItemChecklist
                                     ok={!!form.id_nodo_inicio}
                                     label="Escena de inicio seleccionada"
-                                    hint={!form.id_nodo_inicio ? 'Elige la escena con la que empieza.' : undefined}
+                                    hint={checklistData.nodoInicioHint}
                                 />
                                 {nodosHuerfanos.length > 0 && (
                                     <ItemChecklist
                                         ok={false}
                                         advertencia
-                                        label={`${nodosHuerfanos.length} escena${nodosHuerfanos.length > 1 ? 's' : ''} sin salida`}
-                                        hint={`El lector quedaría bloqueado en: ${nodosHuerfanos.map(n => `"${n.titulo_nodo}"`).join(', ')}`}
+                                        label={checklistData.huerfanosLabel}
+                                        hint={checklistData.huerfanosHint}
                                     />
                                 )}
                             </div>
@@ -329,7 +386,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                                 style={{
                                     marginTop: 12, width: '100%',
                                     background: puedePublicar ? 'var(--green)' : 'var(--surface-2)',
-                                    border: `1px solid ${puedePublicar ? 'var(--green)' : 'var(--border)'}`,
+                                    border: `1px solid ${checklistData.publicarBorderColor}`,
                                     color: puedePublicar ? '#fff' : 'var(--text-muted)',
                                     borderRadius: 8, padding: '8px 0',
                                     cursor: puedePublicar ? 'pointer' : 'not-allowed',
@@ -337,7 +394,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                                     transition: 'all 0.15s',
                                 }}
                             >
-                                {guardando ? 'Publicando...' : puedePublicar ? 'Publicar historia' : 'Completa los requisitos'}
+                                {publicarTexto}
                             </button>
                         </div>
                     )}
@@ -357,29 +414,29 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                 {/* Columna derecha: formulario */}
                 <div style={{ flex: 1, minWidth: 280, display: 'flex', flexDirection: 'column', gap: 16 }}>
                     <div>
-                        <label style={labelStyle}>Título de la Historia *</label>
-                        <input type="text" name="titulo" value={form.titulo} onChange={handleChange} required disabled={guardando}
+                        <label htmlFor="tabinfo-titulo" style={labelStyle}>Título de la Historia *</label>
+                        <input id="tabinfo-titulo" type="text" name="titulo" value={form.titulo} onChange={handleChange} required disabled={guardando}
                             placeholder="Ej. El Misterio del Edificio A" style={inputStyle} />
                         {errores.titulo && <p style={{ color: 'var(--red)', fontSize: '0.8rem', marginTop: 4 }}>{errores.titulo.join(', ')}</p>}
                     </div>
 
                     <div style={{ display: 'flex', gap: 12 }}>
                         <div style={{ flex: 1 }}>
-                            <label style={labelStyle}>Categoría</label>
-                            <select name="categoria" value={form.categoria} onChange={handleChange} disabled={guardando} style={selectStyle}>
+                            <label htmlFor="tabinfo-categoria" style={labelStyle}>Categoría</label>
+                            <select id="tabinfo-categoria" name="categoria" value={form.categoria} onChange={handleChange} disabled={guardando} style={selectStyle}>
                                 <option value="">-- Sin categoría --</option>
                                 {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
                             </select>
                         </div>
                         <div style={{ flex: 1 }}>
-                            <label style={labelStyle}>Estado</label>
+                            <p style={labelStyle}>Estado</p>
                             <div style={{ display: 'flex', alignItems: 'center', height: 42 }}>
                                 <span style={{
                                     display: 'inline-flex', alignItems: 'center', height: 28,
                                     padding: '0 12px', borderRadius: 20, fontSize: '0.8rem', fontWeight: 700,
                                     background: form.publicada ? 'var(--green-bg)' : '#fef9c3',
                                     color: form.publicada ? 'var(--green)' : '#92400e',
-                                    border: `1px solid ${form.publicada ? 'var(--green)' : '#fde68a'}`,
+                                    border: `1px solid ${estadoBorderColor}`,
                                 }}>
                                     {form.publicada ? 'Publicado' : 'Borrador'}
                                 </span>
@@ -388,19 +445,19 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
                     </div>
 
                     <div>
-                        <label style={labelStyle}>Sinopsis / Prólogo</label>
-                        <textarea name="descripcion" rows={5} value={form.descripcion} onChange={handleChange}
+                        <label htmlFor="tabinfo-descripcion" style={labelStyle}>Sinopsis / Prólogo</label>
+                        <textarea id="tabinfo-descripcion" name="descripcion" rows={5} value={form.descripcion} onChange={handleChange}
                             disabled={guardando} placeholder="Este texto se mostrará al inicio de la historia..."
                             style={{ ...inputStyle, height: 'auto', resize: 'vertical' }} />
                     </div>
 
                     {historiaId && nodos.length > 0 && (
                         <div>
-                            <label style={labelStyle}>Escena de inicio *</label>
+                            <label htmlFor="tabinfo-nodo-inicio" style={labelStyle}>Escena de inicio *</label>
                             <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '0 0 6px' }}>
                                 La primera escena que verá el lector al comenzar la historia.
                             </p>
-                            <select name="id_nodo_inicio" value={form.id_nodo_inicio} onChange={handleChange} disabled={guardando}
+                            <select id="tabinfo-nodo-inicio" name="id_nodo_inicio" value={form.id_nodo_inicio} onChange={handleChange} disabled={guardando}
                                 style={{ ...selectStyle, ...(errores.id_nodo_inicio ? { borderColor: 'var(--red)' } : {}) }}>
                                 <option value="">-- Selecciona una escena --</option>
                                 {nodos.map(n => <option key={n.id} value={n.id}>{n.titulo_nodo}</option>)}
@@ -413,7 +470,7 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
 
                     <div style={{ marginTop: 'auto', paddingTop: 8 }}>
                         <button type="submit" disabled={guardando} style={btnPrimary}>
-                            {guardando ? 'Guardando...' : historiaId ? 'Guardar cambios' : 'Guardar y Continuar →'}
+                            {guardarTexto}
                         </button>
                     </div>
                 </div>
@@ -432,3 +489,19 @@ export default function TabInfo({ historia, historiaId, usuario, onGuardado }) {
         </>
     );
 }
+
+TabInfo.propTypes = {
+    historia: PropTypes.shape({
+        titulo: PropTypes.string,
+        descripcion: PropTypes.string,
+        publicada: PropTypes.bool,
+        id_nodo_inicio: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        id_portada: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        categoria: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    }),
+    historiaId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    usuario: PropTypes.shape({
+        id: PropTypes.number,
+    }),
+    onGuardado: PropTypes.func,
+};

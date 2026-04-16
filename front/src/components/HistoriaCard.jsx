@@ -35,17 +35,7 @@ export default function HistoriaCard({ historia }) {
     });
 
     return (
-        <article
-            className="nv-story-card"
-            tabIndex={0}
-            onClick={openHistoria}
-            onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    openHistoria();
-                }
-            }}
-        >
+        <article className="nv-story-card">
             <div
                 className="nv-story-cover"
                 style={src ? { backgroundImage: `url(${src})` } : undefined}
@@ -72,7 +62,7 @@ export default function HistoriaCard({ historia }) {
                     <button
                         type="button"
                         className="nv-story-btn"
-                        onClick={(e) => { e.stopPropagation(); openHistoria(); }}
+                        onClick={openHistoria}
                     >
                         Leer ahora
                     </button>
