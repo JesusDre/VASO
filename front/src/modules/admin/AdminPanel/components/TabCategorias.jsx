@@ -99,12 +99,66 @@ export default function TabCategorias() {
         letterSpacing: '0.05em',
     };
 
+    let submitButtonLabel;
+    if (guardando) submitButtonLabel = 'Guardando...';
+    else if (editandoId) submitButtonLabel = 'Guardar cambios';
+    else submitButtonLabel = 'Crear';
+
+    let categoriasContent;
+    if (cargando) {
+        categoriasContent = <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>;
+    } else if (categorias.length === 0) {
+        categoriasContent = <Empty texto="No hay categorías activas. Crea la primera." />;
+    } else {
+        categoriasContent = (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {categorias.map((cat) => (
+                <div key={cat.id} style={{
+                    background: 'var(--surface)', border: '1px solid var(--border)',
+                    borderRadius: 10, padding: '14px 18px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    gap: 12, boxShadow: 'var(--shadow-sm)',
+                }}>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                        <span style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.93rem' }}>
+                            {cat.nombre}
+                        </span>
+                        {cat.descripcion && (
+                            <p style={{
+                                color: 'var(--text-muted)', fontSize: '0.82rem',
+                                marginTop: 2, margin: 0,
+                            }}>
+                                {cat.descripcion}
+                            </p>
+                        )}
+                    </div>
+                    <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                        <button onClick={() => abrirEditar(cat)} style={{
+                            height: 32, padding: '0 14px', borderRadius: 7,
+                            border: '1px solid var(--border)', background: 'var(--surface)',
+                            color: 'var(--text)', fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer',
+                        }}>
+                            Editar
+                        </button>
+                        <button onClick={() => handleDesactivar(cat)} style={{
+                            height: 32, padding: '0 14px', borderRadius: 7,
+                            border: '1px solid var(--red)', background: 'var(--red-bg)',
+                            color: 'var(--red)', fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer',
+                        }}>
+                            Desactivar
+                        </button>
+                    </div>
+                </div>
+            ))}
+        </div>
+    ));
+
     return (
         <div>
             {/* Cabecera */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', margin: 0 }}>
-                    {categorias.length} categoría{categorias.length !== 1 ? 's' : ''} activa{categorias.length !== 1 ? 's' : ''}
+                    {categorias.length} categoría{categorias.length === 1 ? '' : 's'} activa{categorias.length === 1 ? '' : 's'}
                 </p>
                 {!modoFormulario && (
                     <button onClick={abrirCrear} style={{
@@ -129,8 +183,9 @@ export default function TabCategorias() {
                     </p>
                     <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                         <div style={{ flex: 1, minWidth: 200 }}>
-                            <label style={labelStyle}>Nombre *</label>
+                            <label htmlFor="cat-nombre" style={labelStyle}>Nombre *</label>
                             <input
+                                id="cat-nombre"
                                 name="nombre"
                                 value={form.nombre}
                                 onChange={handleChange}
@@ -140,8 +195,9 @@ export default function TabCategorias() {
                             />
                         </div>
                         <div style={{ flex: 2, minWidth: 260 }}>
-                            <label style={labelStyle}>Descripción</label>
+                            <label htmlFor="cat-descripcion" style={labelStyle}>Descripción</label>
                             <input
+                                id="cat-descripcion"
                                 name="descripcion"
                                 value={form.descripcion}
                                 onChange={handleChange}
@@ -157,7 +213,7 @@ export default function TabCategorias() {
                             background: 'var(--accent)', border: 'none',
                             color: '#fff', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
                         }}>
-                            {guardando ? 'Guardando...' : editandoId ? 'Guardar cambios' : 'Crear'}
+                            {submitButtonLabel}
                         </button>
                         <button type="button" onClick={cancelar} disabled={guardando} style={{
                             height: 34, padding: '0 16px', borderRadius: 8,
@@ -171,52 +227,7 @@ export default function TabCategorias() {
             )}
 
             {/* Listado */}
-            {cargando ? (
-                <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>
-            ) : categorias.length === 0 ? (
-                <Empty texto="No hay categorías activas. Crea la primera." />
-            ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {categorias.map((cat) => (
-                        <div key={cat.id} style={{
-                            background: 'var(--surface)', border: '1px solid var(--border)',
-                            borderRadius: 10, padding: '14px 18px',
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            gap: 12, boxShadow: 'var(--shadow-sm)',
-                        }}>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                <span style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.93rem' }}>
-                                    {cat.nombre}
-                                </span>
-                                {cat.descripcion && (
-                                    <p style={{
-                                        color: 'var(--text-muted)', fontSize: '0.82rem',
-                                        marginTop: 2, margin: 0,
-                                    }}>
-                                        {cat.descripcion}
-                                    </p>
-                                )}
-                            </div>
-                            <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
-                                <button onClick={() => abrirEditar(cat)} style={{
-                                    height: 32, padding: '0 14px', borderRadius: 7,
-                                    border: '1px solid var(--border)', background: 'var(--surface)',
-                                    color: 'var(--text)', fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer',
-                                }}>
-                                    Editar
-                                </button>
-                                <button onClick={() => handleDesactivar(cat)} style={{
-                                    height: 32, padding: '0 14px', borderRadius: 7,
-                                    border: '1px solid var(--red)', background: 'var(--red-bg)',
-                                    color: 'var(--red)', fontWeight: 600, fontSize: '0.82rem', cursor: 'pointer',
-                                }}>
-                                    Desactivar
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+            {categoriasContent}
         </div>
     );
 }

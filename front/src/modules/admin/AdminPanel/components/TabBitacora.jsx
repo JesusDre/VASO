@@ -63,6 +63,125 @@ export default function TabBitacora() {
         color: 'var(--text)', fontSize: '0.83rem',
     };
 
+    let bitacoraContent;
+    if (cargando) {
+        bitacoraContent = <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>;
+    } else if (registros.length === 0) {
+        bitacoraContent = <Empty texto="Sin registros en la bitácora." />;
+    } else {
+        bitacoraContent = (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            {registros.map((r) => {
+                const badge = BADGE_COLOR[r.tipo_movimiento] || {};
+                const isOpen = expandido === r.id;
+                const fecha = new Date(r.fecha_hora).toLocaleString('es-MX', {
+                    year: 'numeric', month: 'short', day: '2-digit',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit',
+                });
+
+                return (
+                    <div key={r.id} style={{
+                        background: 'var(--surface)', border: '1px solid var(--border)',
+                        borderRadius: 10, overflow: 'hidden', boxShadow: 'var(--shadow-sm)',
+                    }}>
+                        {/* Fila principal */}
+                        <button
+                            type="button"
+                            onClick={() => setExpandido(isOpen ? null : r.id)}
+                            style={{
+                                padding: '12px 16px', cursor: 'pointer',
+                                display: 'flex', alignItems: 'center',
+                                gap: 12, flexWrap: 'wrap',
+                                background: 'none', border: 'none',
+                                textAlign: 'left', width: '100%',
+                            }}
+                        >
+                            {/* Badge tipo */}
+                            <span style={{
+                                height: 22, padding: '0 10px', borderRadius: 20,
+                                fontSize: '0.72rem', fontWeight: 700,
+                                display: 'inline-flex', alignItems: 'center',
+                                background: badge.bg, color: badge.color,
+                                flexShrink: 0,
+                            }}>
+                                {r.tipo_movimiento}
+                            </span>
+
+                            {/* Nombre del dato */}
+                            <span style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.88rem', flexShrink: 0 }}>
+                                {r.nombre_dato}
+                            </span>
+
+                            <span style={{ color: 'var(--border)', flexShrink: 0 }}>·</span>
+
+                            {/* Fecha */}
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', flexShrink: 0 }}>
+                                {fecha}
+                            </span>
+
+                            <span style={{ color: 'var(--border)', flexShrink: 0 }}>·</span>
+
+                            {/* Usuario */}
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', flexShrink: 0 }}>
+                                {r.usuario_email || 'Anónimo'}
+                            </span>
+
+                            <span style={{ color: 'var(--border)', flexShrink: 0 }}>·</span>
+
+                            {/* IP */}
+                            <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontFamily: 'monospace', flexShrink: 0 }}>
+                                {r.host_origen || '—'}
+                            </span>
+
+                            {/* Indicador expandir */}
+                            <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: '0.78rem', flexShrink: 0 }}>
+                                {isOpen ? '▲ Ocultar' : '▼ Ver valores'}
+                            </span>
+                        </button>
+
+                        {/* Detalle expandido */}
+                        {isOpen && (
+                            <div style={{
+                                borderTop: '1px solid var(--border)',
+                                padding: '14px 16px',
+                                display: 'grid',
+                                gridTemplateColumns: '1fr 1fr',
+                                gap: 14,
+                            }}>
+                                <div>
+                                    <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                                        Valor anterior
+                                    </p>
+                                    <pre style={{
+                                        fontSize: '0.76rem', color: 'var(--text)',
+                                        background: 'var(--surface-2)', borderRadius: 6,
+                                        padding: '10px 12px', overflowX: 'auto',
+                                        margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+                                    }}>
+                                        {r.valor_anterior ? JSON.stringify(r.valor_anterior, null, 2) : '—'}
+                                    </pre>
+                                </div>
+                                <div>
+                                    <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                                        Valor nuevo
+                                    </p>
+                                    <pre style={{
+                                        fontSize: '0.76rem', color: 'var(--text)',
+                                        background: 'var(--surface-2)', borderRadius: 6,
+                                        padding: '10px 12px', overflowX: 'auto',
+                                        margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+                                    }}>
+                                        {r.valor_nuevo ? JSON.stringify(r.valor_nuevo, null, 2) : '—'}
+                                    </pre>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
+        </div>
+    ));
+
     return (
         <div>
             {/* Filtros */}
@@ -99,124 +218,12 @@ export default function TabBitacora() {
             {/* Conteo */}
             {!cargando && (
                 <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 12 }}>
-                    {registros.length} registro{registros.length !== 1 ? 's' : ''} encontrado{registros.length !== 1 ? 's' : ''}
+                    {registros.length} registro{registros.length === 1 ? '' : 's'} encontrado{registros.length === 1 ? '' : 's'}
                 </p>
             )}
 
             {/* Tabla */}
-            {cargando ? (
-                <div style={{ textAlign: 'center', padding: '3rem 0' }}><Spinner /></div>
-            ) : registros.length === 0 ? (
-                <Empty texto="Sin registros en la bitácora." />
-            ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    {registros.map((r) => {
-                        const badge = BADGE_COLOR[r.tipo_movimiento] || {};
-                        const isOpen = expandido === r.id;
-                        const fecha = new Date(r.fecha_hora).toLocaleString('es-MX', {
-                            year: 'numeric', month: 'short', day: '2-digit',
-                            hour: '2-digit', minute: '2-digit', second: '2-digit',
-                        });
-
-                        return (
-                            <div key={r.id} style={{
-                                background: 'var(--surface)', border: '1px solid var(--border)',
-                                borderRadius: 10, overflow: 'hidden', boxShadow: 'var(--shadow-sm)',
-                            }}>
-                                {/* Fila principal */}
-                                <div
-                                    onClick={() => setExpandido(isOpen ? null : r.id)}
-                                    style={{
-                                        padding: '12px 16px', cursor: 'pointer',
-                                        display: 'flex', alignItems: 'center',
-                                        gap: 12, flexWrap: 'wrap',
-                                    }}
-                                >
-                                    {/* Badge tipo */}
-                                    <span style={{
-                                        height: 22, padding: '0 10px', borderRadius: 20,
-                                        fontSize: '0.72rem', fontWeight: 700,
-                                        display: 'inline-flex', alignItems: 'center',
-                                        background: badge.bg, color: badge.color,
-                                        flexShrink: 0,
-                                    }}>
-                                        {r.tipo_movimiento}
-                                    </span>
-
-                                    {/* Nombre del dato */}
-                                    <span style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.88rem', flexShrink: 0 }}>
-                                        {r.nombre_dato}
-                                    </span>
-
-                                    <span style={{ color: 'var(--border)', flexShrink: 0 }}>·</span>
-
-                                    {/* Fecha */}
-                                    <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', flexShrink: 0 }}>
-                                        {fecha}
-                                    </span>
-
-                                    <span style={{ color: 'var(--border)', flexShrink: 0 }}>·</span>
-
-                                    {/* Usuario */}
-                                    <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', flexShrink: 0 }}>
-                                        {r.usuario_email || 'Anónimo'}
-                                    </span>
-
-                                    <span style={{ color: 'var(--border)', flexShrink: 0 }}>·</span>
-
-                                    {/* IP */}
-                                    <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', fontFamily: 'monospace', flexShrink: 0 }}>
-                                        {r.host_origen || '—'}
-                                    </span>
-
-                                    {/* Indicador expandir */}
-                                    <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: '0.78rem', flexShrink: 0 }}>
-                                        {isOpen ? '▲ Ocultar' : '▼ Ver valores'}
-                                    </span>
-                                </div>
-
-                                {/* Detalle expandido */}
-                                {isOpen && (
-                                    <div style={{
-                                        borderTop: '1px solid var(--border)',
-                                        padding: '14px 16px',
-                                        display: 'grid',
-                                        gridTemplateColumns: '1fr 1fr',
-                                        gap: 14,
-                                    }}>
-                                        <div>
-                                            <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
-                                                Valor anterior
-                                            </p>
-                                            <pre style={{
-                                                fontSize: '0.76rem', color: 'var(--text)',
-                                                background: 'var(--surface-2)', borderRadius: 6,
-                                                padding: '10px 12px', overflowX: 'auto',
-                                                margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all',
-                                            }}>
-                                                {r.valor_anterior ? JSON.stringify(r.valor_anterior, null, 2) : '—'}
-                                            </pre>
-                                        </div>
-                                        <div>
-                                            <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
-                                                Valor nuevo
-                                            </p>
-                                            <pre style={{
-                                                fontSize: '0.76rem', color: 'var(--text)',
-                                                background: 'var(--surface-2)', borderRadius: 6,
-                                                padding: '10px 12px', overflowX: 'auto',
-                                                margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-all',
-                                            }}>
-                                                {r.valor_nuevo ? JSON.stringify(r.valor_nuevo, null, 2) : '—'}
-                                            </pre>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
+            {bitacoraContent}
         </div>
     );
 }

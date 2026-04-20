@@ -45,6 +45,53 @@ export default function TabRoles() {
         catch { toast.error('Error al eliminar'); }
     };
 
+    let rolSubmitLabel;
+    if (guardando) rolSubmitLabel = '...';
+    else if (editandoId) rolSubmitLabel = 'Actualizar';
+    else rolSubmitLabel = 'Crear';
+
+    let rolesContent;
+    if (cargando) {
+        rolesContent = <div style={{ textAlign: 'center', padding: '2rem 0' }}><Spinner /></div>;
+    } else if (roles.length === 0) {
+        rolesContent = <Empty texto="Sin roles configurados." />;
+    } else {
+        rolesContent = (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {roles.map((r) => (
+                <div key={r.id} style={{
+                    background: 'var(--surface)', border: '1px solid var(--border)',
+                    borderRadius: 10, padding: '13px 16px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    boxShadow: 'var(--shadow-sm)',
+                }}>
+                    <div>
+                        <span style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.92rem' }}>{r.nombre_rol}</span>
+
+                    </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                        <button onClick={() => editar(r)} style={{
+                            height: 30, padding: '0 12px',
+                            border: '1px solid var(--border)', borderRadius: 6,
+                            background: 'var(--yellow-bg)', color: 'var(--yellow)',
+                            fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
+                        }}>
+                            Editar
+                        </button>
+                        <button onClick={() => eliminar(r.id)} style={{
+                            height: 30, padding: '0 12px',
+                            border: '1px solid var(--red)', borderRadius: 6,
+                            background: 'var(--red-bg)', color: 'var(--red)',
+                            fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
+                        }}>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            ))}
+        </div>
+    ));
+
     return (
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'flex-start' }}>
             <div style={{ width: 280, flexShrink: 0, background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: 20, boxShadow: 'var(--shadow-sm)' }}>
@@ -53,8 +100,9 @@ export default function TabRoles() {
                 </h3>
                 <form onSubmit={handleGuardar} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     <div>
-                        <label className="nv-label">Nombre del rol</label>
+                        <label htmlFor="rol-nombre" className="nv-label">Nombre del rol</label>
                         <input
+                            id="rol-nombre"
                             type="text" value={form.nombre_rol}
                             onChange={(e) => setForm({ nombre_rol: e.target.value })}
                             required disabled={guardando}
@@ -68,7 +116,7 @@ export default function TabRoles() {
                             background: 'var(--accent)', border: 'none', color: '#fff',
                             borderRadius: 8, fontWeight: 600, fontSize: '0.88rem', cursor: 'pointer',
                         }}>
-                            {guardando ? '...' : editandoId ? 'Actualizar' : 'Crear'}
+                            {rolSubmitLabel}
                         </button>
                         {editandoId && (
                             <button type="button" onClick={() => { setForm(FORM); setEditandoId(null); }} style={{
@@ -85,45 +133,7 @@ export default function TabRoles() {
             </div>
 
             <div style={{ flex: 1, minWidth: 240 }}>
-                {cargando ? (
-                    <div style={{ textAlign: 'center', padding: '2rem 0' }}><Spinner /></div>
-                ) : roles.length === 0 ? (
-                    <Empty texto="Sin roles configurados." />
-                ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        {roles.map((r) => (
-                            <div key={r.id} style={{
-                                background: 'var(--surface)', border: '1px solid var(--border)',
-                                borderRadius: 10, padding: '13px 16px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                boxShadow: 'var(--shadow-sm)',
-                            }}>
-                                <div>
-                                    <span style={{ fontWeight: 600, color: 'var(--text)', fontSize: '0.92rem' }}>{r.nombre_rol}</span>
-                                    
-                                </div>
-                                <div style={{ display: 'flex', gap: 8 }}>
-                                    <button onClick={() => editar(r)} style={{
-                                        height: 30, padding: '0 12px',
-                                        border: '1px solid var(--border)', borderRadius: 6,
-                                        background: 'var(--yellow-bg)', color: 'var(--yellow)',
-                                        fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
-                                    }}>
-                                        Editar
-                                    </button>
-                                    <button onClick={() => eliminar(r.id)} style={{
-                                        height: 30, padding: '0 12px',
-                                        border: '1px solid var(--red)', borderRadius: 6,
-                                        background: 'var(--red-bg)', color: 'var(--red)',
-                                        fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
-                                    }}>
-                                        Eliminar
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                {rolesContent}
             </div>
 
             <ModalAlert
