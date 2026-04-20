@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { readCategorias, createCategoria, updateCategoria } from '../../../../services/api';
 import toast from 'react-hot-toast';
@@ -151,7 +152,8 @@ export default function TabCategorias() {
                 </div>
             ))}
         </div>
-    ));
+    );
+    }
 
     return (
         <div>

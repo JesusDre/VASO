@@ -1,3 +1,4 @@
+import React from 'react';
 import Navbar from '../../../components/Navbar';
 import HistoriaCard from '../../../components/HistoriaCard';
 import { useHistorias } from './hooks/useHistorias';
@@ -32,6 +33,7 @@ export default function Home() {
             ))}
         </div>
     );
+    }
 
     return (
         <div className="nv-home-page">

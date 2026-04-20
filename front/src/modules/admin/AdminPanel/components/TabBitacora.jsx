@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { readBitacora } from '../../../../services/api';
 import toast from 'react-hot-toast';
@@ -180,7 +181,8 @@ export default function TabBitacora() {
                 );
             })}
         </div>
-    ));
+    );
+    }
 
     return (
         <div>

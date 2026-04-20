@@ -1,3 +1,4 @@
+import React from 'react';
 import Navbar from '../../../components/Navbar';
 import TabRecursos from '../EditorHistoria/components/TabRecursos';
 import { Toaster } from 'react-hot-toast';

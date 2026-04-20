@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { API_BASE, readUsuarios, readRoles, deleteUsuario } from '../../../../services/api';
 import { useAuth } from '../../../../context/AuthContext';
@@ -132,7 +133,8 @@ export default function TabUsuarios() {
                 </tbody>
             </table>
         </div>
-    ));
+    );
+    }
 
     return (
         <div>

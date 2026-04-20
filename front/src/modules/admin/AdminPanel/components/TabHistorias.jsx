@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { readHistorias, updateHistoria } from '../../../../services/api';
 import toast from 'react-hot-toast';
@@ -95,7 +96,8 @@ export default function TabHistorias() {
                 </div>
             ))}
         </div>
-    ));
+    );
+    }
 
     return (
         <div>

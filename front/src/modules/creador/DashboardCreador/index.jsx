@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { readHistorias, deleteHistoria } from '../../../services/api';
@@ -102,7 +103,9 @@ export default function DashboardCreador() {
                 Crear historia
             </button>
         </div>
-    ) : (
+    );
+    } else {
+        dashboardContent = (
         <table style={styles.table}>
             <thead style={styles.thead}>
                 <tr>
@@ -147,7 +150,8 @@ export default function DashboardCreador() {
                 ))}
             </tbody>
         </table>
-    ));
+    );
+    }
 
     return (
         <div style={styles.page}>

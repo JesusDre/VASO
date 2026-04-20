@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import toast from 'react-hot-toast';
