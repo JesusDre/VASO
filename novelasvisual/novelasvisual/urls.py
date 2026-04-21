@@ -1,9 +1,10 @@
 # URL raiz del proyecto Novelas Visuales
 # Incluye las rutas de todas las apps y los endpoints de JWT
 
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from core import views as core_views
 from usuarios.views import RegistroView
@@ -33,4 +34,7 @@ urlpatterns = [
 ]
 
 # Servir archivos de medios (DEBUG y produccion)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+else:
+    urlpatterns += [re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT})]
