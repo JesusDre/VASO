@@ -68,13 +68,6 @@ class ImagenSerializer(serializers.ModelSerializer):
 # Serializador de Audio
 # -----------------------------------------------------------
 class AudioSerializer(serializers.ModelSerializer):
-    archivo = serializers.SerializerMethodField()
-
-    def get_archivo(self, obj):
-        if obj.archivo:
-            return f'/media/{obj.archivo.name}'
-        return None
-
     class Meta:
         model = Audio
         fields = [
@@ -84,6 +77,12 @@ class AudioSerializer(serializers.ModelSerializer):
             'usuario',
         ]
         read_only_fields = ['usuario']
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        if instance.archivo:
+            rep['archivo'] = f'/media/{instance.archivo.name}'
+        return rep
 
     def validate_archivo(self, archivo):
         if not archivo:
