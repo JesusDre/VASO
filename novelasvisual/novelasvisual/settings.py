@@ -135,7 +135,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # -----------------------------------------------------------
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='https://localhost:5173,http://127.0.0.1:h5173',
+    default='https://app.genidas.com',
     cast=Csv(),
 )
 

@@ -32,6 +32,5 @@ urlpatterns = [
     path('', include('progreso.urls')),
 ]
 
-# Servir archivos de medios en modo DEBUG
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Servir archivos de medios (DEBUG y produccion)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

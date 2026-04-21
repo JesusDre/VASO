@@ -91,8 +91,6 @@ class MisAudiosViewSet(viewsets.ModelViewSet):
         return Audio.objects.filter(usuario=self.request.user)
 
     def perform_create(self, serializer):
-        logger.info("FILES recibidos: {}", dict(self.request.FILES))
-        logger.info("DATA recibida: {}", dict(self.request.data))
         audio = serializer.save(usuario=self.request.user)
         logger.info(
             "Audio creado (privado) | id={} user={}",
