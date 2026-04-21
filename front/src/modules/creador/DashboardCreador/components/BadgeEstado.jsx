@@ -1,3 +1,6 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
 export function BadgeEstado({ publicada }) {
     return (
         <span style={{
@@ -15,3 +18,7 @@ export function BadgeEstado({ publicada }) {
         </span>
     );
 }
+
+BadgeEstado.propTypes = {
+    publicada: PropTypes.bool.isRequired,
+};

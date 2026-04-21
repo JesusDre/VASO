@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { readHistoria, readProgresos, deleteProgreso } from '../../../services/api';
@@ -152,7 +153,7 @@ export default function DetalleHistoria() {
 
                         {!usuario && (
                             <p className="dh-login-hint">
-                                <span onClick={() => navigate('/login')}>Inicia sesión</span> para guardar tu progreso.
+                                <button type="button" className="dh-login-link" onClick={() => navigate('/login')}>Inicia sesión</button> para guardar tu progreso.
                             </p>
                         )}
                     </div>

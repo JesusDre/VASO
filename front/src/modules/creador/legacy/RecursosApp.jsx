@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import {
     API_BASE,
@@ -103,8 +104,8 @@ function ImagenesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Tipo</label>
-                                <select name="tipo" className={`form-select ${errores.tipo ? 'is-invalid' : ''}`}
+                                <label htmlFor="img-tipo" className="form-label">Tipo</label>
+                                <select id="img-tipo" name="tipo" className={`form-select ${errores.tipo ? 'is-invalid' : ''}`}
                                     value={formData.tipo} onChange={handleChange} required disabled={cargandoGuardar}>
                                     <option value="escenario">Escenario</option>
                                     <option value="personaje">Personaje</option>
@@ -113,32 +114,31 @@ function ImagenesPanel() {
                                 {errores.tipo && <div className="invalid-feedback">{errores.tipo.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Descripcion</label>
-                                <input type="text" name="descripcion"
+                                <label htmlFor="img-desc" className="form-label">Descripcion</label>
+                                <input id="img-desc" type="text" name="descripcion"
                                     className={`form-control ${errores.descripcion ? 'is-invalid' : ''}`}
                                     value={formData.descripcion} onChange={handleChange}
                                     disabled={cargandoGuardar} placeholder="Descripcion de la imagen" />
                                 {errores.descripcion && <div className="invalid-feedback">{errores.descripcion.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Imagen (archivo en servidor)</label>
-                                <input type="file" name="url"
+                                <label htmlFor="img-url" className="form-label">Imagen (archivo en servidor)</label>
+                                <input id="img-url" type="file" name="url"
                                     className={`form-control ${errores.url ? 'is-invalid' : ''}`}
                                     onChange={handleChange} accept="image/*" disabled={cargandoGuardar} />
                                 {errores.url && <div className="invalid-feedback">{errores.url.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Imagen binaria (en BD)</label>
-                                <input type="file" name="imagen_para_binario"
+                                <label htmlFor="img-bin" className="form-label">Imagen binaria (en BD)</label>
+                                <input id="img-bin" type="file" name="imagen_para_binario"
                                     className={`form-control ${errores.imagen_para_binario ? 'is-invalid' : ''}`}
                                     onChange={handleChange} accept="image/*" disabled={cargandoGuardar} />
                                 {errores.imagen_para_binario && <div className="invalid-feedback">{errores.imagen_para_binario.join(', ')}</div>}
                             </div>
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                    {cargandoGuardar && <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>}
+                                    {!cargandoGuardar && (editandoId ? 'Actualizar' : 'Guardar')}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
@@ -178,13 +178,15 @@ function ImagenesPanel() {
                                                 <td><span className="badge bg-info text-dark">{img.tipo}</span></td>
                                                 <td>{img.descripcion || '—'}</td>
                                                 <td>
-                                                    {img.url ? (
+                                                    {img.url && (
                                                         <img src={imgBase(img.url)} alt={img.descripcion}
                                                             style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 4 }} />
-                                                    ) : img.imagen_base64_display ? (
-                                                        <img src={`data:image/jpeg;base64,${img.imagen_base64_display}`} alt=""
+                                                    )}
+                                                    {!img.url && img.imagen_base64_display && (
+                                                        <img src={`data:image/jpeg;base64,${img.imagen_base64_display}`} alt={img.descripcion || 'imagen'}
                                                             style={{ width: 48, height: 48, objectFit: 'cover', borderRadius: 4 }} />
-                                                    ) : <span className="text-muted">—</span>}
+                                                    )}
+                                                    {!img.url && !img.imagen_base64_display && <span className="text-muted">—</span>}
                                                 </td>
                                                 <td>
                                                     <button className="btn btn-warning btn-sm me-1" onClick={() => prepararEdicion(img)}>Editar</button>
@@ -296,25 +298,24 @@ function AudiosPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Descripcion</label>
-                                <input type="text" name="descripcion"
+                                <label htmlFor="aud-desc" className="form-label">Descripcion</label>
+                                <input id="aud-desc" type="text" name="descripcion"
                                     className={`form-control ${errores.descripcion ? 'is-invalid' : ''}`}
                                     value={formData.descripcion} onChange={handleChange}
                                     disabled={cargandoGuardar} placeholder="Nombre del audio" />
                                 {errores.descripcion && <div className="invalid-feedback">{errores.descripcion.join(', ')}</div>}
                             </div>
                             <div className="mb-3">
-                                <label className="form-label">Archivo de audio</label>
-                                <input type="file" name="archivo"
+                                <label htmlFor="aud-file" className="form-label">Archivo de audio</label>
+                                <input id="aud-file" type="file" name="archivo"
                                     className={`form-control ${errores.archivo ? 'is-invalid' : ''}`}
                                     onChange={handleChange} accept="audio/*" disabled={cargandoGuardar} />
                                 {errores.archivo && <div className="invalid-feedback">{errores.archivo.join(', ')}</div>}
                             </div>
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                    {cargandoGuardar && <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>}
+                                    {!cargandoGuardar && (editandoId ? 'Actualizar' : 'Guardar')}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
@@ -356,6 +357,7 @@ function AudiosPanel() {
                                                     {a.archivo ? (
                                                         <audio controls style={{ height: 32 }}>
                                                             <source src={audioBase(a.archivo)} />
+                                                            <track kind="captions" srcLang="es" label="Sin subtítulos" />
                                                         </audio>
                                                     ) : <span className="text-muted">—</span>}
                                                 </td>

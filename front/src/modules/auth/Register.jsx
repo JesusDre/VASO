@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../../services/api';
@@ -17,7 +18,7 @@ function validarPassword(password) {
     const errores = [];
     if (password.length < 8) errores.push('mínimo 8 caracteres');
     if (!/[A-Z]/.test(password)) errores.push('al menos una mayúscula');
-    if (!/[0-9]/.test(password)) errores.push('al menos un número');
+    if (!/\d/.test(password)) errores.push('al menos un número');
     if (!/[^a-zA-Z0-9]/.test(password)) errores.push('al menos un carácter especial');
     return errores;
 }
@@ -28,9 +29,16 @@ function Register() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+    const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]*$/;
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (['nombre', 'apellido_paterno', 'apellido_materno'].includes(name)) {
+            if (!soloLetras.test(value)) return;
+        }
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
@@ -196,13 +204,31 @@ function Register() {
                                 <input
                                     id="password"
                                     name="password"
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     value={formData.password}
                                     onChange={handleChange}
                                     autoComplete="new-password"
                                     required
                                     placeholder="••••••••"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4 }}
+                                >
+                                    {showPassword ? (
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
+                                            <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
+                                            <line x1="1" y1="1" x2="23" y2="23" />
+                                        </svg>
+                                    ) : (
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    )}
+                                </button>
                             </div>
                             <p className="login-hint">
                                 Mínimo 8 caracteres, una mayúscula, un número y un carácter especial.
@@ -224,13 +250,31 @@ function Register() {
                                 <input
                                     id="confirmar_password"
                                     name="confirmar_password"
-                                    type="password"
+                                    type={showConfirmPassword ? 'text' : 'password'}
                                     value={formData.confirmar_password}
                                     onChange={handleChange}
                                     autoComplete="new-password"
                                     required
                                     placeholder="••••••••"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4 }}
+                                >
+                                    {showConfirmPassword ? (
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94" />
+                                            <path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19" />
+                                            <line x1="1" y1="1" x2="23" y2="23" />
+                                        </svg>
+                                    ) : (
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    )}
+                                </button>
                             </div>
                         </div>
 
@@ -238,7 +282,7 @@ function Register() {
                             <div className="login-error" role="alert">{error}</div>
                         )}
                         {success && (
-                            <div className="login-success" role="status">{success}</div>
+                            <output className="login-success">{success}</output>
                         )}
 
                         <button type="submit" disabled={loading} className="login-btn">

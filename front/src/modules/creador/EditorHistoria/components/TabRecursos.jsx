@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import {
@@ -140,20 +141,20 @@ export default function TabRecursos() {
                         <h6 style={{ color: 'var(--text)', fontWeight: 700, marginBottom: 16, fontSize: '0.95rem' }}>Subir imagen</h6>
                         <form onSubmit={subirImagen}>
                             <div style={{ marginBottom: 12 }}>
-                                <label style={labelStyle}>Tipo de imagen</label>
-                                <select value={imgTipo} onChange={(e) => setImgTipo(e.target.value)} style={selectStyle}>
+                                <label htmlFor="img-tipo" style={labelStyle}>Tipo de imagen</label>
+                                <select id="img-tipo" value={imgTipo} onChange={(e) => setImgTipo(e.target.value)} style={selectStyle}>
                                     <option value="escenario">Fondo de escena</option>
                                     <option value="personaje">Sprite de personaje</option>
                                     <option value="portada">Portada de historia</option>
                                 </select>
                             </div>
                             <div style={{ marginBottom: 12 }}>
-                                <label style={labelStyle}>Descripción</label>
-                                <input type="text" value={imgDesc} onChange={(e) => setImgDesc(e.target.value)} placeholder="Ej: Bosque nocturno" style={inputStyle} />
+                                <label htmlFor="img-desc" style={labelStyle}>Descripción</label>
+                                <input id="img-desc" type="text" value={imgDesc} onChange={(e) => setImgDesc(e.target.value)} placeholder="Ej: Bosque nocturno" style={inputStyle} />
                             </div>
                             <div style={{ marginBottom: 16 }}>
-                                <label style={labelStyle}>Archivo (PNG, JPG, WebP)</label>
-                                <input type="file" accept="image/*" onChange={(e) => setImgFile(e.target.files[0])} style={{ ...inputStyle, padding: '6px 10px' }} />
+                                <label htmlFor="img-file" style={labelStyle}>Archivo (PNG, JPG, WebP)</label>
+                                <input id="img-file" type="file" accept="image/*" onChange={(e) => setImgFile(e.target.files[0])} style={{ ...inputStyle, padding: '6px 10px' }} />
                             </div>
                             <button type="submit" disabled={subiendo} style={{ ...btnPrimary, width: '100%' }}>
                                 {subiendo ? 'Subiendo...' : 'Subir imagen'}
@@ -177,11 +178,13 @@ export default function TabRecursos() {
                                         {FILTROS.map(({ key, label, color }) => {
                                             const activo = filtroTipo === key;
                                             const count = key === 'todos' ? imagenes.length : imagenes.filter(i => i.tipo === key).length;
+                                            let bgColor = 'var(--surface)';
+                                            if (activo) bgColor = color ? `${color}18` : 'var(--accent-light)';
                                             return (
                                                 <button key={key} onClick={() => setFiltroTipo(key)} style={{
                                                     height: 30, padding: '0 14px', borderRadius: 20, cursor: 'pointer',
                                                     border: `1px solid ${activo ? (color || 'var(--accent)') : 'var(--border)'}`,
-                                                    background: activo ? (color ? `${color}18` : 'var(--accent-light)') : 'var(--surface)',
+                                                    background: bgColor,
                                                     color: activo ? (color || 'var(--accent)') : 'var(--text-muted)',
                                                     fontWeight: activo ? 700 : 500, fontSize: '0.82rem',
                                                     transition: 'all 0.15s',
@@ -199,9 +202,12 @@ export default function TabRecursos() {
                                             </p>
                                         )}
                                         {imgsFiltradas.map((img) => {
-                                            const src = img.imagen_base64_display
-                                                ? `data:image/png;base64,${img.imagen_base64_display}`
-                                                : img.url ? `${API_BASE}${img.url}` : null;
+                                            let src = null;
+                                            if (img.imagen_base64_display) {
+                                                src = `data:image/png;base64,${img.imagen_base64_display}`;
+                                            } else if (img.url) {
+                                                src = `${API_BASE}${img.url}`;
+                                            }
                                             return (
                                                 <div key={img.id} style={{ ...cardStyle, display: 'flex', alignItems: 'center', gap: 14 }}>
                                                     <div style={{ width: 60, height: 60, borderRadius: 7, overflow: 'hidden', flexShrink: 0, background: 'var(--surface-2)', border: '1px solid var(--border)' }}>
@@ -239,12 +245,12 @@ export default function TabRecursos() {
                         <h6 style={{ color: 'var(--text)', fontWeight: 700, marginBottom: 16, fontSize: '0.95rem' }}>Subir audio</h6>
                         <form onSubmit={subirAudio}>
                             <div style={{ marginBottom: 12 }}>
-                                <label style={labelStyle}>Descripción</label>
-                                <input type="text" value={audDesc} onChange={(e) => setAudDesc(e.target.value)} placeholder="Ej: Música de tensión" style={inputStyle} />
+                                <label htmlFor="aud-desc" style={labelStyle}>Descripción</label>
+                                <input id="aud-desc" type="text" value={audDesc} onChange={(e) => setAudDesc(e.target.value)} placeholder="Ej: Música de tensión" style={inputStyle} />
                             </div>
                             <div style={{ marginBottom: 16 }}>
-                                <label style={labelStyle}>Archivo (MP3, OGG, WAV)</label>
-                                <input type="file" accept="audio/*" onChange={(e) => setAudFile(e.target.files[0])} style={{ ...inputStyle, padding: '6px 10px' }} />
+                                <label htmlFor="aud-file" style={labelStyle}>Archivo (MP3, OGG, WAV)</label>
+                                <input id="aud-file" type="file" accept="audio/*" onChange={(e) => setAudFile(e.target.files[0])} style={{ ...inputStyle, padding: '6px 10px' }} />
                             </div>
                             <button type="submit" disabled={subiendo} style={{ ...btnPrimary, width: '100%' }}>
                                 {subiendo ? 'Subiendo...' : 'Subir audio'}
@@ -261,6 +267,7 @@ export default function TabRecursos() {
                                     {a.archivo && (
                                         <audio controls style={{ height: 32, width: '100%' }}>
                                             <source src={`${API_BASE}${a.archivo}`} />
+                                            <track kind="captions" srcLang="es" label="Sin subtítulos" />
                                         </audio>
                                     )}
                                 </div>
@@ -311,14 +318,14 @@ export default function TabRecursos() {
                 <Modal isOpen titulo={`Editar ${modalEditar.tipo === 'imagen' ? 'imagen' : 'audio'}`} onClose={() => !guardandoEdit && setModalEditar(null)} ancho={420}>
                     <form onSubmit={confirmarEditar} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                         <div>
-                            <label style={labelStyle}>Descripción</label>
-                            <input type="text" value={editForm.descripcion} onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })}
+                            <label htmlFor="edit-desc" style={labelStyle}>Descripción</label>
+                            <input id="edit-desc" type="text" value={editForm.descripcion} onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })}
                                 placeholder="Descripción del recurso" style={inputStyle} autoFocus />
                         </div>
                         {modalEditar.tipo === 'imagen' && (
                             <div>
-                                <label style={labelStyle}>Tipo de imagen</label>
-                                <select value={editForm.tipo} onChange={(e) => setEditForm({ ...editForm, tipo: e.target.value })} style={selectStyle}>
+                                <label htmlFor="edit-tipo" style={labelStyle}>Tipo de imagen</label>
+                                <select id="edit-tipo" value={editForm.tipo} onChange={(e) => setEditForm({ ...editForm, tipo: e.target.value })} style={selectStyle}>
                                     <option value="escenario">Fondo de escena</option>
                                     <option value="personaje">Sprite de personaje</option>
                                     <option value="portada">Portada de historia</option>

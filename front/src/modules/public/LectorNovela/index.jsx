@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -128,15 +129,8 @@ export default function LectorNovela() {
     useEffect(() => {
         if (!nodoActual) return;
         const audio = audiosMap[nodoActual.id_audio_fondo];
-        let url = null;
-        if (audio?.archivo) {
-            try {
-                new URL(audio.archivo);
-                url = audio.archivo;
-            } catch {
-                url = `${API_BASE}${audio.archivo.startsWith('/') ? '' : '/'}${audio.archivo}`;
-            }
-        }
+        const audioSrc = audio?.archivo?.startsWith('http') ? audio.archivo : `${API_BASE}${audio?.archivo}`;
+        const url = audio?.archivo ? audioSrc : null;
 
         audioRef.current?.pause();
         if (url) {
@@ -277,7 +271,12 @@ export default function LectorNovela() {
                         <IconVolume muted={muted} />
                     </button>
 
-                    <div className="ln-text-panel" onClick={handleTextClick}>
+                    <button
+                        type="button"
+                        className="ln-text-panel"
+                        onClick={handleTextClick}
+                        style={{ background: 'none', border: 'none', padding: 0, textAlign: 'left', cursor: 'pointer', width: '100%' }}
+                    >
                         {personajeHablando && <div className="ln-character-name">{personajeHablando}</div>}
 
                         <div className="ln-panel-body">
@@ -290,7 +289,7 @@ export default function LectorNovela() {
                                 <div className="ln-options">
                                     {opciones.map((op, idx) => (
                                         <button key={op.id} className="ln-option-btn" onClick={() => irANodo(op.id_nodo_destino)}>
-                                            {String.fromCharCode(65 + idx)}. {op.texto_opcion}
+                                            {String.fromCodePoint(65 + idx)}. {op.texto_opcion}
                                         </button>
                                     ))}
                                 </div>
@@ -307,7 +306,7 @@ export default function LectorNovela() {
                                 <p className="ln-no-continue">Sin continuación configurada.</p>
                             )}
                         </div>
-                    </div>
+                    </button>
                 </div>
             </div>
         </div>

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import {
     readHistorias, createHistoria, updateHistoria, deleteHistoria,
@@ -131,6 +132,11 @@ export default function HistoriasApp() {
         (h.publicada ? 'publicada' : 'borrador').includes(filtro.toLowerCase())
     );
 
+    let saveButtonLabel;
+    if (cargandoGuardar) saveButtonLabel = <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>;
+    else if (editandoId) saveButtonLabel = 'Actualizar';
+    else saveButtonLabel = 'Guardar';
+
     return (
         <div>
             <Toaster position="top-right" />
@@ -147,8 +153,9 @@ export default function HistoriasApp() {
                             <div className="card-body">
                                 <form onSubmit={handleSubmit}>
                                     <div className="mb-3">
-                                        <label className="form-label">Titulo</label>
+                                        <label htmlFor="hist-titulo" className="form-label">Titulo</label>
                                         <input
+                                            id="hist-titulo"
                                             type="text" name="titulo"
                                             className={`form-control ${errores.titulo ? 'is-invalid' : ''}`}
                                             value={formData.titulo} onChange={handleChange}
@@ -159,8 +166,9 @@ export default function HistoriasApp() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Descripcion</label>
+                                        <label htmlFor="hist-descripcion" className="form-label">Descripcion</label>
                                         <textarea
+                                            id="hist-descripcion"
                                             name="descripcion" rows="3"
                                             className={`form-control ${errores.descripcion ? 'is-invalid' : ''}`}
                                             value={formData.descripcion} onChange={handleChange}
@@ -170,8 +178,9 @@ export default function HistoriasApp() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Creador</label>
+                                        <label htmlFor="hist-creador" className="form-label">Creador</label>
                                         <select
+                                            id="hist-creador"
                                             name="id_creador"
                                             className={`form-select ${errores.id_creador ? 'is-invalid' : ''}`}
                                             value={formData.id_creador} onChange={handleChange}
@@ -188,8 +197,9 @@ export default function HistoriasApp() {
                                     </div>
 
                                     <div className="mb-3">
-                                        <label className="form-label">Nodo de inicio (opcional)</label>
+                                        <label htmlFor="hist-nodo-inicio" className="form-label">Nodo de inicio (opcional)</label>
                                         <select
+                                            id="hist-nodo-inicio"
                                             name="id_nodo_inicio"
                                             className={`form-select ${errores.id_nodo_inicio ? 'is-invalid' : ''}`}
                                             value={formData.id_nodo_inicio} onChange={handleChange}
@@ -217,9 +227,7 @@ export default function HistoriasApp() {
 
                                     <div className="d-grid gap-2">
                                         <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                            {cargandoGuardar
-                                                ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                                : editandoId ? 'Actualizar' : 'Guardar'}
+                                            {saveButtonLabel}
                                         </button>
                                         {editandoId && (
                                             <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>

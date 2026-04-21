@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -81,6 +82,11 @@ export default function Navbar() {
         navigate('/login');
     };
 
+    const roleLabelMap = { creador: 'Creator', admin: 'Admin' };
+    const roleBadgeMap = { creador: 'Creador', admin: 'Admin' };
+    const roleLabelText = roleLabelMap[rol] || 'Lector';
+    const roleBadgeText = roleBadgeMap[rol] || 'Lector';
+
     return (
         <nav className="nv-navbar">
             <div className="nv-navbar-inner">
@@ -157,7 +163,7 @@ export default function Navbar() {
                                 <div className="nv-user-info">
                                     <div className="nv-user-meta">
                                         <div className="nv-user-role-label">
-                                            {rol === 'creador' ? 'Creator' : rol === 'admin' ? 'Admin' : 'Lector'}
+                                            {roleLabelText}
                                         </div>
                                         <div className="nv-user-name">{usuario.nombre}</div>
                                     </div>
@@ -166,7 +172,7 @@ export default function Navbar() {
                                     </div>
                                 </div>
                                 <span className={`nv-role-badge nv-role-${rol}`}>
-                                    {rol === 'creador' ? 'Creador' : rol === 'admin' ? 'Admin' : 'Lector'}
+                                    {roleBadgeText}
                                 </span>
                                 <button className="nv-btn-logout" onClick={handleLogout}>
                                     Salir

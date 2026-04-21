@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { readHistorias, readCategorias } from '../../../../services/api';

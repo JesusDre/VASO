@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import {
@@ -9,6 +11,14 @@ import {
 import { inputStyle, labelStyle, selectStyle, btnPrimary, btnGhost, cardStyle } from '../styles/editorStyles';
 import Modal from './Modal';
 import ModalAlert from '../../../../components/ModalAlert';
+
+function getSpritePreviewSrc(imagenes, id_imagen) {
+    const img = imagenes.find((i) => i.id === Number(id_imagen));
+    if (!img) return null;
+    if (img.imagen_base64_display) return `data:image/png;base64,${img.imagen_base64_display}`;
+    if (img.url) return `${API_BASE}${img.url}`;
+    return null;
+}
 
 function extraerMensajeError(err, fallback) {
     const data = err.response?.data;
@@ -43,7 +53,7 @@ export default function TabPersonajes({ historiaId }) {
     const spriteInputRef = useRef(null);
 
     const [alerta, setAlerta] = useState(null);
-    const [confirmEliminar, setConfirmEliminar] = useState(null); // { id, nombre }
+    const [confirmEliminar, setConfirmEliminar] = useState(null);
 
     const cargar = async () => {
         const [rp, ri, rn, rnp] = await Promise.all([readPersonajes(), readMisImagenes(), readNodos(), readNodoPersonajes()]);
@@ -144,12 +154,7 @@ export default function TabPersonajes({ historiaId }) {
         return null;
     };
 
-    const spriteSeleccionado = imagenes.find((i) => i.id === Number(form.id_imagen));
-    const spriteSrc = spriteSeleccionado
-        ? (spriteSeleccionado.imagen_base64_display
-            ? `data:image/png;base64,${spriteSeleccionado.imagen_base64_display}`
-            : spriteSeleccionado.url ? `http://localhost:8000${spriteSeleccionado.url}` : null)
-        : null;
+    const spriteSrc = getSpritePreviewSrc(imagenes, form.id_imagen);
 
     return (
         <>
@@ -180,14 +185,14 @@ export default function TabPersonajes({ historiaId }) {
                     <form onSubmit={handleGuardar}>
                         {/* Nombre */}
                         <div style={{ marginBottom: 14 }}>
-                            <label style={labelStyle}>Nombre</label>
-                            <input type="text" name="nombre" value={form.nombre} onChange={handleChange} required disabled={guardando} style={inputStyle} placeholder="Ej: Aria" />
+                            <label htmlFor="p-nombre" style={labelStyle}>Nombre</label>
+                            <input id="p-nombre" type="text" name="nombre" value={form.nombre} onChange={handleChange} required disabled={guardando} style={inputStyle} placeholder="Ej: Aria" />
                         </div>
 
                         {/* Sprite */}
                         <div style={{ marginBottom: 16 }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                                <label style={{ ...labelStyle, marginBottom: 0 }}>Sprite</label>
+                                <label htmlFor="p-sprite" style={{ ...labelStyle, marginBottom: 0 }}>Sprite</label>
                                 <div style={{ display: 'flex', gap: 0, border: '1px solid var(--border)', borderRadius: 6, overflow: 'hidden' }}>
                                     {['seleccionar', 'subir'].map((modo) => (
                                         <button
@@ -217,7 +222,7 @@ export default function TabPersonajes({ historiaId }) {
                                             <img src={spriteSrc} alt="sprite" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         </div>
                                     )}
-                                    <select name="id_imagen" value={form.id_imagen} onChange={handleChange} disabled={guardando} style={{ ...selectStyle, flex: 1 }}>
+                                    <select id="p-sprite" name="id_imagen" value={form.id_imagen} onChange={handleChange} disabled={guardando} style={{ ...selectStyle, flex: 1 }}>
                                         <option value="">-- Sin sprite --</option>
                                         {imagenes.map((i) => (
                                             <option key={i.id} value={i.id}>{i.descripcion || `Imagen ${i.id}`}</option>
@@ -248,7 +253,7 @@ export default function TabPersonajes({ historiaId }) {
                                             ...btnPrimary,
                                             fontSize: '0.84rem',
                                             padding: '7px 14px',
-                                            opacity: !spriteFile ? 0.5 : 1,
+                                            opacity: spriteFile ? 1 : 0.5,
                                         }}
                                     >
                                         {subiendoSprite ? 'Subiendo...' : 'Subir y seleccionar'}
@@ -270,22 +275,22 @@ export default function TabPersonajes({ historiaId }) {
                         <h6 style={{ fontWeight: 700, color: 'var(--accent)', marginBottom: 16, fontSize: '0.95rem' }}>Asignar a nodo</h6>
                         <form onSubmit={handleAsign}>
                             <div style={{ marginBottom: 12 }}>
-                                <label style={labelStyle}>Personaje</label>
-                                <select value={asignForm.id_personaje} onChange={(e) => setAsignForm({ ...asignForm, id_personaje: e.target.value })} required style={selectStyle}>
+                                <label htmlFor="asign-personaje" style={labelStyle}>Personaje</label>
+                                <select id="asign-personaje" value={asignForm.id_personaje} onChange={(e) => setAsignForm({ ...asignForm, id_personaje: e.target.value })} required style={selectStyle}>
                                     <option value="">-- Personaje --</option>
                                     {personajes.map((p) => <option key={p.id} value={p.id}>{p.nombre}</option>)}
                                 </select>
                             </div>
                             <div style={{ marginBottom: 12 }}>
-                                <label style={labelStyle}>Nodo</label>
-                                <select value={asignForm.id_nodo} onChange={(e) => setAsignForm({ ...asignForm, id_nodo: e.target.value })} required style={selectStyle}>
+                                <label htmlFor="asign-nodo" style={labelStyle}>Nodo</label>
+                                <select id="asign-nodo" value={asignForm.id_nodo} onChange={(e) => setAsignForm({ ...asignForm, id_nodo: e.target.value })} required style={selectStyle}>
                                     <option value="">-- Nodo --</option>
                                     {nodos.map((n) => <option key={n.id} value={n.id}>{n.titulo_nodo}</option>)}
                                 </select>
                             </div>
                             <div style={{ marginBottom: 16 }}>
-                                <label style={labelStyle}>Posición en pantalla</label>
-                                <select value={asignForm.posicion} onChange={(e) => setAsignForm({ ...asignForm, posicion: e.target.value })} style={selectStyle}>
+                                <label htmlFor="asign-posicion" style={labelStyle}>Posición en pantalla</label>
+                                <select id="asign-posicion" value={asignForm.posicion} onChange={(e) => setAsignForm({ ...asignForm, posicion: e.target.value })} style={selectStyle}>
                                     <option value="izquierda">Izquierda</option>
                                     <option value="centro">Centro</option>
                                     <option value="derecha">Derecha</option>
@@ -318,7 +323,7 @@ export default function TabPersonajes({ historiaId }) {
                                         </div>
                                         <div style={{ flex: 1 }}>
                                             <div style={{ fontWeight: 600, color: 'var(--text)' }}>{p.nombre}</div>
-                                            <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>{asignaciones.length} nodo{asignaciones.length !== 1 ? 's' : ''}</div>
+                                            <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>{asignaciones.length} nodo{asignaciones.length === 1 ? '' : 's'}</div>
                                         </div>
                                         <div style={{ display: 'flex', gap: 6 }}>
                                             <button onClick={() => abrirEditar(p)} style={{ background: '#fef9c3', border: '1px solid #fde68a', color: '#92400e', borderRadius: 6, padding: '4px 12px', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600 }}>Editar</button>
@@ -347,8 +352,9 @@ export default function TabPersonajes({ historiaId }) {
             {modalEditar && (
                 <form onSubmit={handleGuardarEdit}>
                     <div style={{ marginBottom: 14 }}>
-                        <label style={labelStyle}>Nombre</label>
+                        <label htmlFor="p-edit-nombre" style={labelStyle}>Nombre</label>
                         <input
+                            id="p-edit-nombre"
                             type="text"
                             value={formEditar.nombre}
                             onChange={(e) => setFormEditar(prev => ({ ...prev, nombre: e.target.value }))}
@@ -359,8 +365,9 @@ export default function TabPersonajes({ historiaId }) {
                         />
                     </div>
                     <div style={{ marginBottom: 20 }}>
-                        <label style={labelStyle}>Sprite</label>
+                        <label htmlFor="p-edit-sprite" style={labelStyle}>Sprite</label>
                         <select
+                            id="p-edit-sprite"
                             value={formEditar.id_imagen}
                             onChange={(e) => setFormEditar(prev => ({ ...prev, id_imagen: e.target.value }))}
                             disabled={guardandoEdit}
@@ -407,3 +414,7 @@ export default function TabPersonajes({ historiaId }) {
         </>
     );
 }
+
+TabPersonajes.propTypes = {
+    historiaId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};

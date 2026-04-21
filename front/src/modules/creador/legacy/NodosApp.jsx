@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect } from 'react';
 import {
     readNodos, createNodo, updateNodo, deleteNodo,
@@ -115,8 +116,8 @@ function NodosPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Titulo del nodo</label>
-                                <input type="text" name="titulo_nodo"
+                                <label htmlFor="nodo-titulo" className="form-label">Titulo del nodo</label>
+                                <input id="nodo-titulo" type="text" name="titulo_nodo"
                                     className={`form-control ${errores.titulo_nodo ? 'is-invalid' : ''}`}
                                     value={formData.titulo_nodo} onChange={handleChange}
                                     required disabled={cargandoGuardar} placeholder="Nombre interno del nodo" />
@@ -124,8 +125,8 @@ function NodosPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Texto narrativo</label>
-                                <textarea name="texto" rows="4"
+                                <label htmlFor="nodo-texto" className="form-label">Texto narrativo</label>
+                                <textarea id="nodo-texto" name="texto" rows="4"
                                     className={`form-control ${errores.texto ? 'is-invalid' : ''}`}
                                     value={formData.texto} onChange={handleChange}
                                     required disabled={cargandoGuardar} placeholder="Texto que vera el jugador" />
@@ -133,8 +134,8 @@ function NodosPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Historia</label>
-                                <select name="id_historia"
+                                <label htmlFor="nodo-historia" className="form-label">Historia</label>
+                                <select id="nodo-historia" name="id_historia"
                                     className={`form-select ${errores.id_historia ? 'is-invalid' : ''}`}
                                     value={formData.id_historia} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -147,8 +148,8 @@ function NodosPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Imagen de escenario (opcional)</label>
-                                <select name="id_imagen_escenario"
+                                <label htmlFor="nodo-imagen" className="form-label">Imagen de escenario (opcional)</label>
+                                <select id="nodo-imagen" name="id_imagen_escenario"
                                     className="form-select"
                                     value={formData.id_imagen_escenario} onChange={handleChange}
                                     disabled={cargandoGuardar}>
@@ -160,8 +161,8 @@ function NodosPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Audio de fondo (opcional)</label>
-                                <select name="id_audio_fondo"
+                                <label htmlFor="nodo-audio" className="form-label">Audio de fondo (opcional)</label>
+                                <select id="nodo-audio" name="id_audio_fondo"
                                     className="form-select"
                                     value={formData.id_audio_fondo} onChange={handleChange}
                                     disabled={cargandoGuardar}>
@@ -182,9 +183,8 @@ function NodosPanel() {
 
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                    {cargandoGuardar && <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>}
+                                    {!cargandoGuardar && (editandoId ? 'Actualizar' : 'Guardar')}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
@@ -343,8 +343,8 @@ function OpcionesPanel() {
                     <div className="card-body">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label">Texto de la opcion</label>
-                                <input type="text" name="texto_opcion"
+                                <label htmlFor="op-texto" className="form-label">Texto de la opcion</label>
+                                <input id="op-texto" type="text" name="texto_opcion"
                                     className={`form-control ${errores.texto_opcion ? 'is-invalid' : ''}`}
                                     value={formData.texto_opcion} onChange={handleChange}
                                     required disabled={cargandoGuardar} placeholder="Lo que ve el jugador" />
@@ -352,8 +352,8 @@ function OpcionesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Nodo origen</label>
-                                <select name="id_nodo_origen"
+                                <label htmlFor="op-origen" className="form-label">Nodo origen</label>
+                                <select id="op-origen" name="id_nodo_origen"
                                     className={`form-select ${errores.id_nodo_origen ? 'is-invalid' : ''}`}
                                     value={formData.id_nodo_origen} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -366,8 +366,8 @@ function OpcionesPanel() {
                             </div>
 
                             <div className="mb-3">
-                                <label className="form-label">Nodo destino</label>
-                                <select name="id_nodo_destino"
+                                <label htmlFor="op-destino" className="form-label">Nodo destino</label>
+                                <select id="op-destino" name="id_nodo_destino"
                                     className={`form-select ${errores.id_nodo_destino ? 'is-invalid' : ''}`}
                                     value={formData.id_nodo_destino} onChange={handleChange}
                                     required disabled={cargandoGuardar}>
@@ -381,9 +381,8 @@ function OpcionesPanel() {
 
                             <div className="d-grid gap-2">
                                 <button type="submit" className="btn btn-success" disabled={cargandoGuardar}>
-                                    {cargandoGuardar
-                                        ? <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>
-                                        : editandoId ? 'Actualizar' : 'Guardar'}
+                                    {cargandoGuardar && <><span className="spinner-border spinner-border-sm me-2" />Guardando...</>}
+                                    {!cargandoGuardar && (editandoId ? 'Actualizar' : 'Guardar')}
                                 </button>
                                 {editandoId && (
                                     <button type="button" className="btn btn-secondary" onClick={cancelar} disabled={cargandoGuardar}>
