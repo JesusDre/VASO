@@ -244,33 +244,37 @@ export default function LectorNovela() {
             </div>
 
             <div className="ln-game-wrap">
-                <div className="ln-stage" style={fondoSrc ? { backgroundImage: `url(${fondoSrc})` } : {}}>
-                    <div className="ln-stage-overlay" />
+                <div className="ln-stage">
+                    {/* Área visual — imagen siempre completa */}
+                    <div className="ln-stage-visual" style={fondoSrc ? { backgroundImage: `url(${fondoSrc})` } : {}}>
+                        <div className="ln-stage-overlay" />
 
-                    {!fondoSrc && (
-                        <div className="ln-stage-placeholder">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
-                                <rect x="3" y="3" width="18" height="18" rx="2" />
-                                <circle cx="8.5" cy="8.5" r="1.5" />
-                                <polyline points="21 15 16 10 5 21" />
-                            </svg>
+                        {!fondoSrc && (
+                            <div className="ln-stage-placeholder">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                                    <circle cx="8.5" cy="8.5" r="1.5" />
+                                    <polyline points="21 15 16 10 5 21" />
+                                </svg>
+                            </div>
+                        )}
+
+                        <div className="ln-characters">
+                            {['izquierda', 'centro', 'derecha'].map((pos) => {
+                                const p = personajesPorPos[pos];
+                                if (!p?.imagenUrl) return null;
+                                return (
+                                    <img key={pos} src={p.imagenUrl} alt={p.nombre} className={`ln-character ln-character-${pos}`} />
+                                );
+                            })}
                         </div>
-                    )}
 
-                    <div className="ln-characters">
-                        {['izquierda', 'centro', 'derecha'].map((pos) => {
-                            const p = personajesPorPos[pos];
-                            if (!p?.imagenUrl) return null;
-                            return (
-                                <img key={pos} src={p.imagenUrl} alt={p.nombre} className={`ln-character ln-character-${pos}`} />
-                            );
-                        })}
+                        <button className="ln-mute-btn" onClick={toggleMute} title={muted ? 'Activar audio' : 'Silenciar'}>
+                            <IconVolume muted={muted} />
+                        </button>
                     </div>
 
-                    <button className="ln-mute-btn" onClick={toggleMute} title={muted ? 'Activar audio' : 'Silenciar'}>
-                        <IconVolume muted={muted} />
-                    </button>
-
+                    {/* Panel de texto — crece hacia abajo */}
                     <button
                         type="button"
                         className="ln-text-panel"

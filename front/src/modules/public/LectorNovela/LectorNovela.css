@@ -54,18 +54,26 @@
     padding: 1.25rem 1.5rem 1.5rem;
 }
 
-/* Escenario */
+/* Escenario — flex column, imagen arriba + panel abajo */
 .ln-stage {
-    position: relative;
     width: 100%;
     max-width: 900px;
-    aspect-ratio: 16 / 9;
     border-radius: 16px;
     overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Área visual — siempre 16:9, imagen nunca tapada */
+.ln-stage-visual {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
     background: #0f1724;
     background-size: cover;
     background-position: center;
-    box-shadow: var(--shadow-lg);
+    flex-shrink: 0;
 }
 
 /* Overlay semitransparente sobre el fondo */
@@ -135,13 +143,10 @@
     color: #fff;
 }
 
-/* Panel de texto — parte inferior */
+/* Panel de texto — flujo normal, crece hacia abajo */
 .ln-text-panel {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
+    width: 100%;
+    display: block;
 }
 
 /* Badge nombre del personaje */
@@ -172,8 +177,11 @@
     line-height: 1.75;
     margin: 0 0 16px;
     font-weight: 500;
-    min-height: 56px;
+    min-height: 2.5em;
     cursor: pointer;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .ln-cursor {
@@ -205,6 +213,8 @@
     font-weight: 500;
     line-height: 1.4;
     transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .ln-option-btn:hover {
@@ -300,8 +310,11 @@
     }
 
     .ln-stage {
-        aspect-ratio: 4 / 3;
         border-radius: 10px;
+    }
+
+    .ln-stage-visual {
+        aspect-ratio: 4 / 3;
     }
 
     .ln-panel-body {
