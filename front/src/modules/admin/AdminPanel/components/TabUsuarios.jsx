@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import ModalAlert from '../../../../components/ModalAlert';
 import Spinner from './Spinner';
 import Empty from './Empty';
+import { sanitize } from '../../../../utils/validators';
 
 export default function TabUsuarios() {
     const { usuario: currentUser } = useAuth();
@@ -140,7 +141,7 @@ export default function TabUsuarios() {
         <div>
             <input
                 type="text" value={filtro}
-                onChange={(e) => setFiltro(e.target.value)}
+                onChange={(e) => { const v = sanitize(e.target.value, 'TEXTO_SEGURO'); if (v !== null) setFiltro(v); }}
                 placeholder="Buscar por nombre o email..."
                 className="nv-input"
                 style={{ maxWidth: 360, marginBottom: 20 }}

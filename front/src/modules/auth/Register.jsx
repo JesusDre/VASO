@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { registerUser } from '../../services/api';
 import Navbar from '../../components/Navbar';
+import { sanitize, validarAntesDeEnviar } from '../../utils/validators';
 import '../../styles/login.css';
 
 const initialState = {
@@ -32,20 +33,33 @@ function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]*$/;
-
     const handleChange = (e) => {
         const { name, value } = e.target;
+        let sanitizado = value;
         if (['nombre', 'apellido_paterno', 'apellido_materno'].includes(name)) {
-            if (!soloLetras.test(value)) return;
+            sanitizado = sanitize(value, 'SOLO_LETRAS');
+        } else if (name === 'email') {
+            sanitizado = sanitize(value, 'EMAIL');
         }
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        if (sanitizado === null) return;
+        setFormData((prev) => ({ ...prev, [name]: sanitizado }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setSuccess('');
+
+        const erroresValidacion = validarAntesDeEnviar(formData, {
+            nombre: 'SOLO_LETRAS',
+            apellido_paterno: 'SOLO_LETRAS',
+            apellido_materno: 'SOLO_LETRAS',
+            email: 'EMAIL',
+        });
+        if (erroresValidacion.length > 0) {
+            setError(erroresValidacion.join(' '));
+            return;
+        }
 
         const erroresPassword = validarPassword(formData.password);
         if (erroresPassword.length > 0) {

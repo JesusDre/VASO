@@ -13,16 +13,14 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
     if (!isOpen) return null;
 
     return (
-        <button
-            type="button"
+        <div
+            role="presentation"
             onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-            aria-label="Cerrar modal"
             style={{
                 position: 'fixed', inset: 0, zIndex: 1000,
                 background: 'rgba(15,23,42,0.45)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 padding: '1rem',
-                border: 'none',
                 cursor: 'default',
                 width: '100%',
             }}
@@ -51,7 +49,7 @@ export default function Modal({ isOpen, titulo, children, onClose, ancho = 440 }
                 </div>
                 {children}
             </dialog>
-        </button>
+        </div>
     );
 }
 

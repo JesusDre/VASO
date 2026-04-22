@@ -8,6 +8,7 @@ import {
 } from '../../../../services/api';
 import { inputStyle, labelStyle, selectStyle, btnPrimary, btnGhost, cardStyle } from '../styles/editorStyles';
 import Modal from './Modal';
+import { sanitize } from '../../../../utils/validators';
 import ModalAlert from '../../../../components/ModalAlert';
 
 function extraerMensajeError(err, fallback) {
@@ -103,7 +104,17 @@ export default function TabNodos({ historiaId }) {
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+        if (type === 'checkbox') {
+            setForm({ ...form, [name]: checked });
+            return;
+        }
+        if (name === 'titulo_nodo' || name === 'texto') {
+            const sanitizado = sanitize(value, 'TEXTO_SEGURO');
+            if (sanitizado === null) return;
+            setForm({ ...form, [name]: sanitizado });
+            return;
+        }
+        setForm({ ...form, [name]: value });
     };
 
     const handleSubirImagen = async () => {
@@ -183,7 +194,17 @@ export default function TabNodos({ historiaId }) {
 
     const handleChangeEdit = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormEditar(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+        if (type === 'checkbox') {
+            setFormEditar(prev => ({ ...prev, [name]: checked }));
+            return;
+        }
+        if (name === 'titulo_nodo' || name === 'texto') {
+            const sanitizado = sanitize(value, 'TEXTO_SEGURO');
+            if (sanitizado === null) return;
+            setFormEditar(prev => ({ ...prev, [name]: sanitizado }));
+            return;
+        }
+        setFormEditar(prev => ({ ...prev, [name]: value }));
     };
 
     const handleGuardarEdit = async (e) => {
@@ -259,7 +280,7 @@ export default function TabNodos({ historiaId }) {
                                 <input
                                     type="text"
                                     value={imgDesc}
-                                    onChange={(e) => setImgDesc(e.target.value)}
+                                    onChange={(e) => { const v = sanitize(e.target.value, 'TEXTO_SEGURO'); if (v !== null) setImgDesc(v); }}
                                     placeholder="Nombre del fondo (opcional)"
                                     style={{ ...inputStyle, fontSize: '0.84rem' }}
                                 />
@@ -301,7 +322,7 @@ export default function TabNodos({ historiaId }) {
                                 <input
                                     type="text"
                                     value={audDesc}
-                                    onChange={(e) => setAudDesc(e.target.value)}
+                                    onChange={(e) => { const v = sanitize(e.target.value, 'TEXTO_SEGURO'); if (v !== null) setAudDesc(v); }}
                                     placeholder="Nombre del audio (opcional)"
                                     style={{ ...inputStyle, fontSize: '0.84rem' }}
                                 />

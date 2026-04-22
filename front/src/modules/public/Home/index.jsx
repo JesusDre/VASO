@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '../../../components/Navbar';
 import HistoriaCard from '../../../components/HistoriaCard';
 import { useHistorias } from './hooks/useHistorias';
+import { sanitize } from '../../../utils/validators';
 import './Home.css';
 
 export default function Home() {
@@ -50,7 +51,7 @@ export default function Home() {
                             type="text"
                             placeholder="Buscar novela..."
                             value={filtro}
-                            onChange={(e) => setFiltro(e.target.value)}
+                            onChange={(e) => { const v = sanitize(e.target.value, 'TEXTO_SEGURO'); if (v !== null) setFiltro(v); }}
                         />
                     </div>
                 </div>

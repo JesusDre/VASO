@@ -9,6 +9,7 @@ import {
 import { inputStyle, labelStyle, selectStyle, btnPrimary, cardStyle } from '../styles/editorStyles';
 import Modal from './Modal';
 import ModalAlert from '../../../../components/ModalAlert';
+import { sanitize } from '../../../../utils/validators';
 
 function extraerMensajeError(err, fallback) {
     const data = err.response?.data;
@@ -150,7 +151,7 @@ export default function TabRecursos() {
                             </div>
                             <div style={{ marginBottom: 12 }}>
                                 <label htmlFor="img-desc" style={labelStyle}>Descripción</label>
-                                <input id="img-desc" type="text" value={imgDesc} onChange={(e) => setImgDesc(e.target.value)} placeholder="Ej: Bosque nocturno" style={inputStyle} />
+                                <input id="img-desc" type="text" value={imgDesc} onChange={(e) => { const v = sanitize(e.target.value, 'TEXTO_SEGURO'); if (v !== null) setImgDesc(v); }} placeholder="Ej: Bosque nocturno" style={inputStyle} />
                             </div>
                             <div style={{ marginBottom: 16 }}>
                                 <label htmlFor="img-file" style={labelStyle}>Archivo (PNG, JPG, WebP)</label>
@@ -246,7 +247,7 @@ export default function TabRecursos() {
                         <form onSubmit={subirAudio}>
                             <div style={{ marginBottom: 12 }}>
                                 <label htmlFor="aud-desc" style={labelStyle}>Descripción</label>
-                                <input id="aud-desc" type="text" value={audDesc} onChange={(e) => setAudDesc(e.target.value)} placeholder="Ej: Música de tensión" style={inputStyle} />
+                                <input id="aud-desc" type="text" value={audDesc} onChange={(e) => { const v = sanitize(e.target.value, 'TEXTO_SEGURO'); if (v !== null) setAudDesc(v); }} placeholder="Ej: Música de tensión" style={inputStyle} />
                             </div>
                             <div style={{ marginBottom: 16 }}>
                                 <label htmlFor="aud-file" style={labelStyle}>Archivo (MP3, OGG, WAV)</label>
@@ -319,7 +320,7 @@ export default function TabRecursos() {
                     <form onSubmit={confirmarEditar} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                         <div>
                             <label htmlFor="edit-desc" style={labelStyle}>Descripción</label>
-                            <input id="edit-desc" type="text" value={editForm.descripcion} onChange={(e) => setEditForm({ ...editForm, descripcion: e.target.value })}
+                            <input id="edit-desc" type="text" value={editForm.descripcion} onChange={(e) => { const v = sanitize(e.target.value, 'TEXTO_SEGURO'); if (v !== null) setEditForm({ ...editForm, descripcion: v }); }}
                                 placeholder="Descripción del recurso" style={inputStyle} autoFocus />
                         </div>
                         {modalEditar.tipo === 'imagen' && (

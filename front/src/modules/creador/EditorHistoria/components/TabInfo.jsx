@@ -8,6 +8,7 @@ import {
 } from '../../../../services/api';
 import { inputStyle, labelStyle, selectStyle, btnPrimary } from '../styles/editorStyles';
 import ModalAlert from '../../../../components/ModalAlert';
+import { sanitize } from '../../../../utils/validators';
 
 function extraerMensajeError(err, fallback) {
     const data = err.response?.data;
@@ -350,7 +351,17 @@ function useTabInfoLogic({ historia, historiaId, usuario, onGuardado }) {
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setForm({ ...form, [name]: type === 'checkbox' ? checked : value });
+        if (type === 'checkbox') {
+            setForm({ ...form, [name]: checked });
+            return;
+        }
+        if (name === 'titulo' || name === 'descripcion') {
+            const sanitizado = sanitize(value, 'TEXTO_SEGURO');
+            if (sanitizado === null) return;
+            setForm({ ...form, [name]: sanitizado });
+            return;
+        }
+        setForm({ ...form, [name]: value });
     };
 
     const handlePortadaChange = async (e) => {

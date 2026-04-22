@@ -5,6 +5,7 @@ import toast from 'react-hot-toast';
 import ModalAlert from '../../../../components/ModalAlert';
 import Spinner from './Spinner';
 import Empty from './Empty';
+import { sanitize } from '../../../../utils/validators';
 
 export default function TabRoles() {
     const FORM = { nombre_rol: '' };
@@ -91,7 +92,8 @@ export default function TabRoles() {
                 </div>
             ))}
         </div>
-    ));
+    );
+    }
 
     return (
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'flex-start' }}>
@@ -105,7 +107,7 @@ export default function TabRoles() {
                         <input
                             id="rol-nombre"
                             type="text" value={form.nombre_rol}
-                            onChange={(e) => setForm({ nombre_rol: e.target.value })}
+                            onChange={(e) => { const v = sanitize(e.target.value, 'SOLO_LETRAS'); if (v !== null) setForm({ nombre_rol: v }); }}
                             required disabled={guardando}
                             placeholder="Ej: administrador, lector"
                             className="nv-input"

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Navbar from '../../components/Navbar';
+import { sanitize, contieneSQLInjection } from '../../utils/validators';
 import '../../styles/login.css';
 
 function Login() {
@@ -15,11 +16,20 @@ function Login() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        let sanitizado = value;
+        if (name === 'email') {
+            sanitizado = sanitize(value, 'EMAIL');
+            if (sanitizado === null) return;
+        }
+        setFormData((prev) => ({ ...prev, [name]: sanitizado }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (contieneSQLInjection(formData.email) || contieneSQLInjection(formData.password)) {
+            setError('Caracteres no permitidos en los campos.');
+            return;
+        }
         setLoading(true);
         setError('');
         try {

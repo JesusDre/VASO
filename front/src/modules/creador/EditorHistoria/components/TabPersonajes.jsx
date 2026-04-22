@@ -11,6 +11,7 @@ import {
 import { inputStyle, labelStyle, selectStyle, btnPrimary, btnGhost, cardStyle } from '../styles/editorStyles';
 import Modal from './Modal';
 import ModalAlert from '../../../../components/ModalAlert';
+import { sanitize } from '../../../../utils/validators';
 
 function getSpritePreviewSrc(imagenes, id_imagen) {
     const img = imagenes.find((i) => i.id === Number(id_imagen));
@@ -65,7 +66,16 @@ export default function TabPersonajes({ historiaId }) {
 
     useEffect(() => { cargar(); }, [historiaId]);
 
-    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        if (name === 'nombre') {
+            const v = sanitize(value, 'SOLO_LETRAS');
+            if (v === null) return;
+            setForm({ ...form, [name]: v });
+            return;
+        }
+        setForm({ ...form, [name]: value });
+    };
 
     const handleSubirSprite = async () => {
         if (!spriteFile) { toast.error('Selecciona un archivo'); return; }
@@ -234,7 +244,7 @@ export default function TabPersonajes({ historiaId }) {
                                     <input
                                         type="text"
                                         value={spriteDesc}
-                                        onChange={(e) => setSpriteDesc(e.target.value)}
+                                        onChange={(e) => { const v = sanitize(e.target.value, 'TEXTO_SEGURO'); if (v !== null) setSpriteDesc(v); }}
                                         placeholder="Nombre del sprite (opcional)"
                                         style={{ ...inputStyle, fontSize: '0.84rem' }}
                                     />
@@ -357,7 +367,7 @@ export default function TabPersonajes({ historiaId }) {
                             id="p-edit-nombre"
                             type="text"
                             value={formEditar.nombre}
-                            onChange={(e) => setFormEditar(prev => ({ ...prev, nombre: e.target.value }))}
+                            onChange={(e) => { const v = sanitize(e.target.value, 'SOLO_LETRAS'); if (v !== null) setFormEditar(prev => ({ ...prev, nombre: v })); }}
                             required
                             disabled={guardandoEdit}
                             style={inputStyle}

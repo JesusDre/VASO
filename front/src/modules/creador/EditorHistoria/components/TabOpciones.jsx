@@ -8,6 +8,7 @@ import { inputStyle, labelStyle, selectStyle, btnPrimary, btnGhost, cardStyle } 
 import Modal from './Modal';
 import ModalAlert from '../../../../components/ModalAlert';
 import toast from 'react-hot-toast';
+import { sanitize } from '../../../../utils/validators';
 
 export default function TabOpciones({ historiaId }) {
     const FORM = { texto_opcion: '', id_nodo_origen: '', id_nodo_destino: '' };
@@ -39,11 +40,16 @@ export default function TabOpciones({ historiaId }) {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        let sanitizado = value;
+        if (name === 'texto_opcion') {
+            sanitizado = sanitize(value, 'TEXTO_SEGURO');
+            if (sanitizado === null) return;
+        }
         setForm(prev => ({
             ...prev,
-            [name]: value,
+            [name]: sanitizado,
             // Si cambia el origen y el destino es igual, limpiar destino
-            ...(name === 'id_nodo_origen' && value === prev.id_nodo_destino ? { id_nodo_destino: '' } : {}),
+            ...(name === 'id_nodo_origen' && sanitizado === prev.id_nodo_destino ? { id_nodo_destino: '' } : {}),
         }));
     };
 
@@ -76,10 +82,15 @@ export default function TabOpciones({ historiaId }) {
 
     const handleChangeEdit = (e) => {
         const { name, value } = e.target;
+        let sanitizado = value;
+        if (name === 'texto_opcion') {
+            sanitizado = sanitize(value, 'TEXTO_SEGURO');
+            if (sanitizado === null) return;
+        }
         setFormEditar(prev => ({
             ...prev,
-            [name]: value,
-            ...(name === 'id_nodo_origen' && value === prev.id_nodo_destino ? { id_nodo_destino: '' } : {}),
+            [name]: sanitizado,
+            ...(name === 'id_nodo_origen' && sanitizado === prev.id_nodo_destino ? { id_nodo_destino: '' } : {}),
         }));
     };
 

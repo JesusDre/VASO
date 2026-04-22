@@ -4,6 +4,7 @@ import { readCategorias, createCategoria, updateCategoria } from '../../../../se
 import toast from 'react-hot-toast';
 import Spinner from './Spinner';
 import Empty from './Empty';
+import { sanitize } from '../../../../utils/validators';
 
 const FORM_VACIO = { nombre: '', descripcion: '' };
 
@@ -48,7 +49,15 @@ export default function TabCategorias() {
     };
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        let v = value;
+        if (name === 'nombre') {
+            v = sanitize(value, 'SOLO_LETRAS');
+        } else if (name === 'descripcion') {
+            v = sanitize(value, 'TEXTO_SEGURO');
+        }
+        if (v === null) return;
+        setForm({ ...form, [name]: v });
     };
 
     const handleGuardar = async (e) => {
