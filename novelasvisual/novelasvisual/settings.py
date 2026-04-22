@@ -135,7 +135,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # -----------------------------------------------------------
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='https://localhost:5173,http://127.0.0.1:5173',
+    default='https://app.genidas.com',
     cast=Csv(),
 )
 
@@ -206,15 +206,6 @@ _FMT = "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {m
 
 logger.configure(handlers=[
     {
-        'sink': LOG_DIR / 'debug.log',
-        'level': 'DEBUG',
-        'filter': lambda record: record['level'].no <= logger.level('WARNING').no,
-        'format': _FMT,
-        'rotation': '10 MB',
-        'retention': '2 days',
-        'compression': 'zip',
-    },
-    {
         'sink': LOG_DIR / 'error.log',
         'level': 'ERROR',
         'format': _FMT,
@@ -238,7 +229,6 @@ _LOGGING = {
     },
     'root': {
         'handlers': ['loguru'],
-        'level': 'DEBUG',
     },
 }
 logging.config.dictConfig(_LOGGING)
