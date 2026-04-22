@@ -259,6 +259,10 @@ export default function LectorNovela() {
                             </div>
                         )}
 
+                        <button className="ln-mute-btn" onClick={toggleMute} title={muted ? 'Activar audio' : 'Silenciar'}>
+                            <IconVolume muted={muted} />
+                        </button>
+
                         <div className="ln-characters">
                             {['izquierda', 'centro', 'derecha'].map((pos) => {
                                 const p = personajesPorPos[pos];
@@ -269,9 +273,9 @@ export default function LectorNovela() {
                             })}
                         </div>
 
-                        <button className="ln-mute-btn" onClick={toggleMute} title={muted ? 'Activar audio' : 'Silenciar'}>
-                            <IconVolume muted={muted} />
-                        </button>
+                        {personajeHablando && (
+                            <div className="ln-character-name">{personajeHablando}</div>
+                        )}
                     </div>
 
                     {/* Panel de texto — crece hacia abajo */}
@@ -281,7 +285,6 @@ export default function LectorNovela() {
                         onClick={handleTextClick}
                         style={{ background: 'none', border: 'none', padding: 0, textAlign: 'left', cursor: 'pointer', width: '100%' }}
                     >
-                        {personajeHablando && <div className="ln-character-name">{personajeHablando}</div>}
 
                         <div className="ln-panel-body">
                             <p className="ln-narrative" style={{ cursor: listo ? 'default' : 'pointer' }}>
